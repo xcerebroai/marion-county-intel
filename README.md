@@ -93,8 +93,8 @@ behind a single unresolved question on the recorder portal.
 
     python scaffold/tests/run_all.py
 
-37/37 gate tests pass as of 2026-08-04, including the four v5.6.0 recon
-invariants.
+35/35 gate suites (539 assertions, 0 failures) pass as of 2026-08-04,
+including the four v5.6.0 recon invariants.
 
 ---
 
