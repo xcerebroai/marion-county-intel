@@ -29,8 +29,10 @@ Run:
 
 from __future__ import annotations
 
+import argparse
 import collections
 import json
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -181,8 +183,38 @@ def _amount(rec):
     return None
 
 
-def build() -> dict:
-    banner("BUILD DASHBOARD — Marion County (no scoring)")
+def _redact_owner(name: str) -> str:
+    """Owner name -> non-identifying form for a publicly served build.
+
+    Entities (LLC, INC, TRUST, BANK, ...) are business records and stay intact.
+    Natural persons are reduced to a surname initial, which preserves the
+    ability to eyeball-group a stack without naming the individual.
+    """
+    if not name:
+        return ""
+    if re.search(r"\b(LLC|L\.L\.C|INC|CORP|TRUST|BANK|COMPANY|CO|LP|LLP|PLC|"
+                 r"ASSOCIATION|AUTHORITY|CHURCH|MINISTRIES|HOLDINGS|PROPERTIES|"
+                 r"INVESTMENTS|GROUP|PARTNERS|FUND|REALTY|HOMES|CAPITAL)\b",
+                 name.upper()):
+        return name
+    first = name.split(",")[0].strip()
+    return (first[:1].upper() + "█████") if first else "█████"
+
+
+def _redact_addr(addr: str) -> str:
+    """Situs address -> block-level. '2615 WHITE AVE' -> '2600 BLOCK WHITE AVE'."""
+    if not addr:
+        return ""
+    m = re.match(r"^\s*(\d+)\s+(.*)$", addr.strip())
+    if not m:
+        return addr
+    n = int(m.group(1))
+    return f"{(n // 100) * 100} BLOCK {m.group(2)}"
+
+
+def build(redact: bool = False) -> dict:
+    banner(f"BUILD DASHBOARD — Marion County (no scoring"
+           f"{', REDACTED for public serving' if redact else ''})")
 
     parcels, l2s = _load_crosswalk()
     log(f"crosswalk: {len(parcels):,} parcels, {len(l2s):,} local->state keys")
@@ -202,6 +234,10 @@ def build() -> dict:
                 continue
             p = parcels.get(state or "", {})
             dt = r.get("canonical_doc_type") or ""
+            addr = (f"{p.get('situs_house_no','')} {p.get('situs_street','')}".strip()
+                    or (r.get("property_refs") or {}).get("situs_address") or "")
+            owner = _clean_owner(p.get("owner_name")
+                                 or (r.get("parties") or [{}])[0].get("name", ""))
             records.append({
                 "t": dt,
                 "lt": LEAD_TYPE_LABEL.get(dt, dt.replace("_", " ").title()),
@@ -211,11 +247,9 @@ def build() -> dict:
                 "d": r.get("recorded_date") or r.get("event_date") or "",
                 "p": state or "",
                 "pl": p.get("parcel_id_local") or (pid if str(pid).isdigit() else ""),
-                "a": (f"{p.get('situs_house_no','')} {p.get('situs_street','')}".strip()
-                      or (r.get("property_refs") or {}).get("situs_address") or ""),
+                "a": (_redact_addr(addr) if redact else addr),
                 "z": p.get("situs_zip") or "",
-                "o": _clean_owner(p.get("owner_name")
-                                  or (r.get("parties") or [{}])[0].get("name", "")),
+                "o": (_redact_owner(owner) if redact else owner),
                 "av": p.get("assessed_value"),
                 "amt": _amount(r),
                 "inst": r.get("instrument_number") or "",
@@ -831,4 +865,12 @@ applyFilters();
 
 
 if __name__ == "__main__":
-    build()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--redact", action="store_true",
+                    help="omit individual owner names and reduce situs addresses to "
+                         "block level. REQUIRED for any publicly served build.")
+    ap.add_argument("--out", default=None, help="override output path")
+    a = ap.parse_args()
+    if a.out:
+        OUT_HTML = Path(a.out)  # noqa: F811
+    build(redact=a.redact)
