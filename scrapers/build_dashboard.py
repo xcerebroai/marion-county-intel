@@ -39,7 +39,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from scrapers._common import CROSSWALK_DIR, OUT_DIR, REPO_ROOT, banner, log, read_jsonl  # noqa: E402
+from scrapers._common import (  # noqa: E402
+    CROSSWALK_DIR, OUT_DIR, REPO_ROOT, banner, log, read_jsonl, stamp_first_seen,
+)
+
+# A record wears the NEW badge while first_seen is within this many days.
+NEW_BADGE_DAYS = 7
 
 # dashboard/index.html — mirrors harris-intel. GitHub Pages uploads dashboard/
 # as the artifact root (build_type: workflow), so index.html serves at the site
@@ -84,16 +89,31 @@ SOURCE_COVERAGE = {
                   "separate, unbuilt path.",
     },
     "marion_recorder_fidlar": {
-        "level": "capped",
-        "short": "CAPPED 200/search — counts are FLOORS",
-        "detail": "The recorder portal returns at most 200 rows per search. A "
-                  "one-month all-types search reports 8,251 total results and "
-                  "returns 200. Every lien and deed count from this source is an "
-                  "UNDERCOUNT, not a total. Additionally the portal publishes on "
-                  "a 5-day lag, and six lead types (lis pendens, abstract of "
-                  "judgment, state tax lien, heirship affidavit, executor and "
-                  "administrator deeds) have no dedicated document code in Marion "
-                  "County and cannot be separated from generic buckets at all.",
+        # Raised from "capped" once recursive date slicing landed and every
+        # harvested slice returned TotalResults == rows returned. The claim is
+        # deliberately scoped to the 9 MAPPED distress doc types — it is not a
+        # claim about all 50 document types the recorder publishes.
+        "level": "full",
+        "short": "Verified complete for 9 mapped lien/deed types",
+        "detail": "The portal truncates any single search at 200 rows. The "
+                  "adapter now slices by document type and recursively bisects "
+                  "the date range whenever a slice comes back truncated, so no "
+                  "capped result is ever accepted as complete. Verification uses "
+                  "the portal's own TotalResults, which it reports independently "
+                  "of how many rows it returns: a slice is complete only when "
+                  "rows returned equals TotalResults, and the harvest is complete "
+                  "only when zero slices remain capped. "
+                  "SCOPE LIMIT — this covers the 9 mapped distress document types "
+                  "(mechanic, federal tax, assessment, sewer, hospital and "
+                  "judgment liens, their releases, and sheriff deeds), not all 50 "
+                  "types the recorder publishes; a full month across every type is "
+                  "~8,251 documents, most of them ordinary mortgages and deeds "
+                  "that are not distress signals. Six lead types (lis pendens, "
+                  "abstract of judgment, state tax lien, heirship affidavit, "
+                  "executor and administrator deeds) still have no dedicated "
+                  "document code in Marion County and cannot be separated from "
+                  "generic buckets at all. The portal also publishes on a 5-day "
+                  "lag, so the cursor trails by five days.",
     },
     "mycase_courts": {
         "level": "partial",
@@ -224,9 +244,17 @@ def build(redact: bool = False) -> dict:
     log(f"crosswalk: {len(parcels):,} parcels, {len(l2s):,} local->state keys")
 
     records, unjoined = [], 0
+    total_new = 0
     for sid, path in FEEDS.items():
         rows = read_jsonl(path)
-        log(f"{SOURCE_LABEL.get(sid, sid):<10} {len(rows):>6,}")
+        # Stamp first_seen for every source here — this is where all feeds
+        # converge, so the ledger stays consistent whichever adapter ran. An
+        # instrument already in the ledger keeps its original date; anything
+        # unseen is stamped with today and counts as new. Idempotent.
+        rows, new_n = stamp_first_seen(sid, rows)
+        total_new += new_n
+        log(f"{SOURCE_LABEL.get(sid, sid):<10} {len(rows):>6,}"
+            f"{('  (+' + str(new_n) + ' new)') if new_n else ''}")
         for r in rows:
             pid = (r.get("property_refs") or {}).get("parcel_id")
             # Normalize every parcel reference to the canonical STATE key.
@@ -267,6 +295,7 @@ def build(redact: bool = False) -> dict:
                 "dc": (r.get("_derivation") or {}).get("confidence"),
                 "url": r.get("source_url") or "",
                 "role": r.get("source_role") or "",
+                "fs": r.get("_first_seen") or "",
             })
 
     # ---- stacking on the canonical key ----
@@ -310,6 +339,7 @@ def build(redact: bool = False) -> dict:
         "review": review,
         "coverage": SOURCE_COVERAGE,
         "source_label": SOURCE_LABEL,
+        "new_badge_days": NEW_BADGE_DAYS,
         "stats": {
             "total": len(records),
             "parcels": len(stack),
@@ -317,6 +347,7 @@ def build(redact: bool = False) -> dict:
             "deepest": max(stack.values()) if stack else 0,
             "review": len(review),
             "unjoined": unjoined,
+            "new_this_run": total_new,
         },
     }
 

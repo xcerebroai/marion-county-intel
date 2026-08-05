@@ -93,8 +93,18 @@ def ingest(small: bool) -> None:
     banner("STAGE 3 — ADDRESS-BEARING SOURCES")
     code_enforcement.run(limit=2000 if small else 20000)
 
-    banner("STAGE 4 — RECORDER (legal description join)")
-    recorder_fidlar.run(date(2026, 1, 5), date(2026, 1, 9))
+    banner("STAGE 4 — RECORDER (recursive date slicing, cap-verified)")
+    # Daily mode walks a trailing window ending at the 5-day lag cursor and
+    # merges into the existing dataset. RECORDER_START/RECORDER_END override it
+    # for a backfill without editing code (used by the workflow inputs).
+    import os
+    rs, re_ = os.environ.get("RECORDER_START"), os.environ.get("RECORDER_END")
+    if rs and re_:
+        y, m, d = rs.split("-"); s = date(int(y), int(m), int(d))
+        y, m, d = re_.split("-"); e = date(int(y), int(m), int(d))
+        recorder_fidlar.run(s, e)
+    else:
+        recorder_fidlar.run(daily=True)
 
     banner("STAGE 5 — MYCASE (no address at ingest; MF resolved in stage 7)")
     mycase.run(date(2026, 6, 1), date(2026, 6, 5),

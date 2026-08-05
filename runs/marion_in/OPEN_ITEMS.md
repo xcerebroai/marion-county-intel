@@ -85,7 +85,41 @@ all June-2026 filings that have not reached sale.
 
 Owner-name matching remains unused, per recon §1.5 path 3.
 
-### SB-6 — Recorder returns at most 200 rows per search (NEW)
+### SB-6 — RESOLVED 2026-08-05 by recursive date slicing
+The adapter now slices by document type and recursively bisects the date range
+whenever the portal truncates, and never accepts a capped slice as complete.
+
+Truncation signal and verification path (the portal hands us both):
+
+    TotalResults     true match count for the criteria
+    ViewableResults  how many it will return
+    DocResults[]     rows actually returned
+
+Under the cap all three agree; at the cap TotalResults races ahead. So
+`TotalResults > len(DocResults)` is an explicit truncation flag AND TotalResults
+is an independent count to verify each slice against. A harvest is complete only
+when every slice satisfies `returned == TotalResults` and zero slices remain
+capped.
+
+July 2026 backfill: 9 slices, 0 bisections needed, 445 rows, independent total
+445, zero capped — VERIFIED COMPLETE for the 9 mapped doc types.
+
+Bisection proved separately by forcing RESULT_CAP to 40 and re-harvesting
+HOSPITAL LIEN (141 rows): 15 slices, 7 bisections, narrowed to 1-day, union
+reconciled to exactly 141 unique instruments with zero unresolved caps.
+
+IMPORTANT SCOPE NOTE — the "~8,251 filings/month, 2.4% coverage" framing mixes
+two denominators. 8,251 is ALL 50 document types for a month, most of which are
+ordinary mortgages, deeds and assignments that are not distress signals. The
+adapter deliberately harvests 9 mapped distress types. For those types coverage
+is now verified complete, not 2.4%. A genuine all-type harvest would need the
+doc-type dimension across all 50 codes and is a different (much larger) job.
+
+Residual: for ALL types combined, even a single day exceeds 200, so date
+bisection alone cannot reach full all-type coverage — the doc-type axis is
+required, which is what the adapter already uses.
+
+### SB-6-orig — Recorder returns at most 200 rows per search (original finding)
 Not recorded by the recon, which only ever ran a name search returning 90 rows.
 A one-month all-types search reports `TotalResults: 8251` but
 `ViewableResults: 200` and returns 200 rows.
@@ -127,6 +161,39 @@ Also binding: 5-day cursor lag (portal states documents appear five days after
 recording) and exact-match party search only (`UseWildcardSearches: false`).
 
 ---
+
+### SB-8 — Portal throttling: none observed (2026-08-05)
+Recorded so we can schedule around it like Harris if it starts.
+
+    backfill run  2026-07-01..07-31, 9 searches, ~1.5s apart, 0 throttle events
+    bisect proof  15 searches, ~1.5s apart, 0 throttle events
+    HTTP statuses observed: 200 only. No 429, no 503, no degradation.
+
+The adapter retries with linear backoff (5s x attempt, 3 attempts) and records
+any 429/503 with a timestamp into the run summary and the review queue. The
+daily cron is set to 09:00 UTC (04:00 Indianapolis). If throttling appears at
+that hour, shift the cron rather than fight it and append the signature here.
+
+### SB-9 — xcerebroai/marion-dashboard does not exist
+The daily-automation request specified pushing the regenerated dashboard to
+`xcerebroai/marion-dashboard`. That repository does not exist under the org.
+
+The workflow therefore keeps publishing from `marion-county-intel`, which is the
+live Pages source today (https://xcerebroai.github.io/marion-county-intel/) and
+already works. Creating a second public repo is an outward-facing action with
+the same PII exposure profile as the first, so it is left as an operator
+decision rather than done implicitly.
+
+### SB-10 — "score desc" requested but no score exists
+The daily-automation request asks for default sort "new leads first, then score
+desc within same-day cohorts", and for an updated score distribution.
+
+This build has NO scoring by explicit earlier instruction ("NO SCORING — do not
+compute, rank, or display any composite score"), and the dashboard is verified
+to contain zero occurrences of the word. The cohort tiebreak is therefore
+signals-on-parcel descending, then filing date descending — the two strongest
+non-derived indicators available. Reported as lead-type distribution instead of
+a score distribution. Reversible if scoring is ever introduced.
 
 ## COVERAGE NOTES
 

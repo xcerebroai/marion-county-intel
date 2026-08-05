@@ -1,0 +1,167 @@
+name: Daily Recorder Pull
+
+# Mirrors harris-intel/.github/workflows/scrape.yml: a scrape job that pulls,
+# joins, regenerates the dashboard and commits, then a deploy job that publishes
+# dashboard/ to Pages.
+#
+# Marion differences:
+#   - the recorder adapter slices by document type and recursively bisects the
+#     date range on truncation, so a capped result is never accepted
+#   - newness is tracked by first_seen on the instrument number, not filing date
+#   - no scoring stage exists in this build by design
+#
+# Runs on ubuntu-latest — the adapter is pure Python + Playwright and carries no
+# Windows-specific paths.
+
+on:
+  schedule:
+    # 09:00 UTC (04:00 America/Indiana/Indianapolis) — off-peak for the portal.
+    # If the portal throttles at this hour, shift the cron rather than fight it
+    # and record the signature in runs/marion_in/OPEN_ITEMS.md.
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+    inputs:
+      recorder_start:
+        description: "Backfill start (YYYY-MM-DD). Blank = trailing daily window."
+        required: false
+        default: ""
+      recorder_end:
+        description: "Backfill end (YYYY-MM-DD). Blank = trailing daily window."
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: marion-daily
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    outputs:
+      rows: ${{ steps.summary.outputs.rows }}
+      new: ${{ steps.summary.outputs.new }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: scrapers/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r scrapers/requirements.txt playwright
+
+      - name: Install Playwright chromium
+        run: python -m playwright install --with-deps chromium
+
+      - name: Create output directories
+        run: mkdir -p data/raw dashboard
+
+      # The crosswalk is the join spine (346k parcels, ~25 min). It changes
+      # slowly, so it is rebuilt only when absent rather than every night.
+      - name: Ensure address -> parcel crosswalk
+        run: |
+          if [ ! -f data/raw/crosswalk/parcel_master.jsonl ]; then
+            echo "crosswalk missing — building"
+            python scrapers/address_parcel_crosswalk.py
+          else
+            echo "crosswalk present: $(wc -l < data/raw/crosswalk/parcel_master.jsonl) parcels"
+          fi
+
+      - name: Recorder pull (slice + bisect + cap verification)
+        env:
+          RECORDER_START: ${{ github.event.inputs.recorder_start }}
+          RECORDER_END: ${{ github.event.inputs.recorder_end }}
+        run: |
+          if [ -n "$RECORDER_START" ] && [ -n "$RECORDER_END" ]; then
+            python scrapers/recorder_fidlar.py --start "$RECORDER_START" --end "$RECORDER_END"
+          else
+            python scrapers/recorder_fidlar.py --daily
+          fi
+
+      - name: Rebuild dashboard (join + first_seen stamping)
+        run: python scrapers/build_dashboard.py
+
+      - name: Run summary
+        id: summary
+        run: |
+          set -euo pipefail
+          LOG="data/raw/run_logs/run_$(date -u +'%Y-%m-%d').jsonl"
+          if [ ! -f "$LOG" ]; then
+            echo "::error::No dated run log written — the recorder step produced nothing."
+            exit 1
+          fi
+          echo "=== $LOG ==="
+          cat "$LOG"
+          ROWS=$(python -c "import json,sys;ls=[json.loads(l) for l in open('$LOG')];print(sum(r.get('rows_deduped',0) for r in ls))")
+          NEW=$(python -c "import json,sys;ls=[json.loads(l) for l in open('$LOG')];print(sum(r.get('new_instruments',0) for r in ls))")
+          CAPPED=$(python -c "import json,sys;ls=[json.loads(l) for l in open('$LOG')];print(sum(r.get('capped_unresolved',0) for r in ls))")
+          echo "rows=$ROWS" >> "$GITHUB_OUTPUT"
+          echo "new=$NEW"   >> "$GITHUB_OUTPUT"
+          echo "### Marion daily pull" >> "$GITHUB_STEP_SUMMARY"
+          echo "- rows deduped: **$ROWS**"        >> "$GITHUB_STEP_SUMMARY"
+          echo "- new instruments: **$NEW**"      >> "$GITHUB_STEP_SUMMARY"
+          echo "- unresolved capped slices: **$CAPPED**" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$CAPPED" != "0" ]; then
+            echo "::warning::$CAPPED slice(s) remained capped — coverage is incomplete for those."
+          fi
+
+      - name: Verify framework gate
+        run: python scaffold/tests/run_all.py
+
+      # Failure-safe commit+push. A push failure must fail the workflow loudly:
+      # a silent no-op here would leave the dashboard stale while the run still
+      # showed green.
+      - name: Commit and push
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add dashboard/index.html data/raw/run_logs data/raw/first_seen.json || true
+          if git diff --cached --quiet; then
+            echo "no changes to commit"
+            exit 0
+          fi
+          git commit -m "chore: daily recorder pull $(date -u +'%Y-%m-%d %H:%M UTC')"
+          for attempt in 1 2 3; do
+            git pull --rebase --autostash origin main && git push origin main && exit 0
+            echo "push attempt $attempt failed; retrying"
+            sleep 10
+          done
+          echo "::error::Push failed after 3 attempts — dashboard NOT updated."
+          exit 1
+
+  deploy-pages:
+    needs: pull
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload dashboard to Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard/
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

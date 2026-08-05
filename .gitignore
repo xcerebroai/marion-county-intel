@@ -27,7 +27,10 @@ Thumbs.db
 
 # Build artifacts that DO NOT belong in version control
 # (Phase 1+ may generate these; tracked separately by run manifests)
-data/raw/
+# Contents of data/raw/ are excluded, but the DIRECTORY is not — git cannot
+# re-include a path from inside an excluded directory, and two artifacts below
+# must stay tracked (see the exceptions further down).
+data/raw/*
 data/runs/*/raw/
 data/evidence/*.pdf
 
@@ -49,6 +52,17 @@ runs/*/recon/samples/
 # harris-intel publishes dashboard/index.html + records.json. It embeds the full
 # unredacted record set by operator decision. Regenerate with:
 #   .venv\Scripts\python.exe scrapers\build_dashboard.py
+
+# Exceptions to data/raw/ — these two are committed on purpose.
+#   run_logs/   per-run counts only (rows, new instruments, capped slices). No
+#               owner names, no addresses. Committed so a silent-zero
+#               regression is visible in history rather than invisible.
+#   first_seen.json  the newness ledger: source|instrument -> first capture
+#               date. Instrument numbers are document identifiers, not people.
+#               Must persist across CI runs or every record looks new forever.
+!data/raw/run_logs/
+!data/raw/run_logs/**
+!data/raw/first_seen.json
 
 # NOTE: every Marion adapter artifact is written under data/raw/ — the crosswalk
 # (data/raw/crosswalk/), the review queue, and the run report included. They all

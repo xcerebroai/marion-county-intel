@@ -393,6 +393,76 @@ def review_count() -> int:
     return len(read_jsonl(REVIEW_PATH))
 
 
+# ---------------------------------------------------------------------------
+# first_seen ledger
+# ---------------------------------------------------------------------------
+# Newness is decided by whether an instrument/document number has EVER been
+# captured before — not by its filing date. Counties record documents late, so a
+# filing dated three weeks ago can legitimately be new to us today. Mirrors the
+# seen_doc_nums.json pattern harris-intel uses.
+FIRST_SEEN_PATH = RAW_DIR / "first_seen.json"
+
+
+def load_first_seen() -> dict:
+    if not FIRST_SEEN_PATH.exists():
+        return {}
+    try:
+        return json.loads(FIRST_SEEN_PATH.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def save_first_seen(ledger: dict) -> None:
+    FIRST_SEEN_PATH.parent.mkdir(parents=True, exist_ok=True)
+    FIRST_SEEN_PATH.write_text(json.dumps(ledger, ensure_ascii=False, indent=0,
+                                          sort_keys=True), encoding="utf-8")
+
+
+def stamp_first_seen(source_id: str, records: list[dict], run_date: str | None = None):
+    """Stamp `_first_seen` on each record and return (records, new_count).
+
+    A record is NEW only if its ledger key has never been recorded. Backfilled
+    records simply get the date of the run that first captured them, which is
+    the correct semantics: that is when the record first became visible to us.
+    """
+    run_date = run_date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    ledger = load_first_seen()
+    new_count = 0
+    for r in records:
+        inst = (r.get("instrument_number") or r.get("raw_event_id") or "").strip()
+        if not inst:
+            r["_first_seen"] = run_date
+            r["_is_new"] = False
+            continue
+        key = f"{source_id}|{inst}"
+        if key in ledger:
+            r["_first_seen"] = ledger[key]
+            r["_is_new"] = False
+        else:
+            ledger[key] = run_date
+            r["_first_seen"] = run_date
+            r["_is_new"] = True
+            new_count += 1
+    save_first_seen(ledger)
+    return records, new_count
+
+
+# ---------------------------------------------------------------------------
+# dated run log — a silent-zero regression must be visible in history
+# ---------------------------------------------------------------------------
+RUN_LOG_DIR = RAW_DIR / "run_logs"
+
+
+def write_run_log(entry: dict) -> Path:
+    RUN_LOG_DIR.mkdir(parents=True, exist_ok=True)
+    day = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    path = RUN_LOG_DIR / f"run_{day}.jsonl"
+    entry = {"logged_at": utc_now_iso(), **entry}
+    with path.open("a", encoding="utf-8") as fh:
+        fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    return path
+
+
 # Any adapter run standalone must still persist its review items. Without this,
 # to_review() buffers in-process and the queue is silently lost on exit — which
 # would turn "routed to review" into exactly the silent drop the framework
