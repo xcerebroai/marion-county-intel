@@ -45,6 +45,7 @@ from scrapers._common import CROSSWALK_DIR, OUT_DIR, REPO_ROOT, banner, log, rea
 # as the artifact root (build_type: workflow), so index.html serves at the site
 # root: https://xcerebroai.github.io/marion-county-intel/
 OUT_HTML = REPO_ROOT / "dashboard" / "index.html"
+TEMPLATE_PATH = Path(__file__).resolve().parent / "dashboard_template.html"
 
 FEEDS = {
     "tax_sale_lists_indygov":    OUT_DIR / "raw" / "tax_sale" / "tax_sale_events.jsonl",
@@ -258,6 +259,14 @@ def build(redact: bool = False) -> dict:
                 "inst": r.get("instrument_number") or "",
                 "note": (r.get("document_body_text") or "").replace("PARCEL_STATUS: ", ""),
                 "bf": bool(r.get("_is_backfill")),
+                # secondary fields — surfaced in the details drawer only, never
+                # as permanent table columns
+                "rid": r.get("raw_event_id") or "",
+                "rt": r.get("raw_doc_type") or "",
+                "dm": (r.get("_derivation") or {}).get("method") or "direct_key",
+                "dc": (r.get("_derivation") or {}).get("confidence"),
+                "url": r.get("source_url") or "",
+                "role": r.get("source_role") or "",
             })
 
     # ---- stacking on the canonical key ----
@@ -282,10 +291,13 @@ def build(redact: bool = False) -> dict:
             "method": r.get("derivation_method") or "",
             "conf": r.get("confidence"),
             "ref": (rec.get("case_number") or rec.get("doc_number")
-                    or rec.get("parcel_local") or rec.get("address")
-                    or rec.get("case_number") or ""),
+                    or rec.get("parcel_local") or rec.get("address") or ""),
+            "cand": rec.get("parcel_local") or rec.get("candidate_parcel") or "",
+            "date": (rec.get("file_date") or rec.get("open_date")
+                     or (r.get("queued_at") or "")[:10]),
             "detail": (rec.get("address") or rec.get("legal_summary")
-                       or rec.get("style") or rec.get("note") or ""),
+                       or rec.get("style") or rec.get("note")
+                       or rec.get("raw_status") or ""),
         })
     log(f"review queue            : {len(review):,}")
 
@@ -321,559 +333,24 @@ def build(redact: bool = False) -> dict:
 
 
 def _html(payload: dict) -> str:
+    """Inject the data payload into the UI template.
+
+    The template lives in scrapers/dashboard_template.html rather than inline
+    here: it is ~700 lines of HTML/CSS/JS and keeping it as a Python string made
+    UI work needlessly painful. The generator remains the source of truth — the
+    template is data-less until this function fills it.
+    """
     data_json = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
-    return _TEMPLATE.replace("/*__DATA__*/", data_json)
-
-
-_TEMPLATE = r"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Marion County | Distress Signal Intelligence</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-<style>
-  :root {
-    --black:      #0A0A0A;   /* Deep Black    */
-    --midnight:   #0F172A;   /* Midnight Blue */
-    --blue:       #3B82F6;   /* Electric Blue */
-    --blue-light: #60A5FA;   /* Light Blue    */
-    --gray-soft:  #E5E7EB;   /* Soft Gray     */
-    --gray-dark:  #1F2937;   /* Dark Gray     */
-
-    --surface:  #0F172A;
-    --surface2: #1F2937;
-    --line:     rgba(229,231,235,0.10);
-    --muted:    #94A3B8;
-
-    --amber: #F59E0B;
-    --red:   #EF4444;
-    --green: #10B981;
-
-    --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-
-    --g-foreclosure: #EF4444;
-    --g-tax:         #F59E0B;
-    --g-lien:        #3B82F6;
-    --g-code:        #8B5CF6;
-    --g-eviction:    #EC4899;
-    --g-probate:     #10B981;
-    --g-surplus:     #14B8A6;
-    --g-other:       #94A3B8;
-  }
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--black);color:var(--gray-soft);font-family:var(--font);
-       font-size:14px;line-height:1.55;min-height:100vh}
-
-  /* HEADER */
-  header{position:sticky;top:0;z-index:100;background:rgba(10,10,10,.94);
-    backdrop-filter:blur(12px);border-bottom:1px solid var(--line);
-    padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px}
-  .logo{display:flex;align-items:center;gap:12px}
-  .logo-icon{width:34px;height:34px;border-radius:8px;
-    background:linear-gradient(135deg,var(--blue),var(--blue-light));
-    display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff}
-  .logo-text{font-size:17px;font-weight:700;letter-spacing:-.01em;color:#fff}
-  .logo-sub{font-size:11px;color:var(--blue-light);letter-spacing:.08em;
-    text-transform:uppercase;font-weight:500}
-  .header-right{display:flex;align-items:center;gap:14px}
-  .status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);
-    animation:pulse 2s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
-  .last-updated{font-size:12px;color:var(--muted)}
-  .btn{background:var(--blue);color:#fff;border:none;padding:8px 15px;border-radius:6px;
-    font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;
-    transition:background .15s,transform .1s}
-  .btn:hover{background:var(--blue-light);transform:translateY(-1px)}
-  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--gray-soft)}
-  .btn.ghost:hover{border-color:var(--blue);color:var(--blue-light);background:transparent}
-
-  /* COVERAGE BANNER */
-  .coverage-banner{background:rgba(245,158,11,.10);border-bottom:1px solid rgba(245,158,11,.32);
-    padding:11px 24px;display:flex;gap:12px;align-items:flex-start}
-  .coverage-banner .ico{font-size:16px;line-height:1.2}
-  .coverage-banner b{color:var(--amber);font-weight:600}
-  .coverage-banner .txt{font-size:13px;color:#FCD9A0}
-  .coverage-banner .more{background:none;border:none;color:var(--amber);
-    text-decoration:underline;cursor:pointer;font-family:var(--font);font-size:12px;padding:0}
-
-  /* TOOLBAR */
-  .toolbar{display:flex;gap:8px;padding:10px 24px;background:var(--surface);
-    border-bottom:1px solid var(--line);flex-wrap:wrap;align-items:center}
-
-  /* STATS */
-  .stats-bar{background:var(--surface);border-bottom:1px solid var(--line);
-    padding:14px 24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
-  .stat-block{padding:6px 20px;border-right:1px solid var(--line)}
-  .stat-block:last-child{border-right:none}
-  .stat-value{font-size:28px;font-weight:700;line-height:1.1;color:var(--blue-light)}
-  .stat-label{font-size:11px;color:var(--muted);letter-spacing:.07em;
-    text-transform:uppercase;margin-top:2px;font-weight:500}
-
-  .main{max-width:1680px;margin:0 auto;padding:22px 24px}
-
-  /* TABS */
-  .tabs-row{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
-  .view-tab{background:var(--surface2);border:1px solid var(--line);color:var(--muted);
-    padding:9px 16px;border-radius:7px;font-family:var(--font);font-size:13px;
-    font-weight:500;cursor:pointer;transition:all .15s}
-  .view-tab:hover{color:var(--blue-light);border-color:var(--blue)}
-  .view-tab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
-  .tab-badge{background:rgba(0,0,0,.28);padding:1px 7px;border-radius:10px;
-    font-size:11px;margin-left:6px;font-weight:600}
-
-  /* CONTROLS */
-  .controls-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
-  .search-wrap{flex:1;min-width:230px;position:relative}
-  .search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);
-    color:var(--muted);width:15px;height:15px}
-  .search-input{width:100%;background:var(--surface2);border:1px solid var(--line);
-    color:var(--gray-soft);padding:9px 12px 9px 36px;border-radius:7px;
-    font-family:var(--font);font-size:13px;outline:none}
-  .search-input:focus{border-color:var(--blue)}
-  .search-input::placeholder{color:var(--muted)}
-  select.ctl,input.ctl{background:var(--surface2);border:1px solid var(--line);
-    color:var(--gray-soft);padding:9px 11px;border-radius:7px;font-family:var(--font);
-    font-size:13px;outline:none;cursor:pointer}
-  select.ctl:focus,input.ctl:focus{border-color:var(--blue)}
-  input.ctl{width:120px;cursor:text}
-
-  /* CHIPS */
-  .chips-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
-  .chip{background:var(--surface2);border:1px solid var(--line);color:var(--muted);
-    padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;
-    transition:all .15s;display:inline-flex;align-items:center;gap:6px}
-  .chip:hover{border-color:var(--blue);color:var(--blue-light)}
-  .chip.active{background:var(--blue);color:#fff;border-color:var(--blue)}
-  .chip .ct{background:rgba(0,0,0,.25);padding:0 6px;border-radius:9px;font-size:11px}
-  .chip .cov{width:7px;height:7px;border-radius:50%}
-  .cov-full{background:var(--green)} .cov-capped{background:var(--amber)}
-  .cov-frozen{background:var(--red)} .cov-partial{background:var(--blue-light)}
-
-  .count-line{font-size:12px;color:var(--muted);margin:10px 0}
-  .count-line span{color:var(--blue-light);font-weight:600}
-
-  /* TABLE */
-  .table-wrap{background:var(--surface);border:1px solid var(--line);border-radius:9px;
-    overflow-x:auto}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  thead th{background:var(--surface2);color:var(--muted);text-align:left;
-    padding:10px 12px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
-    font-weight:600;white-space:nowrap;cursor:pointer;border-bottom:1px solid var(--line);
-    position:sticky;top:0}
-  thead th:hover{color:var(--blue-light)}
-  tbody td{padding:10px 12px;border-bottom:1px solid rgba(229,231,235,.05);
-    vertical-align:top}
-  tbody tr:hover{background:rgba(59,130,246,.05)}
-  .mono{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
-  .pill{display:inline-block;padding:2px 9px;border-radius:11px;font-size:11px;
-    font-weight:600;white-space:nowrap}
-  .src-pill{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;
-    border-radius:5px;font-size:11px;background:var(--surface2);color:var(--gray-soft)}
-  .stack-badge{display:inline-block;background:rgba(59,130,246,.16);
-    border:1px solid rgba(59,130,246,.4);color:var(--blue-light);padding:1px 8px;
-    border-radius:10px;font-size:11px;font-weight:600;cursor:pointer}
-  .stack-badge.hot{background:rgba(239,68,68,.16);border-color:rgba(239,68,68,.45);
-    color:#FCA5A5}
-  .addr-main{color:var(--gray-soft)}
-  .addr-sub{font-size:11px;color:var(--muted)}
-  .muted{color:var(--muted)}
-  .bf-tag{font-size:10px;color:var(--red);border:1px solid rgba(239,68,68,.35);
-    padding:0 5px;border-radius:4px;margin-left:5px}
-  .empty{padding:48px;text-align:center;color:var(--muted)}
-
-  /* STACK DETAIL ROWS */
-  .stack-row td{background:rgba(59,130,246,.04);padding-top:0}
-  .sig-line{display:flex;gap:10px;align-items:center;padding:3px 0;font-size:12px}
-
-  /* PAGINATION */
-  .pagination{display:flex;gap:5px;justify-content:center;padding:16px 0;flex-wrap:wrap}
-  .page-btn{background:var(--surface2);border:1px solid var(--line);color:var(--gray-soft);
-    padding:6px 11px;border-radius:6px;font-family:var(--font);font-size:12px;cursor:pointer}
-  .page-btn:hover:not(:disabled){border-color:var(--blue);color:var(--blue-light)}
-  .page-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
-  .page-btn:disabled{opacity:.35;cursor:not-allowed}
-
-  /* MODAL */
-  .modal-overlay{position:fixed;inset:0;background:rgba(10,10,10,.82);z-index:200;
-    display:none;align-items:center;justify-content:center;padding:24px}
-  .modal-overlay.open{display:flex}
-  .modal-box{background:var(--surface);border:1px solid var(--line);border-radius:11px;
-    padding:26px;max-width:780px;width:100%;max-height:82vh;overflow-y:auto;position:relative}
-  .modal-close{position:absolute;top:14px;right:16px;background:none;border:none;
-    color:var(--muted);font-size:19px;cursor:pointer}
-  .modal-title{font-size:18px;font-weight:700;color:#fff;margin-bottom:16px}
-  .cov-item{border-left:3px solid var(--line);padding:9px 0 9px 13px;margin-bottom:13px}
-  .cov-item h4{font-size:13px;font-weight:600;color:var(--gray-soft);margin-bottom:3px}
-  .cov-item p{font-size:12.5px;color:var(--muted);line-height:1.55}
-  .cov-item .lvl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
-
-  footer{border-top:1px solid var(--line);padding:20px 24px;display:flex;
-    justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--muted)}
-  .brand{color:var(--blue-light);font-weight:600}
-</style>
-</head>
-<body>
-
-<header>
-  <div class="logo">
-    <div class="logo-icon">M</div>
-    <div>
-      <div class="logo-text">MARION INTEL</div>
-      <div class="logo-sub">Distress Signal Intelligence</div>
-    </div>
-  </div>
-  <div class="header-right">
-    <div class="status-dot"></div>
-    <div class="last-updated" id="lastUpdated">—</div>
-    <button class="btn" onclick="exportCSV()">⬇ Export CSV</button>
-  </div>
-</header>
-
-<!-- COVERAGE DISCLOSURE — required, always visible -->
-<div class="coverage-banner">
-  <div class="ico">⚠️</div>
-  <div class="txt">
-    <b>Coverage is incomplete and counts are floors, not totals.</b>
-    The recorder portal caps every search at <b>200 rows</b> against roughly
-    <b>8,251 documents per month</b> of real volume, so all lien and deed counts here are
-    <b>undercounts</b>. Code enforcement is a <b>frozen</b> extract (no records after 2024-02-27).
-    Do not read any number on this dashboard as complete.
-    <button class="more" onclick="openCoverage()">Per-source detail →</button>
-  </div>
-</div>
-
-<div class="toolbar">
-  <button class="btn ghost" onclick="exportCSV()">⬇ Signals CSV</button>
-  <button class="btn ghost" onclick="exportStacked()">⬇ Stacked Parcels CSV</button>
-  <button class="btn ghost" onclick="exportReview()">⬇ Review Queue CSV</button>
-  <button class="btn ghost" onclick="openCoverage()">📋 Coverage</button>
-  <div style="margin-left:auto;font-size:12px;color:var(--muted)">
-    No scoring — raw signals only. Ranking and judgment are yours.
-  </div>
-</div>
-
-<div class="stats-bar">
-  <div class="stat-block"><div class="stat-value" id="sTotal">—</div><div class="stat-label">Signals</div></div>
-  <div class="stat-block"><div class="stat-value" id="sParcels">—</div><div class="stat-label">Distinct Parcels</div></div>
-  <div class="stat-block"><div class="stat-value" id="sStacked">—</div><div class="stat-label">Parcels w/ Stacked Signals</div></div>
-  <div class="stat-block"><div class="stat-value" id="sDeepest">—</div><div class="stat-label">Deepest Stack</div></div>
-  <div class="stat-block"><div class="stat-value" id="sReview">—</div><div class="stat-label">Review Queue</div></div>
-</div>
-
-<div class="main">
-  <div class="tabs-row">
-    <button class="view-tab active" data-view="signals" onclick="setView('signals')">Signals <span class="tab-badge" id="bSignals">0</span></button>
-    <button class="view-tab" data-view="stacked" onclick="setView('stacked')">Stacked Parcels <span class="tab-badge" id="bStacked">0</span></button>
-    <button class="view-tab" data-view="review" onclick="setView('review')">Review Queue <span class="tab-badge" id="bReview">0</span></button>
-  </div>
-
-  <div class="controls-row">
-    <div class="search-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-      </svg>
-      <input class="search-input" id="searchInput" type="text"
-             placeholder="Search owner, address, parcel, instrument…" />
-    </div>
-    <select class="ctl" id="sortSelect" onchange="applyFilters()">
-      <option value="date_desc">Date: Newest First</option>
-      <option value="date_asc">Date: Oldest First</option>
-      <option value="stack_desc">Signals on Parcel: Most First</option>
-      <option value="av_desc">Assessed Value: High → Low</option>
-      <option value="av_asc">Assessed Value: Low → High</option>
-      <option value="amt_desc">Amount: High → Low</option>
-    </select>
-    <input class="ctl" id="avMin" type="number" placeholder="AV min" oninput="deb()">
-    <input class="ctl" id="avMax" type="number" placeholder="AV max" oninput="deb()">
-    <button class="chip" id="stackOnly" onclick="toggleStackOnly()">Stacked only</button>
-  </div>
-
-  <div class="chips-row" id="typeChips"></div>
-  <div class="chips-row" id="sourceChips"></div>
-
-  <div class="count-line" id="countLine"></div>
-
-  <div class="table-wrap">
-    <table>
-      <thead><tr id="tableHead"></tr></thead>
-      <tbody id="tableBody"></tbody>
-    </table>
-  </div>
-  <div class="pagination" id="pagination"></div>
-</div>
-
-<div class="modal-overlay" id="covModal">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeCoverage()">✕</button>
-    <div class="modal-title">Data Coverage by Source</div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:18px">
-      Every count on this dashboard is a floor. These are the known limits of each feed.
-    </p>
-    <div id="covBody"></div>
-  </div>
-</div>
-
-<footer>
-  <div>Marion County, Indiana · Distress Signal Intelligence<br/>
-    Sources: Treasurer tax sale · DBNS code enforcement · County Recorder ·
-    Indiana Courts (MyCase) · Sheriff sale</div>
-  <div style="text-align:right">Built by <span class="brand">XCEREBRO</span><br/>
-    <span id="genAt"></span></div>
-</footer>
-
-<script>
-const DATA = /*__DATA__*/;
-const R = DATA.records, RV = DATA.review, COV = DATA.coverage;
-
-let view='signals', typeFilter='', sourceFilter='', stackOnly=false, page=1;
-let filtered=[], stackedRows=[], expanded=new Set();
-const PER=100;
-
-const byParcel={};
-R.forEach(r=>{ if(r.p){ (byParcel[r.p]=byParcel[r.p]||[]).push(r); } });
-
-function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
-  .replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function money(v){return (v!=null&&v!==''&&!isNaN(v))
-  ? '$'+Number(v).toLocaleString('en-US',{maximumFractionDigits:0}) : '—';}
-function setText(id,v){const e=document.getElementById(id); if(e) e.innerHTML=v;}
-
-// ── INIT ────────────────────────────────────────────────────────
-setText('sTotal',   DATA.stats.total.toLocaleString());
-setText('sParcels', DATA.stats.parcels.toLocaleString());
-setText('sStacked', DATA.stats.stacked.toLocaleString());
-setText('sDeepest', DATA.stats.deepest);
-setText('sReview',  DATA.stats.review.toLocaleString());
-setText('bSignals', DATA.stats.total.toLocaleString());
-setText('bStacked', DATA.stats.stacked.toLocaleString());
-setText('bReview',  DATA.stats.review.toLocaleString());
-setText('lastUpdated', DATA.generated_at);
-setText('genAt', DATA.generated_at);
-
-// stacked parcels, deepest first
-stackedRows = Object.keys(byParcel).filter(p=>byParcel[p].length>1)
-  .map(p=>({p, sigs:byParcel[p]})).sort((a,b)=>b.sigs.length-a.sigs.length);
-
-// chips
-(function(){
-  const tc={}; R.forEach(r=>tc[r.t]=(tc[r.t]||0)+1);
-  const order=Object.keys(tc).sort((a,b)=>tc[b]-tc[a]);
-  let h=`<button class="chip active" data-t="" onclick="setType('')">All Types <span class="ct">${R.length.toLocaleString()}</span></button>`;
-  order.forEach(t=>{ const lbl=(R.find(x=>x.t===t)||{}).lt||t;
-    h+=`<button class="chip" data-t="${esc(t)}" onclick="setType('${esc(t)}')">${esc(lbl)} <span class="ct">${tc[t].toLocaleString()}</span></button>`;});
-  document.getElementById('typeChips').innerHTML=h;
-
-  const sc={}; R.forEach(r=>sc[r.s]=(sc[r.s]||0)+1);
-  let s=`<button class="chip active" data-s="" onclick="setSource('')">All Sources <span class="ct">${R.length.toLocaleString()}</span></button>`;
-  Object.keys(sc).sort((a,b)=>sc[b]-sc[a]).forEach(k=>{
-    const c=COV[k]||{level:'partial',short:''};
-    s+=`<button class="chip" data-s="${esc(k)}" onclick="setSource('${esc(k)}')" title="${esc(c.short)}">`
-      +`<span class="cov cov-${c.level}"></span>${esc(DATA.source_label[k]||k)} <span class="ct">${sc[k].toLocaleString()}</span></button>`;});
-  document.getElementById('sourceChips').innerHTML=s;
-})();
-
-// coverage modal
-(function(){
-  const col={full:'var(--green)',capped:'var(--amber)',frozen:'var(--red)',partial:'var(--blue-light)'};
-  document.getElementById('covBody').innerHTML=Object.keys(COV).map(k=>{
-    const c=COV[k];
-    return `<div class="cov-item" style="border-left-color:${col[c.level]}">
-      <div class="lvl" style="color:${col[c.level]}">${esc(c.level)}</div>
-      <h4>${esc(DATA.source_label[k]||k)} — ${esc(c.short)}</h4>
-      <p>${esc(c.detail)}</p></div>`;}).join('');
-})();
-
-function openCoverage(){document.getElementById('covModal').classList.add('open');}
-function closeCoverage(){document.getElementById('covModal').classList.remove('open');}
-
-function setView(v){view=v;page=1;
-  document.querySelectorAll('.view-tab').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
-  applyFilters();}
-function setType(t){typeFilter=t;page=1;
-  document.querySelectorAll('#typeChips .chip').forEach(b=>b.classList.toggle('active',b.dataset.t===t));
-  applyFilters();}
-function setSource(s){sourceFilter=s;page=1;
-  document.querySelectorAll('#sourceChips .chip').forEach(b=>b.classList.toggle('active',b.dataset.s===s));
-  applyFilters();}
-function toggleStackOnly(){stackOnly=!stackOnly;page=1;
-  document.getElementById('stackOnly').classList.toggle('active',stackOnly);applyFilters();}
-function toggleStack(p){expanded.has(p)?expanded.delete(p):expanded.add(p);renderTable();}
-
-let t0; function deb(){clearTimeout(t0);t0=setTimeout(()=>{page=1;applyFilters();},250);}
-document.getElementById('searchInput').addEventListener('input',deb);
-
-const HEADS={
-  signals:['Lead Type','Source','Date','Parcel','Situs Address','Owner','Amount','Assessed','Signals','Instrument'],
-  stacked:['Parcel','Situs Address','Owner','Assessed','Signals','Lead Types',''],
-  review: ['Source','Reason','Derivation','Conf.','Reference','Detail']
-};
-
-function applyFilters(){
-  const q=document.getElementById('searchInput').value.toLowerCase().trim();
-  const mn=parseFloat(document.getElementById('avMin').value);
-  const mx=parseFloat(document.getElementById('avMax').value);
-
-  if(view==='review'){
-    filtered=RV.filter(r=>!q||[r.src,r.reason,r.ref,r.detail,r.method].join(' ').toLowerCase().includes(q));
-    setText('countLine',`Showing <span>${filtered.length.toLocaleString()}</span> review items — unresolved, not dropped`);
-  } else if(view==='stacked'){
-    filtered=stackedRows.filter(row=>{
-      const s=row.sigs[0];
-      if(typeFilter && !row.sigs.some(x=>x.t===typeFilter)) return false;
-      if(sourceFilter && !row.sigs.some(x=>x.s===sourceFilter)) return false;
-      if(!isNaN(mn) && !(s.av>=mn)) return false;
-      if(!isNaN(mx) && !(s.av<=mx)) return false;
-      if(q){const h=[row.p,s.a,s.o,...row.sigs.map(x=>x.lt)].join(' ').toLowerCase();
-        if(!h.includes(q))return false;}
-      return true;});
-    setText('countLine',`Showing <span>${filtered.length.toLocaleString()}</span> parcels carrying more than one distress signal`);
-  } else {
-    filtered=R.filter(r=>{
-      if(typeFilter && r.t!==typeFilter) return false;
-      if(sourceFilter && r.s!==sourceFilter) return false;
-      if(stackOnly && r.st<2) return false;
-      if(!isNaN(mn) && !(r.av>=mn)) return false;
-      if(!isNaN(mx) && !(r.av<=mx)) return false;
-      if(q){const h=[r.o,r.a,r.p,r.pl,r.inst,r.lt,r.sl,r.note].join(' ').toLowerCase();
-        if(!h.includes(q))return false;}
-      return true;});
-    const sv=document.getElementById('sortSelect').value, [k,d]=sv.split('_');
-    filtered.sort((a,b)=>{
-      if(k==='stack') return d==='desc'?b.st-a.st:a.st-b.st;
-      if(k==='av')    return d==='desc'?(b.av||0)-(a.av||0):(a.av||0)-(b.av||0);
-      if(k==='amt')   return d==='desc'?(b.amt||0)-(a.amt||0):(a.amt||0)-(b.amt||0);
-      const av=a.d||'',bv=b.d||'';
-      return d==='asc'?(av<bv?-1:av>bv?1:0):(av<bv?1:av>bv?-1:0);});
-    setText('countLine',`Showing <span>${filtered.length.toLocaleString()}</span> distress signals`);
-  }
-  document.getElementById('tableHead').innerHTML=HEADS[view].map(h=>`<th>${h}</th>`).join('');
-  renderTable(); renderPagination();
-}
-
-function renderTable(){
-  const start=(page-1)*PER, rows=filtered.slice(start,start+PER);
-  const tb=document.getElementById('tableBody');
-  if(!rows.length){tb.innerHTML=`<tr><td colspan="10"><div class="empty">No records match these filters</div></td></tr>`;return;}
-
-  if(view==='review'){
-    tb.innerHTML=rows.map(r=>`<tr>
-      <td><span class="src-pill">${esc(r.src)}</span></td>
-      <td>${esc(r.reason)}</td>
-      <td class="muted">${esc(r.method||'—')}</td>
-      <td class="mono">${r.conf==null?'—':r.conf}</td>
-      <td class="mono">${esc(r.ref||'—')}</td>
-      <td class="muted">${esc((r.detail||'').slice(0,90))}</td></tr>`).join('');
-    return;
-  }
-
-  if(view==='stacked'){
-    tb.innerHTML=rows.map(row=>{
-      const s=row.sigs[0], open=expanded.has(row.p);
-      const types=[...new Set(row.sigs.map(x=>x.lt))];
-      const chips=types.map(t=>{
-        const g=(row.sigs.find(x=>x.lt===t)||{}).g||'other';
-        return `<span class="pill" style="background:rgba(255,255,255,.06);color:var(--g-${g})">${esc(t)}</span>`;}).join(' ');
-      let h=`<tr>
-        <td class="mono">${esc(row.p)}<div class="addr-sub">${esc(s.pl||'')}</div></td>
-        <td><div class="addr-main">${esc(s.a||'—')}</div><div class="addr-sub">${esc(s.z||'')}</div></td>
-        <td>${esc(s.o||'—')}</td>
-        <td class="mono">${money(s.av)}</td>
-        <td><span class="stack-badge ${row.sigs.length>=4?'hot':''}">${row.sigs.length} signals</span></td>
-        <td>${chips}</td>
-        <td><button class="btn ghost" style="padding:4px 9px;font-size:11px" onclick="toggleStack('${esc(row.p)}')">${open?'Hide':'Show'}</button></td></tr>`;
-      if(open){
-        h+=`<tr class="stack-row"><td colspan="7">`+row.sigs.map(x=>
-          `<div class="sig-line">
-            <span class="pill" style="background:rgba(255,255,255,.06);color:var(--g-${x.g})">${esc(x.lt)}</span>
-            <span class="src-pill">${esc(x.sl)}</span>
-            <span class="mono muted">${esc(x.d||'—')}</span>
-            <span class="mono">${esc(x.inst||'')}</span>
-            <span class="muted">${esc(x.note||'')}</span>
-            ${x.amt!=null?`<span class="mono">${money(x.amt)}</span>`:''}
-            ${x.bf?'<span class="bf-tag">BACKFILL</span>':''}
-          </div>`).join('')+`</td></tr>`;
-      }
-      return h;}).join('');
-    return;
-  }
-
-  tb.innerHTML=rows.map(r=>`<tr>
-    <td><span class="pill" style="background:rgba(255,255,255,.06);color:var(--g-${r.g})">${esc(r.lt)}</span>${r.bf?'<span class="bf-tag">BF</span>':''}</td>
-    <td><span class="src-pill"><span class="cov cov-${(COV[r.s]||{}).level||'partial'}"></span>${esc(r.sl)}</span></td>
-    <td class="mono" style="white-space:nowrap">${esc(r.d||'—')}</td>
-    <td class="mono" style="white-space:nowrap">${esc(r.p||'—')}<div class="addr-sub">${esc(r.pl||'')}</div></td>
-    <td><div class="addr-main">${esc(r.a||'—')}</div><div class="addr-sub">${esc(r.z||'')}</div></td>
-    <td>${esc((r.o||'—').slice(0,42))}</td>
-    <td class="mono">${money(r.amt)}</td>
-    <td class="mono">${money(r.av)}</td>
-    <td>${r.st>1?`<span class="stack-badge ${r.st>=4?'hot':''}" onclick="setView('stacked')">${r.st}</span>`:'<span class="muted">1</span>'}</td>
-    <td class="mono muted" style="white-space:nowrap">${esc(r.inst||'—')}</td></tr>`).join('');
-}
-
-function renderPagination(){
-  const total=Math.ceil(filtered.length/PER), el=document.getElementById('pagination');
-  if(total<=1){el.innerHTML='';return;}
-  let h=`<button class="page-btn" onclick="goPage(${page-1})" ${page===1?'disabled':''}>‹</button>`;
-  for(let p=1;p<=total;p++){
-    if(total>10 && p>3 && p<total-2 && Math.abs(p-page)>1){
-      if(p===4||p===total-3) h+=`<span class="page-btn" style="border:none;background:none">…</span>`;
-      continue;}
-    h+=`<button class="page-btn ${p===page?'active':''}" onclick="goPage(${p})">${p}</button>`;}
-  h+=`<button class="page-btn" onclick="goPage(${page+1})" ${page===total?'disabled':''}>›</button>`;
-  el.innerHTML=h;
-}
-function goPage(p){const t=Math.ceil(filtered.length/PER);
-  if(p<1||p>t)return;page=p;renderTable();renderPagination();window.scrollTo({top:0,behavior:'smooth'});}
-
-// ── CSV ─────────────────────────────────────────────────────────
-function dl(rows,name){
-  const csv=rows.map(r=>r.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(',')).join('\n');
-  const b=new Blob([csv],{type:'text/csv'}),u=URL.createObjectURL(b),a=document.createElement('a');
-  a.href=u;a.download=name;a.click();URL.revokeObjectURL(u);
-}
-const STAMP=()=>new Date().toISOString().slice(0,10);
-
-function exportCSV(){
-  const src=(view==='signals'&&filtered.length)?filtered:R;
-  const rows=[['Lead Type','Source','Coverage','Date','State Parcel','Local Parcel',
-    'Situs Address','Zip','Owner','Amount','Assessed Value','Signals On Parcel',
-    'Instrument','Note','Backfill']];
-  src.forEach(r=>rows.push([r.lt,r.sl,(COV[r.s]||{}).short||'',r.d,r.p,r.pl,r.a,r.z,r.o,
-    r.amt==null?'':r.amt,r.av==null?'':r.av,r.st,r.inst,r.note,r.bf?'YES':'']));
-  dl(rows,`marion_signals_${STAMP()}.csv`);
-}
-function exportStacked(){
-  const rows=[['State Parcel','Local Parcel','Situs Address','Owner','Assessed Value',
-    'Signal Count','Lead Types','Sources']];
-  stackedRows.forEach(row=>{const s=row.sigs[0];
-    rows.push([row.p,s.pl,s.a,s.o,s.av==null?'':s.av,row.sigs.length,
-      [...new Set(row.sigs.map(x=>x.lt))].join(' | '),
-      [...new Set(row.sigs.map(x=>x.sl))].join(' | ')]);});
-  dl(rows,`marion_stacked_parcels_${STAMP()}.csv`);
-}
-function exportReview(){
-  const rows=[['Source','Reason','Derivation Method','Confidence','Reference','Detail']];
-  RV.forEach(r=>rows.push([r.src,r.reason,r.method,r.conf==null?'':r.conf,r.ref,r.detail]));
-  dl(rows,`marion_review_queue_${STAMP()}.csv`);
-}
-
-applyFilters();
-</script>
-</body>
-</html>
-"""
+    tpl = TEMPLATE_PATH.read_text(encoding="utf-8")
+    if "/*__DATA__*/" not in tpl:
+        raise RuntimeError(f"{TEMPLATE_PATH} is missing the /*__DATA__*/ placeholder")
+    return tpl.replace("/*__DATA__*/", data_json)
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--redact", action="store_true",
                     help="omit individual owner names and reduce situs addresses to "
-                         "block level. REQUIRED for any publicly served build.")
-    ap.add_argument("--out", default=None, help="override output path")
+                         "block level. Not used by the deploy path.")
     a = ap.parse_args()
-    if a.out:
-        OUT_HTML = Path(a.out)  # noqa: F811
     build(redact=a.redact)
