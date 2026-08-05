@@ -1,0 +1,47 @@
+{
+  "objectIdFieldName": "OBJECTID",
+  "globalIdFieldName": "",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 102739, "latestWkid": 2278},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "ADDRESS", "type": "esriFieldTypeString", "alias": "ADDRESS", "length": 100},
+    {"name": "DOC_NUMBER", "type": "esriFieldTypeString", "alias": "DOC_NUMBER", "length": 30},
+    {"name": "YEAR", "type": "esriFieldTypeSmallInteger", "alias": "YEAR"},
+    {"name": "MONTH", "type": "esriFieldTypeSmallInteger", "alias": "MONTH"},
+    {"name": "SCHOOL_DIST", "type": "esriFieldTypeString", "alias": "SCHOOL_DIST", "length": 40},
+    {"name": "TYPE", "type": "esriFieldTypeString", "alias": "TYPE", "length": 80},
+    {"name": "CITY", "type": "esriFieldTypeString", "alias": "CITY", "length": 40},
+    {"name": "ZIP", "type": "esriFieldTypeString", "alias": "ZIP", "length": 10}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 10001,
+        "ADDRESS": "101 SYNTHETIC LN",
+        "DOC_NUMBER": "FIX-2026-000001",
+        "YEAR": 2026,
+        "MONTH": 5,
+        "SCHOOL_DIST": "SYNTH SCHOOL DISTRICT",
+        "TYPE": "Notice of Substitute Trustee's Sale",
+        "CITY": "SYNTHTOWN A",
+        "ZIP": "00001"
+      },
+      "geometry": {"x": 2120000.5, "y": 13700000.5}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 10002,
+        "ADDRESS": "202 SYNTHETIC LN",
+        "DOC_NUMBER": "FIX-2026-000002",
+        "YEAR": 2026,
+        "MONTH": 5,
+        "SCHOOL_DIST": "SYNTH SCHOOL DISTRICT",
+        "TYPE": "Notice of Trustee's Sale",
+        "CITY": "SYNTHTOWN B",
+        "ZIP": "00002"
+      },
+      "geometry": {"x": 2121000.5, "y": 13701000.5}
+    }
+  ]
+}

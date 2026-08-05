@@ -1,0 +1,17 @@
+{
+  "objectIdFieldName": "OBJECTID",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 102739},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID"},
+    {"name": "ADDRESS", "type": "esriFieldTypeString"},
+    {"name": "DOC_NUMBER", "type": "esriFieldTypeString"},
+    {"name": "YEAR", "type": "esriFieldTypeSmallInteger"},
+    {"name": "MONTH", "type": "esriFieldTypeSmallInteger"},
+    {"name": "SCHOOL_DIST", "type": "esriFieldTypeString"},
+    {"name": "TYPE", "type": "esriFieldTypeString"},
+    {"name": "CITY", "type": "esriFieldTypeString"},
+    {"name": "ZIP", "type": "esriFieldTypeString"}
+  ],
+  "features": []
+}

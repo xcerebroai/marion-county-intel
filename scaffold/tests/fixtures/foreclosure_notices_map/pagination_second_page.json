@@ -1,0 +1,3445 @@
+{
+"objectIdFieldName": "OBJECTID",
+"geometryType": "esriGeometryPoint",
+"fields": [
+{
+"name": "OBJECTID",
+"type": "esriFieldTypeOID"
+},
+{
+"name": "ADDRESS",
+"type": "esriFieldTypeString"
+},
+{
+"name": "DOC_NUMBER",
+"type": "esriFieldTypeString"
+},
+{
+"name": "YEAR",
+"type": "esriFieldTypeSmallInteger"
+},
+{
+"name": "MONTH",
+"type": "esriFieldTypeSmallInteger"
+},
+{
+"name": "SCHOOL_DIST",
+"type": "esriFieldTypeString"
+},
+{
+"name": "TYPE",
+"type": "esriFieldTypeString"
+},
+{
+"name": "CITY",
+"type": "esriFieldTypeString"
+},
+{
+"name": "ZIP",
+"type": "esriFieldTypeString"
+}
+],
+"exceededTransferLimit": false,
+"features": [
+{
+"attributes": {
+"OBJECTID": 60000,
+"ADDRESS": "1600 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00000",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126000.0,
+"y": 13706000.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60001,
+"ADDRESS": "1601 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00001",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126000.1,
+"y": 13706000.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60002,
+"ADDRESS": "1602 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00002",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126000.2,
+"y": 13706000.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60003,
+"ADDRESS": "1603 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00003",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126000.3,
+"y": 13706000.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60004,
+"ADDRESS": "1604 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00004",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126000.4,
+"y": 13706000.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60005,
+"ADDRESS": "1605 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00005",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126000.5,
+"y": 13706000.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60006,
+"ADDRESS": "1606 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00006",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126000.6,
+"y": 13706000.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60007,
+"ADDRESS": "1607 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00007",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126000.7,
+"y": 13706000.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60008,
+"ADDRESS": "1608 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00008",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126000.8,
+"y": 13706000.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60009,
+"ADDRESS": "1609 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00009",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126000.9,
+"y": 13706000.9
+}
+},
+{
+"attributes": {
+"OBJECTID": 60010,
+"ADDRESS": "1610 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00010",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126001.0,
+"y": 13706001.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60011,
+"ADDRESS": "1611 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00011",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126001.1,
+"y": 13706001.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60012,
+"ADDRESS": "1612 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00012",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126001.2,
+"y": 13706001.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60013,
+"ADDRESS": "1613 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00013",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126001.3,
+"y": 13706001.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60014,
+"ADDRESS": "1614 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00014",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126001.4,
+"y": 13706001.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60015,
+"ADDRESS": "1615 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00015",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126001.5,
+"y": 13706001.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60016,
+"ADDRESS": "1616 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00016",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126001.6,
+"y": 13706001.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60017,
+"ADDRESS": "1617 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00017",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126001.7,
+"y": 13706001.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60018,
+"ADDRESS": "1618 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00018",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126001.8,
+"y": 13706001.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60019,
+"ADDRESS": "1619 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00019",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126001.9,
+"y": 13706001.9
+}
+},
+{
+"attributes": {
+"OBJECTID": 60020,
+"ADDRESS": "1620 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00020",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126002.0,
+"y": 13706002.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60021,
+"ADDRESS": "1621 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00021",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126002.1,
+"y": 13706002.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60022,
+"ADDRESS": "1622 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00022",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126002.2,
+"y": 13706002.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60023,
+"ADDRESS": "1623 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00023",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126002.3,
+"y": 13706002.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60024,
+"ADDRESS": "1624 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00024",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126002.4,
+"y": 13706002.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60025,
+"ADDRESS": "1625 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00025",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126002.5,
+"y": 13706002.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60026,
+"ADDRESS": "1626 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00026",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126002.6,
+"y": 13706002.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60027,
+"ADDRESS": "1627 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00027",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126002.7,
+"y": 13706002.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60028,
+"ADDRESS": "1628 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00028",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126002.8,
+"y": 13706002.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60029,
+"ADDRESS": "1629 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00029",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126002.9,
+"y": 13706002.9
+}
+},
+{
+"attributes": {
+"OBJECTID": 60030,
+"ADDRESS": "1630 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00030",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126003.0,
+"y": 13706003.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60031,
+"ADDRESS": "1631 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00031",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126003.1,
+"y": 13706003.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60032,
+"ADDRESS": "1632 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00032",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126003.2,
+"y": 13706003.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60033,
+"ADDRESS": "1633 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00033",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126003.3,
+"y": 13706003.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60034,
+"ADDRESS": "1634 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00034",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126003.4,
+"y": 13706003.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60035,
+"ADDRESS": "1635 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00035",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126003.5,
+"y": 13706003.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60036,
+"ADDRESS": "1636 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00036",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126003.6,
+"y": 13706003.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60037,
+"ADDRESS": "1637 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00037",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126003.7,
+"y": 13706003.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60038,
+"ADDRESS": "1638 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00038",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126003.8,
+"y": 13706003.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60039,
+"ADDRESS": "1639 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00039",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126003.9,
+"y": 13706003.9
+}
+},
+{
+"attributes": {
+"OBJECTID": 60040,
+"ADDRESS": "1640 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00040",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126004.0,
+"y": 13706004.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60041,
+"ADDRESS": "1641 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00041",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126004.1,
+"y": 13706004.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60042,
+"ADDRESS": "1642 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00042",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126004.2,
+"y": 13706004.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60043,
+"ADDRESS": "1643 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00043",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126004.3,
+"y": 13706004.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60044,
+"ADDRESS": "1644 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00044",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126004.4,
+"y": 13706004.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60045,
+"ADDRESS": "1645 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00045",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126004.5,
+"y": 13706004.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60046,
+"ADDRESS": "1646 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00046",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126004.6,
+"y": 13706004.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60047,
+"ADDRESS": "1647 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00047",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126004.7,
+"y": 13706004.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60048,
+"ADDRESS": "1648 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00048",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126004.8,
+"y": 13706004.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60049,
+"ADDRESS": "1649 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00049",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126004.9,
+"y": 13706004.9
+}
+},
+{
+"attributes": {
+"OBJECTID": 60050,
+"ADDRESS": "1650 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00050",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126005.0,
+"y": 13706005.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60051,
+"ADDRESS": "1651 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00051",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126005.1,
+"y": 13706005.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60052,
+"ADDRESS": "1652 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00052",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126005.2,
+"y": 13706005.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60053,
+"ADDRESS": "1653 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00053",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126005.3,
+"y": 13706005.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60054,
+"ADDRESS": "1654 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00054",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126005.4,
+"y": 13706005.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60055,
+"ADDRESS": "1655 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00055",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126005.5,
+"y": 13706005.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60056,
+"ADDRESS": "1656 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00056",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126005.6,
+"y": 13706005.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60057,
+"ADDRESS": "1657 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00057",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126005.7,
+"y": 13706005.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60058,
+"ADDRESS": "1658 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00058",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126005.8,
+"y": 13706005.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60059,
+"ADDRESS": "1659 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00059",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126005.9,
+"y": 13706005.9
+}
+},
+{
+"attributes": {
+"OBJECTID": 60060,
+"ADDRESS": "1660 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00060",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126006.0,
+"y": 13706006.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60061,
+"ADDRESS": "1661 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00061",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126006.1,
+"y": 13706006.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60062,
+"ADDRESS": "1662 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00062",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126006.2,
+"y": 13706006.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60063,
+"ADDRESS": "1663 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00063",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126006.3,
+"y": 13706006.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60064,
+"ADDRESS": "1664 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00064",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126006.4,
+"y": 13706006.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60065,
+"ADDRESS": "1665 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00065",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126006.5,
+"y": 13706006.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60066,
+"ADDRESS": "1666 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00066",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126006.6,
+"y": 13706006.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60067,
+"ADDRESS": "1667 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00067",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126006.7,
+"y": 13706006.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60068,
+"ADDRESS": "1668 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00068",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126006.8,
+"y": 13706006.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60069,
+"ADDRESS": "1669 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00069",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126006.9,
+"y": 13706006.9
+}
+},
+{
+"attributes": {
+"OBJECTID": 60070,
+"ADDRESS": "1670 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00070",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126007.0,
+"y": 13706007.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60071,
+"ADDRESS": "1671 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00071",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126007.1,
+"y": 13706007.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60072,
+"ADDRESS": "1672 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00072",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126007.2,
+"y": 13706007.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60073,
+"ADDRESS": "1673 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00073",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126007.3,
+"y": 13706007.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60074,
+"ADDRESS": "1674 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00074",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126007.4,
+"y": 13706007.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60075,
+"ADDRESS": "1675 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00075",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126007.5,
+"y": 13706007.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60076,
+"ADDRESS": "1676 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00076",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126007.6,
+"y": 13706007.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60077,
+"ADDRESS": "1677 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00077",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126007.7,
+"y": 13706007.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60078,
+"ADDRESS": "1678 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00078",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126007.8,
+"y": 13706007.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60079,
+"ADDRESS": "1679 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00079",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126007.9,
+"y": 13706007.9
+}
+},
+{
+"attributes": {
+"OBJECTID": 60080,
+"ADDRESS": "1680 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00080",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126008.0,
+"y": 13706008.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60081,
+"ADDRESS": "1681 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00081",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126008.1,
+"y": 13706008.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60082,
+"ADDRESS": "1682 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00082",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126008.2,
+"y": 13706008.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60083,
+"ADDRESS": "1683 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00083",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126008.3,
+"y": 13706008.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60084,
+"ADDRESS": "1684 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00084",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126008.4,
+"y": 13706008.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60085,
+"ADDRESS": "1685 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00085",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126008.5,
+"y": 13706008.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60086,
+"ADDRESS": "1686 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00086",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126008.6,
+"y": 13706008.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60087,
+"ADDRESS": "1687 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00087",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126008.7,
+"y": 13706008.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60088,
+"ADDRESS": "1688 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00088",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126008.8,
+"y": 13706008.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60089,
+"ADDRESS": "1689 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00089",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126008.9,
+"y": 13706008.9
+}
+},
+{
+"attributes": {
+"OBJECTID": 60090,
+"ADDRESS": "1690 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00090",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126009.0,
+"y": 13706009.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60091,
+"ADDRESS": "1691 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00091",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126009.1,
+"y": 13706009.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60092,
+"ADDRESS": "1692 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00092",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126009.2,
+"y": 13706009.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60093,
+"ADDRESS": "1693 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00093",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126009.3,
+"y": 13706009.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60094,
+"ADDRESS": "1694 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00094",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126009.4,
+"y": 13706009.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60095,
+"ADDRESS": "1695 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00095",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126009.5,
+"y": 13706009.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60096,
+"ADDRESS": "1696 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00096",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126009.6,
+"y": 13706009.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60097,
+"ADDRESS": "1697 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00097",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126009.7,
+"y": 13706009.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60098,
+"ADDRESS": "1698 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00098",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126009.8,
+"y": 13706009.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60099,
+"ADDRESS": "1699 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00099",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126009.9,
+"y": 13706009.9
+}
+},
+{
+"attributes": {
+"OBJECTID": 60100,
+"ADDRESS": "1700 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00100",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126010.0,
+"y": 13706010.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60101,
+"ADDRESS": "1701 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00101",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126010.1,
+"y": 13706010.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60102,
+"ADDRESS": "1702 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00102",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126010.2,
+"y": 13706010.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60103,
+"ADDRESS": "1703 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00103",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126010.3,
+"y": 13706010.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60104,
+"ADDRESS": "1704 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00104",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126010.4,
+"y": 13706010.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60105,
+"ADDRESS": "1705 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00105",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126010.5,
+"y": 13706010.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60106,
+"ADDRESS": "1706 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00106",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126010.6,
+"y": 13706010.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60107,
+"ADDRESS": "1707 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00107",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126010.7,
+"y": 13706010.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60108,
+"ADDRESS": "1708 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00108",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126010.8,
+"y": 13706010.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60109,
+"ADDRESS": "1709 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00109",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126010.9,
+"y": 13706010.9
+}
+},
+{
+"attributes": {
+"OBJECTID": 60110,
+"ADDRESS": "1710 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00110",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126011.0,
+"y": 13706011.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60111,
+"ADDRESS": "1711 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00111",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126011.1,
+"y": 13706011.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60112,
+"ADDRESS": "1712 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00112",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126011.2,
+"y": 13706011.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60113,
+"ADDRESS": "1713 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00113",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126011.3,
+"y": 13706011.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60114,
+"ADDRESS": "1714 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00114",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126011.4,
+"y": 13706011.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60115,
+"ADDRESS": "1715 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00115",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126011.5,
+"y": 13706011.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60116,
+"ADDRESS": "1716 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00116",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126011.6,
+"y": 13706011.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60117,
+"ADDRESS": "1717 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00117",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126011.7,
+"y": 13706011.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60118,
+"ADDRESS": "1718 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00118",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126011.8,
+"y": 13706011.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60119,
+"ADDRESS": "1719 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00119",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126011.9,
+"y": 13706011.9
+}
+},
+{
+"attributes": {
+"OBJECTID": 60120,
+"ADDRESS": "1720 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00120",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126012.0,
+"y": 13706012.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60121,
+"ADDRESS": "1721 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00121",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126012.1,
+"y": 13706012.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60122,
+"ADDRESS": "1722 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00122",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126012.2,
+"y": 13706012.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60123,
+"ADDRESS": "1723 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00123",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126012.3,
+"y": 13706012.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60124,
+"ADDRESS": "1724 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00124",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126012.4,
+"y": 13706012.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60125,
+"ADDRESS": "1725 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00125",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126012.5,
+"y": 13706012.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60126,
+"ADDRESS": "1726 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00126",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126012.6,
+"y": 13706012.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60127,
+"ADDRESS": "1727 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00127",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126012.7,
+"y": 13706012.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60128,
+"ADDRESS": "1728 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00128",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126012.8,
+"y": 13706012.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60129,
+"ADDRESS": "1729 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00129",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126012.9,
+"y": 13706012.9
+}
+},
+{
+"attributes": {
+"OBJECTID": 60130,
+"ADDRESS": "1730 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00130",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126013.0,
+"y": 13706013.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60131,
+"ADDRESS": "1731 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00131",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126013.1,
+"y": 13706013.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60132,
+"ADDRESS": "1732 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00132",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126013.2,
+"y": 13706013.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60133,
+"ADDRESS": "1733 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00133",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126013.3,
+"y": 13706013.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60134,
+"ADDRESS": "1734 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00134",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126013.4,
+"y": 13706013.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60135,
+"ADDRESS": "1735 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00135",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126013.5,
+"y": 13706013.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60136,
+"ADDRESS": "1736 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00136",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126013.6,
+"y": 13706013.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60137,
+"ADDRESS": "1737 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00137",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126013.7,
+"y": 13706013.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60138,
+"ADDRESS": "1738 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00138",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126013.8,
+"y": 13706013.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60139,
+"ADDRESS": "1739 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00139",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126013.9,
+"y": 13706013.9
+}
+},
+{
+"attributes": {
+"OBJECTID": 60140,
+"ADDRESS": "1740 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00140",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126014.0,
+"y": 13706014.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60141,
+"ADDRESS": "1741 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00141",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126014.1,
+"y": 13706014.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60142,
+"ADDRESS": "1742 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00142",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126014.2,
+"y": 13706014.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60143,
+"ADDRESS": "1743 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00143",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126014.3,
+"y": 13706014.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60144,
+"ADDRESS": "1744 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00144",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126014.4,
+"y": 13706014.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60145,
+"ADDRESS": "1745 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00145",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126014.5,
+"y": 13706014.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60146,
+"ADDRESS": "1746 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00146",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126014.6,
+"y": 13706014.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60147,
+"ADDRESS": "1747 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00147",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126014.7,
+"y": 13706014.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60148,
+"ADDRESS": "1748 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00148",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126014.8,
+"y": 13706014.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60149,
+"ADDRESS": "1749 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00149",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126014.9,
+"y": 13706014.9
+}
+},
+{
+"attributes": {
+"OBJECTID": 60150,
+"ADDRESS": "1750 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00150",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126015.0,
+"y": 13706015.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60151,
+"ADDRESS": "1751 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00151",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126015.1,
+"y": 13706015.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60152,
+"ADDRESS": "1752 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00152",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126015.2,
+"y": 13706015.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60153,
+"ADDRESS": "1753 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00153",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126015.3,
+"y": 13706015.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60154,
+"ADDRESS": "1754 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00154",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126015.4,
+"y": 13706015.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60155,
+"ADDRESS": "1755 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00155",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126015.5,
+"y": 13706015.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60156,
+"ADDRESS": "1756 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00156",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126015.6,
+"y": 13706015.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60157,
+"ADDRESS": "1757 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00157",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126015.7,
+"y": 13706015.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60158,
+"ADDRESS": "1758 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00158",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126015.8,
+"y": 13706015.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60159,
+"ADDRESS": "1759 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00159",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126015.9,
+"y": 13706015.9
+}
+},
+{
+"attributes": {
+"OBJECTID": 60160,
+"ADDRESS": "1760 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00160",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126016.0,
+"y": 13706016.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60161,
+"ADDRESS": "1761 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00161",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126016.1,
+"y": 13706016.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60162,
+"ADDRESS": "1762 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00162",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126016.2,
+"y": 13706016.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60163,
+"ADDRESS": "1763 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00163",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126016.3,
+"y": 13706016.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60164,
+"ADDRESS": "1764 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00164",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126016.4,
+"y": 13706016.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60165,
+"ADDRESS": "1765 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00165",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126016.5,
+"y": 13706016.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60166,
+"ADDRESS": "1766 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00166",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126016.6,
+"y": 13706016.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60167,
+"ADDRESS": "1767 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00167",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126016.7,
+"y": 13706016.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60168,
+"ADDRESS": "1768 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00168",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126016.8,
+"y": 13706016.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60169,
+"ADDRESS": "1769 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00169",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126016.9,
+"y": 13706016.9
+}
+},
+{
+"attributes": {
+"OBJECTID": 60170,
+"ADDRESS": "1770 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00170",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126017.0,
+"y": 13706017.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60171,
+"ADDRESS": "1771 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00171",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126017.1,
+"y": 13706017.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60172,
+"ADDRESS": "1772 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00172",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126017.2,
+"y": 13706017.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60173,
+"ADDRESS": "1773 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00173",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126017.3,
+"y": 13706017.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60174,
+"ADDRESS": "1774 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00174",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126017.4,
+"y": 13706017.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60175,
+"ADDRESS": "1775 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00175",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126017.5,
+"y": 13706017.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60176,
+"ADDRESS": "1776 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00176",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126017.6,
+"y": 13706017.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60177,
+"ADDRESS": "1777 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00177",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126017.7,
+"y": 13706017.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60178,
+"ADDRESS": "1778 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00178",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126017.8,
+"y": 13706017.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60179,
+"ADDRESS": "1779 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00179",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126017.9,
+"y": 13706017.9
+}
+},
+{
+"attributes": {
+"OBJECTID": 60180,
+"ADDRESS": "1780 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00180",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126018.0,
+"y": 13706018.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60181,
+"ADDRESS": "1781 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00181",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126018.1,
+"y": 13706018.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60182,
+"ADDRESS": "1782 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00182",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126018.2,
+"y": 13706018.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60183,
+"ADDRESS": "1783 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00183",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126018.3,
+"y": 13706018.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60184,
+"ADDRESS": "1784 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00184",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126018.4,
+"y": 13706018.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60185,
+"ADDRESS": "1785 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00185",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126018.5,
+"y": 13706018.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60186,
+"ADDRESS": "1786 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00186",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126018.6,
+"y": 13706018.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60187,
+"ADDRESS": "1787 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00187",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126018.7,
+"y": 13706018.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60188,
+"ADDRESS": "1788 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00188",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126018.8,
+"y": 13706018.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60189,
+"ADDRESS": "1789 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00189",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126018.9,
+"y": 13706018.9
+}
+},
+{
+"attributes": {
+"OBJECTID": 60190,
+"ADDRESS": "1790 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00190",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126019.0,
+"y": 13706019.0
+}
+},
+{
+"attributes": {
+"OBJECTID": 60191,
+"ADDRESS": "1791 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00191",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126019.1,
+"y": 13706019.1
+}
+},
+{
+"attributes": {
+"OBJECTID": 60192,
+"ADDRESS": "1792 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00192",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126019.2,
+"y": 13706019.2
+}
+},
+{
+"attributes": {
+"OBJECTID": 60193,
+"ADDRESS": "1793 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00193",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126019.3,
+"y": 13706019.3
+}
+},
+{
+"attributes": {
+"OBJECTID": 60194,
+"ADDRESS": "1794 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00194",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126019.4,
+"y": 13706019.4
+}
+},
+{
+"attributes": {
+"OBJECTID": 60195,
+"ADDRESS": "1795 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00195",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126019.5,
+"y": 13706019.5
+}
+},
+{
+"attributes": {
+"OBJECTID": 60196,
+"ADDRESS": "1796 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00196",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126019.6,
+"y": 13706019.6
+}
+},
+{
+"attributes": {
+"OBJECTID": 60197,
+"ADDRESS": "1797 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00197",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126019.7,
+"y": 13706019.7
+}
+},
+{
+"attributes": {
+"OBJECTID": 60198,
+"ADDRESS": "1798 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00198",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126019.8,
+"y": 13706019.8
+}
+},
+{
+"attributes": {
+"OBJECTID": 60199,
+"ADDRESS": "1799 SYNTHETIC LN",
+"DOC_NUMBER": "FIX-2026-Q00199",
+"YEAR": 2026,
+"MONTH": 5,
+"SCHOOL_DIST": "SYNTH ISD",
+"TYPE": "Notice of Substitute Trustee\u2019s Sale",
+"CITY": "SYNTHTOWN F",
+"ZIP": "00006"
+},
+"geometry": {
+"x": 2126019.9,
+"y": 13706019.9
+}
+}
+]
+}

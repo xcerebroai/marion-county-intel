@@ -1,0 +1,32 @@
+{
+  "objectIdFieldName": "OBJECTID",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 102739, "latestWkid": 2278},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID"},
+    {"name": "ADDRESS", "type": "esriFieldTypeString"},
+    {"name": "DOC_NUMBER", "type": "esriFieldTypeString"},
+    {"name": "YEAR", "type": "esriFieldTypeSmallInteger"},
+    {"name": "MONTH", "type": "esriFieldTypeSmallInteger"},
+    {"name": "SCHOOL_DIST", "type": "esriFieldTypeString"},
+    {"name": "TYPE", "type": "esriFieldTypeString"},
+    {"name": "CITY", "type": "esriFieldTypeString"},
+    {"name": "ZIP", "type": "esriFieldTypeString"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 20001,
+        "ADDRESS": "303 SYNTHETIC LN",
+        "DOC_NUMBER": "FIX-2026-T00001",
+        "YEAR": 2026,
+        "MONTH": 5,
+        "SCHOOL_DIST": "SYNTH ISD",
+        "TYPE": "Tax Foreclosure Notice",
+        "CITY": "SYNTHTOWN C",
+        "ZIP": "00003"
+      },
+      "geometry": {"x": 2122000.5, "y": 13702000.5}
+    }
+  ]
+}

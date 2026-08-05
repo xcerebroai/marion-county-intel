@@ -1,0 +1,20 @@
+{
+  "_description": "Synthetic-mode-only attribute overrides per MASTER_PROMPT §4.31.7. Loaded ONLY when scaffold/pipeline/build_leads.py runs with --synthetic. Production runs MUST NOT read this file. The map REPLACES the natural attribute-derivation output for each listed parcel_id so the harness produces exactly the attribute distribution declared in synthetic_expectations.json.",
+  "_format_version": "1.0.0",
+  "_loaded_when": "mode == 'synthetic' only",
+  "_callers": ["scaffold/pipeline/build_leads.py --synthetic"],
+  "overrides_by_parcel_id": {
+    "SYN-001": {"attributes": ["absentee", "long_term_owned", "out_of_state"]},
+    "SYN-002": {"attributes": ["high_equity", "long_term_owned"]},
+    "SYN-003": {"attributes": ["out_of_state", "absentee"]},
+    "SYN-004": {"attributes": ["vacant", "absentee"]},
+    "SYN-005": {"attributes": ["long_term_owned"]},
+    "SYN-006": {"attributes": ["high_equity", "free_and_clear", "long_term_owned"]},
+    "SYN-007": {"attributes": []},
+    "SYN-008": {"attributes": ["entity_owned", "multiple_properties"]},
+    "SYN-009": {"attributes": ["senior_owner", "long_term_owned"]},
+    "SYN-010": {"attributes": ["absentee", "vacant"]},
+    "SYN-011": {"attributes": []},
+    "SYN-012": {"attributes": ["long_term_owned"]}
+  }
+}

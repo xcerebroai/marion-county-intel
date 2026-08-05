@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xcerebro.framework/v5.4.0/contracts/scored_lead_record.schema.json",
+  "title": "Scored-lead record (v5.4.0 pipeline stage 6 output — one record in scored_leads.json)",
+  "description": "v5.4.0 Session 9 / Option Y. A scored_lead WRAPS a matched_lead by reference: it carries matched_lead.lead_id and the seam-derived scoring / classification / title-complexity / review output, plus optional parcel-display enrichment. matched_lead stays the immutable §19 output of record — scored_lead never mutates it. Enrichment is OPTIONAL per the R3(iii) decision (§13.14): scoring runs on distress signals from the staged pipeline; parcel-master enrichment (attribute bonus, display value, owner mailing) is a MODIFIER applied when present, absent without blocking. A lead is never dropped, blocked, or held for missing enrichment — enrichment_status records honestly whether the scored lead has parcel-master attributes attached.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "scored_lead_id",
+    "lead_id",
+    "primary_parcel_id",
+    "owner_name",
+    "owner_type",
+    "score",
+    "tier",
+    "score_reasons",
+    "deal_paths",
+    "title_complexity_score",
+    "title_complexity_tier",
+    "title_complexity_contributors",
+    "pattern_set",
+    "patterns",
+    "display_patterns",
+    "stack_depth",
+    "recent_flag",
+    "attributes",
+    "review_flags",
+    "lead_status",
+    "enrichment_status",
+    "evidence_ids",
+    "source_ids"
+  ],
+  "properties": {
+    "scored_lead_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique id for the scored_lead. Deterministic given the same matched_lead + same enrichment inputs."
+    },
+    "lead_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Back-reference to the matched_lead this scored_lead is derived from (the matched_lead is immutable; scored_lead does NOT mutate it)."
+    },
+    "primary_parcel_id": {
+      "type": ["string", "null"],
+      "description": "Carried from the matched_lead. null when the matched lead's parcel_resolution_status is UNRESOLVED / REVIEW_REQUIRED."
+    },
+    "owner_name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Carried from the matched_lead. The §17.E placeholder when the matched lead is REVIEW_REQUIRED. Never a filer (§20 Check 12)."
+    },
+    "owner_type": {
+      "type": "string",
+      "enum": ["ENTITY", "ESTATE", "TRUST", "INDIVIDUAL", "UNKNOWN"],
+      "description": "Carried from the matched_lead."
+    },
+    "score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Lead score per domain/03_scoring_and_stacking.md, in [0, 100]. Computed by the retained score.compute_score over the seam-adapted stack."
+    },
+    "tier": {
+      "type": "string",
+      "enum": ["Hot", "Strong", "Workable", "Low", "Archive"],
+      "description": "Score tier label per score.tier_for."
+    },
+    "score_reasons": {
+      "type": "array",
+      "description": "Per-component score contributions (base / stack / recency / attribute bonuses).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["factor", "delta"],
+        "properties": {
+          "factor": { "type": "string", "minLength": 1 },
+          "delta": { "type": "integer" }
+        }
+      }
+    },
+    "deal_paths": {
+      "type": "array",
+      "description": "Deal-path classifications per domain/04_deal_path_classifier.md. Computed by the retained classify.classify_deal_paths.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "confidence", "rationale"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "confidence": { "type": "string", "enum": ["high", "moderate", "low"] },
+          "rationale": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "title_complexity_score": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Title-complexity score per the retained build_leads._title_complexity (extracted into the seam)."
+    },
+    "title_complexity_tier": {
+      "type": "string",
+      "enum": ["None", "Light curative", "Moderate curative", "Heavy curative"]
+    },
+    "title_complexity_contributors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["factor", "weight"],
+        "properties": {
+          "factor": { "type": "string", "minLength": 1 },
+          "weight": { "type": "integer" }
+        }
+      }
+    },
+    "pattern_set": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Distinct stack-contributing patterns derived from matched_lead.signals via canonical_doc_types.json's lead_pattern. Drives stack-bonus and deal-path classification."
+    },
+    "patterns": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Ordered stack-contributing patterns (with duplicates) — drives stack_depth. The seam synthesizes one pattern entry per matched_lead.signals[].count occurrence so duplicate same-pattern instruments preserve their stack contribution (§18.E)."
+    },
+    "display_patterns": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Patterns for the dashboard chips. Equal to `patterns` here in the Session-9 seam (no tired_landlord collapse adapter yet — staged-pipeline eviction handling is future work)."
+    },
+    "stack_depth": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "len(patterns). Drives the stack-bonus tier."
+    },
+    "recent_flag": {
+      "type": "boolean",
+      "description": "True when any matched_lead.signals[].latest_recorded_date is within the recency window (30 days) of the seam's as_of date — feeds score's recency bonus."
+    },
+    "attributes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Parcel attributes — derived from enrichment when present, empty when not (R3(iii) enrichment-optional rule). Feeds score's attribute bonus + classify's branches."
+    },
+    "review_flags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Review-queue flags per the retained review.evaluate_review_queue."
+    },
+    "lead_status": {
+      "type": "string",
+      "enum": [
+        "STACKED_LEAD",
+        "REVIEW_REQUIRED",
+        "APPROVED_FOR_DASHBOARD"
+      ],
+      "description": "Lifecycle status post-scoring + review evaluation."
+    },
+    "enrichment_status": {
+      "type": "string",
+      "enum": ["ENRICHED", "UNENRICHED"],
+      "description": "ENRICHED when the seam attached parcel-master data (attributes + display fields); UNENRICHED when scoring ran on distress signals alone. Decoupled from parcel_resolution_status per §13.14 / R3(iii) — a UNENRICHED lead is still scored, still passes review, still reaches the dashboard."
+    },
+    "evidence_ids": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Union of all evidence ledger entry ids across the matched_lead's signals — carried forward unchanged."
+    },
+    "source_ids": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Distinct source_ids contributing to this scored_lead — carried forward from matched_lead."
+    },
+    "primary_event_date": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "max(latest_recorded_date) across matched_lead.signals — the most recent event date powering the recency display."
+    },
+    "match_confidence": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Parcel-master match confidence. Null when matcher metadata is not available (synthetic / pre-enrichment)."
+    },
+    "doc_type_normalization": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "description": "The doc-type bridge metadata used by the seam — registry canonical_doc_type values and their bridged monolith UPPERCASE normalized_doc_type values. Audit field; null when not computed.",
+      "properties": {
+        "canonical_doc_types": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "normalized_doc_types": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "doc_type_review_required": { "type": "boolean" }
+      }
+    },
+    "parcel_display": {
+      "type": ["object", "null"],
+      "description": "OPTIONAL parcel-master snapshot used by the dashboard. Present iff enrichment_status is ENRICHED — the R3(iii) modifier path. Null when scoring ran without enrichment.",
+      "additionalProperties": false,
+      "properties": {
+        "situs_address": { "type": ["string", "null"] },
+        "situs_city": { "type": ["string", "null"] },
+        "situs_state": { "type": ["string", "null"] },
+        "owner_mailing_address": { "type": ["string", "null"] },
+        "owner_mailing_city": { "type": ["string", "null"] },
+        "owner_mailing_state": { "type": ["string", "null"] },
+        "owner_mailing_zip": { "type": ["string", "null"] },
+        "assessed_value": { "type": ["number", "null"] },
+        "last_sale_price": { "type": ["number", "null"] },
+        "last_sale_date": { "type": ["string", "null"], "format": "date" },
+        "year_built": { "type": ["integer", "null"] },
+        "property_class": { "type": ["string", "null"] }
+      }
+    },
+    "lead_status_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["status", "transitioned_at", "reason"],
+        "properties": {
+          "status": { "type": "string", "minLength": 1 },
+          "transitioned_at": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "description": "R3(iii) enrichment-optional rule — the parcel_display block is present iff enrichment_status is ENRICHED. A UNENRICHED scored_lead carries no parcel_display (the dashboard renders without one); an ENRICHED scored_lead's parcel_display is non-null. Either way the lead is scored and lives.",
+      "if": { "properties": { "enrichment_status": { "const": "UNENRICHED" } } },
+      "then": { "properties": { "parcel_display": { "type": "null" } } }
+    },
+    {
+      "if": { "properties": { "enrichment_status": { "const": "ENRICHED" } } },
+      "then": {
+        "properties": { "parcel_display": { "type": "object" } },
+        "required": ["parcel_display"]
+      }
+    }
+  ]
+}

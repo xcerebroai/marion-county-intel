@@ -1,0 +1,1119 @@
+{
+  "$schema_version": "1.0.0",
+  "_description": "Universal canonical document type registry. The pipeline reads this file as source of truth for document type normalization. County-specific overrides live in <county>.json doc_type_synonyms blocks. See knowledge_base/domain/08_document_normalization.md for usage.",
+  "canonical_types": {
+    "WARRANTY_DEED": {
+      "lead_pattern": "transfer",
+      "subtype": "warranty_deed",
+      "source_class": "enrichment",
+      "default_confidence": 90,
+      "document_priority": 25,
+      "common_abbreviations": [
+        "WD",
+        "GW DEED",
+        "GWD",
+        "GENERAL WARRANTY DEED"
+      ],
+      "notes": "Standard arms-length transfer instrument. Enrichment unless paired with distress signals.",
+      "source_priority": "P2"
+    },
+    "SPECIAL_WARRANTY_DEED": {
+      "lead_pattern": "transfer",
+      "subtype": "special_warranty_deed",
+      "source_class": "enrichment",
+      "default_confidence": 88,
+      "document_priority": 25,
+      "common_abbreviations": [
+        "SWD",
+        "SPEC WD",
+        "SPCL WARR DEED"
+      ],
+      "notes": "Limited warranty transfer. Enrichment.",
+      "source_priority": "P2"
+    },
+    "QUITCLAIM_DEED": {
+      "lead_pattern": "transfer",
+      "subtype": "quitclaim_deed",
+      "source_class": "lead_generating",
+      "default_confidence": 85,
+      "document_priority": 45,
+      "common_abbreviations": [
+        "QCD",
+        "QC",
+        "QC DEED",
+        "QUITCLAIM"
+      ],
+      "notes": "No-warranty transfer. Frequently signals family transfer, heir conveyance, divorce settlement, or title curative work.",
+      "source_priority": "P0"
+    },
+    "TRUSTEE_DEED": {
+      "lead_pattern": "transfer",
+      "subtype": "trustee_deed",
+      "source_class": "enrichment",
+      "default_confidence": 85,
+      "document_priority": 30,
+      "common_abbreviations": [
+        "TD",
+        "TR DEED",
+        "TRUSTEE DEED"
+      ],
+      "notes": "Transfer by trustee. Enrichment unless paired with foreclosure context.",
+      "source_priority": "P2"
+    },
+    "TRUSTEES_DEED_UPON_SALE": {
+      "lead_pattern": "foreclosure",
+      "subtype": "trustees_deed_upon_sale",
+      "source_class": "lead_generating",
+      "default_confidence": 92,
+      "document_priority": 80,
+      "common_abbreviations": [
+        "TDUS",
+        "TRUSTEES DEED UPON SALE",
+        "TRUSTEE SALE DEED"
+      ],
+      "notes": "Post-foreclosure transfer in non-judicial states. Concludes the foreclosure lifecycle.",
+      "source_priority": "P0"
+    },
+    "TRANSFER_ON_DEATH_DEED": {
+      "lead_pattern": "estate",
+      "subtype": "transfer_on_death_deed",
+      "source_class": "lead_generating",
+      "default_confidence": 88,
+      "document_priority": 60,
+      "common_abbreviations": [
+        "TODD",
+        "TOD DEED"
+      ],
+      "notes": "Pre-death transfer instrument. Estate signal when grantor is deceased.",
+      "source_priority": "P0"
+    },
+    "PERSONAL_REPRESENTATIVE_DEED": {
+      "lead_pattern": "estate",
+      "subtype": "personal_representative_deed",
+      "source_class": "lead_generating",
+      "default_confidence": 90,
+      "document_priority": 70,
+      "common_abbreviations": [
+        "PRD",
+        "PR DEED",
+        "PERS REP DEED"
+      ],
+      "notes": "Estate transfer signal. Indicates open or closing probate.",
+      "source_priority": "P0"
+    },
+    "EXECUTORS_DEED": {
+      "lead_pattern": "estate",
+      "subtype": "executors_deed",
+      "source_class": "lead_generating",
+      "default_confidence": 90,
+      "document_priority": 70,
+      "common_abbreviations": [
+        "EXD",
+        "EXEC DEED",
+        "EXECUTORS DEED"
+      ],
+      "notes": "Testate estate transfer signal.",
+      "source_priority": "P0"
+    },
+    "ADMINISTRATORS_DEED": {
+      "lead_pattern": "estate",
+      "subtype": "administrators_deed",
+      "source_class": "lead_generating",
+      "default_confidence": 90,
+      "document_priority": 70,
+      "common_abbreviations": [
+        "AD",
+        "ADMIN DEED",
+        "ADMINISTRATORS DEED"
+      ],
+      "notes": "Intestate estate transfer signal.",
+      "source_priority": "P0"
+    },
+    "SHERIFF_DEED": {
+      "lead_pattern": "foreclosure",
+      "subtype": "sheriff_deed",
+      "source_class": "lead_generating",
+      "default_confidence": 92,
+      "document_priority": 75,
+      "common_abbreviations": [
+        "SD",
+        "SHERIFFS DEED"
+      ],
+      "notes": "Post-foreclosure transfer in judicial states.",
+      "source_priority": "P0"
+    },
+    "SHERIFF_SALE": {
+      "lead_pattern": "foreclosure",
+      "subtype": "sheriff_sale",
+      "source_class": "lead_generating",
+      "default_confidence": 90,
+      "document_priority": 90,
+      "common_abbreviations": [
+        "SHERIFF SALE",
+        "SHERIFFS SALE",
+        "SHF SALE"
+      ],
+      "notes": "Foreclosure sale event itself (judicial states). Distinct from SHERIFF_DEED which is the post-sale transfer instrument.",
+      "source_priority": "P0"
+    },
+    "TAX_DEED": {
+      "lead_pattern": "tax",
+      "subtype": "tax_deed",
+      "source_class": "lead_generating",
+      "default_confidence": 92,
+      "document_priority": 80,
+      "common_abbreviations": [
+        "TXD",
+        "TAX DEED",
+        "TREAS DEED"
+      ],
+      "notes": "Post-tax-foreclosure transfer.",
+      "source_priority": "P0"
+    },
+    "CORRECTION_DEED": {
+      "lead_pattern": "transfer",
+      "subtype": "correction_deed",
+      "source_class": "enrichment",
+      "default_confidence": 85,
+      "document_priority": 15,
+      "common_abbreviations": [
+        "CD",
+        "COD",
+        "CORR DEED",
+        "CORRECTION DEED"
+      ],
+      "notes": "Curative instrument. Enrichment but flags possible chain-of-title issue.",
+      "source_priority": "P0"
+    },
+    "BARGAIN_AND_SALE_DEED": {
+      "lead_pattern": "transfer",
+      "subtype": "bargain_and_sale_deed",
+      "source_class": "enrichment",
+      "default_confidence": 80,
+      "document_priority": 25,
+      "common_abbreviations": [
+        "B/S",
+        "BSD",
+        "BARGAIN AND SALE"
+      ],
+      "notes": "Limited-warranty transfer common in some jurisdictions.",
+      "source_priority": "P2"
+    },
+    "GIFT_DEED": {
+      "lead_pattern": "transfer",
+      "subtype": "gift_deed",
+      "source_class": "lead_generating",
+      "default_confidence": 80,
+      "document_priority": 35,
+      "common_abbreviations": [
+        "GFD",
+        "GIFT DEED"
+      ],
+      "notes": "Gratuitous transfer. Often family or estate context.",
+      "source_priority": "P0"
+    },
+    "DEED_IN_LIEU_OF_FORECLOSURE": {
+      "lead_pattern": "foreclosure",
+      "subtype": "deed_in_lieu",
+      "source_class": "lead_generating",
+      "default_confidence": 88,
+      "document_priority": 75,
+      "common_abbreviations": [
+        "DIL",
+        "DEED IN LIEU",
+        "DEED IN LIEU OF FCL"
+      ],
+      "notes": "Voluntary transfer to lender to avoid foreclosure.",
+      "source_priority": "P0"
+    },
+    "MORTGAGE": {
+      "lead_pattern": null,
+      "subtype": "mortgage",
+      "source_class": "enrichment",
+      "default_confidence": 85,
+      "document_priority": 20,
+      "common_abbreviations": [
+        "MTG",
+        "MORTGAGE"
+      ],
+      "notes": "Debt position enrichment. Used for equity calculation.",
+      "source_priority": "P2"
+    },
+    "DEED_OF_TRUST": {
+      "lead_pattern": null,
+      "subtype": "deed_of_trust",
+      "source_class": "enrichment",
+      "default_confidence": 85,
+      "document_priority": 20,
+      "common_abbreviations": [
+        "DOT",
+        "DT",
+        "D/T",
+        "DEED OF TRUST"
+      ],
+      "notes": "Debt position enrichment in trust-deed states.",
+      "source_priority": "P2"
+    },
+    "MORTGAGE_MODIFICATION": {
+      "lead_pattern": null,
+      "subtype": "mortgage_modification",
+      "source_class": "enrichment",
+      "default_confidence": 80,
+      "document_priority": 15,
+      "common_abbreviations": [
+        "MOD",
+        "MODMTG",
+        "MOD MTG",
+        "LOAN MOD"
+      ],
+      "notes": "Loan terms changed. May indicate prior distress that was resolved.",
+      "source_priority": "P2"
+    },
+    "ASSIGNMENT_OF_MORTGAGE": {
+      "lead_pattern": null,
+      "subtype": "assignment_of_mortgage",
+      "source_class": "enrichment",
+      "default_confidence": 85,
+      "document_priority": 10,
+      "common_abbreviations": [
+        "ASGN",
+        "ASSGN MTG",
+        "ASSIGNMENT OF MORTGAGE"
+      ],
+      "notes": "Lender transfer. Enrichment only.",
+      "source_priority": "P2"
+    },
+    "SATISFACTION_OF_MORTGAGE": {
+      "lead_pattern": null,
+      "subtype": "satisfaction_of_mortgage",
+      "source_class": "negative_signal",
+      "default_confidence": 90,
+      "document_priority": 10,
+      "suppresses": [
+        "MORTGAGE",
+        "DEED_OF_TRUST",
+        "NOTICE_OF_DEFAULT",
+        "NOTICE_OF_SALE"
+      ],
+      "common_abbreviations": [
+        "SAT",
+        "SAT MTG",
+        "SATISFACTION",
+        "DISCH MTG"
+      ],
+      "notes": "Mortgage paid. Suppresses prior debt and pre-sale foreclosure signals on the same instrument.",
+      "source_priority": "P0"
+    },
+    "RECONVEYANCE": {
+      "lead_pattern": null,
+      "subtype": "reconveyance",
+      "source_class": "negative_signal",
+      "default_confidence": 90,
+      "document_priority": 10,
+      "suppresses": [
+        "DEED_OF_TRUST",
+        "NOTICE_OF_DEFAULT",
+        "NOTICE_OF_SALE"
+      ],
+      "common_abbreviations": [
+        "RECON",
+        "FULL RECONVEYANCE",
+        "RECONVEY"
+      ],
+      "notes": "Trustee deed of trust released. Suppresses prior debt and pre-sale foreclosure signals.",
+      "source_priority": "P0"
+    },
+    "NOTICE_OF_DEFAULT": {
+      "lead_pattern": "foreclosure",
+      "subtype": "notice_of_default",
+      "source_class": "lead_generating",
+      "default_confidence": 92,
+      "document_priority": 95,
+      "common_abbreviations": [
+        "NOD",
+        "NOTICE OF DEFAULT",
+        "NOT DEFAULT"
+      ],
+      "notes": "Non-judicial foreclosure first stage. Highest-priority single signal.",
+      "source_priority": "P0"
+    },
+    "NOTICE_OF_SALE": {
+      "lead_pattern": "foreclosure",
+      "subtype": "notice_of_sale",
+      "source_class": "lead_generating",
+      "default_confidence": 92,
+      "document_priority": 95,
+      "common_abbreviations": [
+        "NOS",
+        "NOTICE OF SALE",
+        "NOT SALE",
+        "NTC SALE"
+      ],
+      "notes": "Foreclosure sale scheduled. Imminent timeline.",
+      "source_priority": "P0"
+    },
+    "NOTICE_OF_SUBSTITUTE_TRUSTEE_SALE": {
+      "lead_pattern": "foreclosure",
+      "subtype": "notice_of_substitute_trustee_sale",
+      "source_class": "lead_generating",
+      "default_confidence": 92,
+      "document_priority": 95,
+      "common_abbreviations": [
+        "NOT TRUSTEE SALE",
+        "NTC SUB TR SALE",
+        "NSTS"
+      ],
+      "notes": "Non-judicial sale notice. Substitute trustee has been appointed and sale is scheduled.",
+      "source_priority": "P0"
+    },
+    "APPOINTMENT_OF_SUBSTITUTE_TRUSTEE": {
+      "lead_pattern": "foreclosure",
+      "subtype": "appointment_of_substitute_trustee",
+      "source_class": "lead_generating",
+      "default_confidence": 88,
+      "document_priority": 70,
+      "common_abbreviations": [
+        "APPT SUB TR",
+        "APP SUB TRUSTEE",
+        "AOST",
+        "SUB TR"
+      ],
+      "notes": "Predicate filing for substitute trustee sale. Foreclosure progressing.",
+      "source_priority": "P0"
+    },
+    "LIS_PENDENS": {
+      "lead_pattern": "by_state_profile",
+      "subtype": "lis_pendens",
+      "source_class": "lead_generating",
+      "default_confidence": 90,
+      "document_priority": 75,
+      "common_abbreviations": [
+        "LP",
+        "LIS PEND",
+        "LIS PENDENS",
+        "NOTICE LIS"
+      ],
+      "notes": "Pending litigation against the property. Ambiguous: foreclosure, partition, quiet title. Context determines subtype.",
+      "source_priority": "P0"
+    },
+    "RELEASE_OF_LIS_PENDENS": {
+      "lead_pattern": null,
+      "subtype": "release_of_lis_pendens",
+      "source_class": "negative_signal",
+      "default_confidence": 90,
+      "document_priority": 5,
+      "suppresses": [
+        "LIS_PENDENS"
+      ],
+      "common_abbreviations": [
+        "REL LIS",
+        "RELEASE LIS PENDENS"
+      ],
+      "notes": "Pending litigation resolved. Suppresses prior LP.",
+      "source_priority": "P0"
+    },
+    "FINAL_JUDGMENT_OF_FORECLOSURE": {
+      "lead_pattern": "foreclosure",
+      "subtype": "final_judgment_of_foreclosure",
+      "source_class": "lead_generating",
+      "default_confidence": 92,
+      "document_priority": 88,
+      "common_abbreviations": [
+        "FINJUDGE",
+        "FINAL JUDGMENT",
+        "FJ"
+      ],
+      "notes": "Court has ruled in foreclosure case. Sale forthcoming.",
+      "source_priority": "P0"
+    },
+    "FEDERAL_TAX_LIEN": {
+      "lead_pattern": "tax",
+      "subtype": "federal_tax_lien",
+      "source_class": "lead_generating",
+      "default_confidence": 92,
+      "document_priority": 92,
+      "common_abbreviations": [
+        "FTL",
+        "IRS LIEN",
+        "FEDLIEN",
+        "FEDERAL TAX LIEN"
+      ],
+      "notes": "IRS lien recorded. High title-cloud impact.",
+      "source_priority": "P0"
+    },
+    "STATE_TAX_LIEN": {
+      "lead_pattern": "tax",
+      "subtype": "state_tax_lien",
+      "source_class": "lead_generating",
+      "default_confidence": 90,
+      "document_priority": 80,
+      "common_abbreviations": [
+        "STL",
+        "INSTLIEN",
+        "STATE TAX LIEN"
+      ],
+      "notes": "State revenue lien recorded.",
+      "source_priority": "P0"
+    },
+    "TAX_SALE_CERTIFICATE": {
+      "lead_pattern": "tax",
+      "subtype": "tax_sale_certificate",
+      "source_class": "lead_generating",
+      "default_confidence": 88,
+      "document_priority": 75,
+      "common_abbreviations": [
+        "TSC",
+        "MTSC",
+        "TAX CERT",
+        "TAX SALE CERT"
+      ],
+      "notes": "Third party purchased tax debt. Owner faces redemption deadline.",
+      "source_priority": "P0"
+    },
+    "TAX_FORECLOSURE_NOTICE": {
+      "lead_pattern": "tax",
+      "subtype": "tax_foreclosure_notice",
+      "source_class": "lead_generating",
+      "default_confidence": 90,
+      "document_priority": 90,
+      "common_abbreviations": [
+        "TAX FORE",
+        "TAX FORECLOSURE NOTICE"
+      ],
+      "notes": "Final notice before tax-foreclosure sale.",
+      "source_priority": "P0"
+    },
+    "RELEASE_OF_FEDERAL_TAX_LIEN": {
+      "lead_pattern": null,
+      "subtype": "release_of_federal_tax_lien",
+      "source_class": "negative_signal",
+      "default_confidence": 92,
+      "document_priority": 5,
+      "suppresses": [
+        "FEDERAL_TAX_LIEN"
+      ],
+      "common_abbreviations": [
+        "REL FTL",
+        "RELEASE FEDERAL TAX LIEN"
+      ],
+      "notes": "IRS lien released. Suppresses prior FTL.",
+      "source_priority": "P0"
+    },
+    "MECHANICS_LIEN": {
+      "lead_pattern": "lien",
+      "subtype": "mechanics_lien",
+      "source_class": "lead_generating",
+      "default_confidence": 85,
+      "document_priority": 50,
+      "common_abbreviations": [
+        "ML",
+        "MCL",
+        "MECHLIEN",
+        "MECHANICS LIEN"
+      ],
+      "notes": "Contractor unpaid. Title cloud.",
+      "source_priority": "P0"
+    },
+    "CONSTRUCTION_LIEN": {
+      "lead_pattern": "lien",
+      "subtype": "construction_lien",
+      "source_class": "lead_generating",
+      "default_confidence": 85,
+      "document_priority": 50,
+      "common_abbreviations": [
+        "CL",
+        "CONLIEN",
+        "CONSTRUCTION LIEN"
+      ],
+      "notes": "Construction debt. Title cloud.",
+      "source_priority": "P0"
+    },
+    "JUDGMENT_LIEN": {
+      "lead_pattern": "lien",
+      "subtype": "judgment_lien",
+      "source_class": "lead_generating",
+      "default_confidence": 85,
+      "document_priority": 60,
+      "common_abbreviations": [
+        "AJ",
+        "ABS JDGT",
+        "JL",
+        "ABSTRACT OF JUDGMENT"
+      ],
+      "notes": "Civil judgment recorded against property.",
+      "source_priority": "P0"
+    },
+    "HOA_LIEN": {
+      "lead_pattern": "lien",
+      "subtype": "hoa_lien",
+      "source_class": "lead_generating",
+      "default_confidence": 85,
+      "document_priority": 40,
+      "common_abbreviations": [
+        "HOA L",
+        "HOA LIEN"
+      ],
+      "notes": "HOA assessments unpaid.",
+      "source_priority": "P0"
+    },
+    "HOSPITAL_LIEN": {
+      "lead_pattern": "lien",
+      "subtype": "hospital_lien",
+      "source_class": "lead_generating",
+      "default_confidence": 80,
+      "document_priority": 35,
+      "common_abbreviations": [
+        "HL",
+        "PHYSLIEN",
+        "HOSPITAL LIEN"
+      ],
+      "notes": "Medical debt lien.",
+      "source_priority": "P0"
+    },
+    "RELEASE_OF_LIEN": {
+      "lead_pattern": null,
+      "subtype": "release_of_lien",
+      "source_class": "negative_signal",
+      "default_confidence": 90,
+      "document_priority": 5,
+      "suppresses": [
+        "MECHANICS_LIEN",
+        "CONSTRUCTION_LIEN",
+        "JUDGMENT_LIEN",
+        "HOA_LIEN",
+        "HOSPITAL_LIEN",
+        "STATE_TAX_LIEN"
+      ],
+      "common_abbreviations": [
+        "REL",
+        "REL LIEN",
+        "RELEASE OF LIEN",
+        "DISCH LIEN"
+      ],
+      "notes": "Generic lien release. Context determines which prior signal is suppressed.",
+      "source_priority": "P0"
+    },
+    "VACATED_JUDGMENT": {
+      "lead_pattern": null,
+      "subtype": "vacated_judgment",
+      "source_class": "negative_signal",
+      "default_confidence": 88,
+      "document_priority": 5,
+      "suppresses": [
+        "JUDGMENT_LIEN"
+      ],
+      "common_abbreviations": [
+        "VAC JMT",
+        "VACATED JUDGMENT",
+        "DISCHARGE OF JUDGMENT LIEN",
+        "DSJUDLIEN",
+        "DISCH JUDGMENT",
+        "JUDGMENT VACATED"
+      ],
+      "notes": "Court vacated prior judgment. Includes statutory discharges of judgment liens \u2014 these are negative signals on the lien, not the lien itself.",
+      "source_priority": "P0"
+    },
+    "AFFIDAVIT_OF_HEIRSHIP": {
+      "lead_pattern": "estate",
+      "subtype": "affidavit_of_heirship",
+      "source_class": "lead_generating",
+      "default_confidence": 88,
+      "document_priority": 88,
+      "common_abbreviations": [
+        "AOH",
+        "AFF H",
+        "AFFT OF H",
+        "AFFIDAVIT OF HEIRSHIP"
+      ],
+      "notes": "Heirs declared outside formal probate. Strong partial-interest signal.",
+      "source_priority": "P0"
+    },
+    "LETTERS_TESTAMENTARY": {
+      "lead_pattern": "estate",
+      "subtype": "letters_testamentary",
+      "source_class": "lead_generating",
+      "default_confidence": 88,
+      "document_priority": 80,
+      "common_abbreviations": [
+        "LET TEST",
+        "LETTERS TESTAMENTARY"
+      ],
+      "notes": "Court has appointed an executor. Probate active.",
+      "source_priority": "P0"
+    },
+    "LETTERS_OF_ADMINISTRATION": {
+      "lead_pattern": "estate",
+      "subtype": "letters_of_administration",
+      "source_class": "lead_generating",
+      "default_confidence": 88,
+      "document_priority": 80,
+      "common_abbreviations": [
+        "LET ADMIN",
+        "LETTERS OF ADMINISTRATION"
+      ],
+      "notes": "Court has appointed an administrator. Intestate probate active.",
+      "source_priority": "P0"
+    },
+    "INHERITANCE_TAX_WAIVER": {
+      "lead_pattern": "estate",
+      "subtype": "inheritance_tax_waiver",
+      "source_class": "lead_generating",
+      "default_confidence": 85,
+      "document_priority": 65,
+      "common_abbreviations": [
+        "TAXWAIVE",
+        "INH TAX WAIVER"
+      ],
+      "notes": "State has cleared estate tax. Often signals imminent transfer.",
+      "source_priority": "P0"
+    },
+    "DISCLAIMER_OF_INTEREST": {
+      "lead_pattern": "estate",
+      "subtype": "disclaimer",
+      "source_class": "lead_generating",
+      "default_confidence": 80,
+      "document_priority": 50,
+      "common_abbreviations": [
+        "DISCLAIM",
+        "DISCLAIMER"
+      ],
+      "notes": "Heir formally rejected inheritance share.",
+      "source_priority": "P0"
+    },
+    "TRUST_AGREEMENT": {
+      "lead_pattern": "estate",
+      "subtype": "trust_agreement",
+      "source_class": "enrichment",
+      "default_confidence": 80,
+      "document_priority": 25,
+      "common_abbreviations": [
+        "TR",
+        "TRUSTAGR",
+        "TRUST AGREEMENT",
+        "REV TR",
+        "IRREV TR"
+      ],
+      "notes": "Property moved to or from trust. Enrichment unless paired with estate signals.",
+      "source_priority": "P2"
+    },
+    "DETERMINATION_OF_HEIRSHIP": {
+      "lead_pattern": "estate",
+      "subtype": "determination_of_heirship",
+      "source_class": "lead_generating",
+      "default_confidence": 88,
+      "document_priority": 80,
+      "common_abbreviations": [
+        "DOH",
+        "DETERMINATION OF HEIRSHIP"
+      ],
+      "notes": "Court order identifying heirs. Often precedes partition or sale.",
+      "source_priority": "P0"
+    },
+    "MUNIMENT_OF_TITLE": {
+      "lead_pattern": "estate",
+      "subtype": "muniment_of_title",
+      "source_class": "lead_generating",
+      "default_confidence": 88,
+      "document_priority": 75,
+      "common_abbreviations": [
+        "MUNIMENT",
+        "PROBATE AS MUNIMENT OF TITLE"
+      ],
+      "notes": "Probate without administration. Will admitted solely to clear title.",
+      "source_priority": "P0"
+    },
+    "DIVORCE_FILING": {
+      "lead_pattern": "divorce",
+      "subtype": "divorce_filing",
+      "source_class": "lead_generating",
+      "default_confidence": 80,
+      "document_priority": 40,
+      "common_abbreviations": [
+        "DIV",
+        "DIVORCE",
+        "DOM REL"
+      ],
+      "notes": "Family court filing. Property may be at issue.",
+      "source_priority": "P0"
+    },
+    "FINAL_DECREE_OF_DIVORCE": {
+      "lead_pattern": "divorce",
+      "subtype": "final_decree_of_divorce",
+      "source_class": "lead_generating",
+      "default_confidence": 85,
+      "document_priority": 50,
+      "common_abbreviations": [
+        "DECREE",
+        "FINAL DECREE",
+        "DIVORCE DECREE"
+      ],
+      "notes": "Divorce finalized. Marital property addressed.",
+      "source_priority": "P0"
+    },
+    "MARITAL_PROPERTY_DIVISION": {
+      "lead_pattern": "divorce",
+      "subtype": "marital_property_division",
+      "source_class": "lead_generating",
+      "default_confidence": 85,
+      "document_priority": 60,
+      "common_abbreviations": [
+        "MPD",
+        "MARITAL PROPERTY DIVISION"
+      ],
+      "notes": "Court order dividing marital real property.",
+      "source_priority": "P0"
+    },
+    "CODE_VIOLATION_NOTICE": {
+      "lead_pattern": "code",
+      "subtype": "code_violation_notice",
+      "source_class": "lead_generating",
+      "default_confidence": 80,
+      "document_priority": 50,
+      "common_abbreviations": [
+        "VIOL",
+        "CODE",
+        "CODE VIOL"
+      ],
+      "notes": "Active code citation against property.",
+      "source_priority": "P0"
+    },
+    "DEMOLITION_ORDER": {
+      "lead_pattern": "code",
+      "subtype": "demolition_order",
+      "source_class": "lead_generating",
+      "default_confidence": 88,
+      "document_priority": 80,
+      "common_abbreviations": [
+        "DEMO",
+        "DEMO ORDER",
+        "DEMOLITION"
+      ],
+      "notes": "Municipality has ordered demolition.",
+      "source_priority": "P0"
+    },
+    "CONDEMNATION_NOTICE": {
+      "lead_pattern": "code",
+      "subtype": "condemnation_notice",
+      "source_class": "lead_generating",
+      "default_confidence": 85,
+      "document_priority": 75,
+      "common_abbreviations": [
+        "CONDEMN",
+        "CONDEMNATION"
+      ],
+      "notes": "Building unfit for occupancy.",
+      "source_priority": "P0"
+    },
+    "MUNICIPAL_LIEN": {
+      "lead_pattern": "code",
+      "subtype": "municipal_lien",
+      "source_class": "lead_generating",
+      "default_confidence": 80,
+      "document_priority": 50,
+      "common_abbreviations": [
+        "MLC",
+        "MUNICIPAL LIEN",
+        "MUNI LIEN"
+      ],
+      "notes": "Municipal services or code lien recorded.",
+      "source_priority": "P0"
+    },
+    "WATER_LIEN": {
+      "lead_pattern": "utility_distress",
+      "subtype": "water_lien",
+      "source_class": "lead_generating",
+      "default_confidence": 80,
+      "document_priority": 35,
+      "common_abbreviations": [
+        "WATER LIEN",
+        "UTIL LIEN"
+      ],
+      "notes": "Unpaid utility account secured against property.",
+      "source_priority": "P0"
+    },
+    "BANKRUPTCY_PETITION": {
+      "lead_pattern": "bankruptcy",
+      "subtype": "bankruptcy_petition",
+      "source_class": "lead_generating",
+      "default_confidence": 85,
+      "document_priority": 80,
+      "common_abbreviations": [
+        "BK",
+        "BNKRCY",
+        "BANKRUPTCY",
+        "CH7",
+        "CH13"
+      ],
+      "notes": "Federal bankruptcy filed. Automatic stay applies to foreclosure actions.",
+      "source_priority": "P0"
+    },
+    "EVICTION_FILING": {
+      "lead_pattern": "eviction",
+      "subtype": "eviction_filing",
+      "source_class": "lead_generating",
+      "default_confidence": 75,
+      "document_priority": 30,
+      "common_abbreviations": [
+        "EVICT",
+        "FORCIBLE DETAINER",
+        "UNLAW DET"
+      ],
+      "notes": "Landlord-tenant action. Standalone weak; stacks for tired_landlord pattern.",
+      "source_priority": "P0"
+    },
+    "WRIT_OF_POSSESSION": {
+      "lead_pattern": "eviction",
+      "subtype": "writ_of_possession",
+      "source_class": "lead_generating",
+      "default_confidence": 80,
+      "document_priority": 35,
+      "common_abbreviations": [
+        "WRIT POS",
+        "WRIT OF POSSESSION",
+        "WRIT OF RESTITUTION"
+      ],
+      "notes": "Court-ordered eviction enforcement.",
+      "source_priority": "P0"
+    },
+    "PARTITION_ACTION": {
+      "lead_pattern": "title_issue",
+      "subtype": "partition_action",
+      "source_class": "lead_generating",
+      "default_confidence": 88,
+      "document_priority": 75,
+      "common_abbreviations": [
+        "PARTITION",
+        "PARTITION ACTION"
+      ],
+      "notes": "Lawsuit to force sale of co-owned property. Strong partial-interest signal.",
+      "source_priority": "P0"
+    },
+    "QUIET_TITLE_ACTION": {
+      "lead_pattern": "title_issue",
+      "subtype": "quiet_title_action",
+      "source_class": "lead_generating",
+      "default_confidence": 88,
+      "document_priority": 80,
+      "common_abbreviations": [
+        "QT",
+        "QUIET TITLE"
+      ],
+      "notes": "Litigation to clear title cloud. Strong messy-title signal.",
+      "source_priority": "P0"
+    },
+    "ADVERSE_POSSESSION_CLAIM": {
+      "lead_pattern": "title_issue",
+      "subtype": "adverse_possession_claim",
+      "source_class": "lead_generating",
+      "default_confidence": 75,
+      "document_priority": 60,
+      "common_abbreviations": [
+        "ADV POSS",
+        "ADVERSE POSSESSION"
+      ],
+      "notes": "Claim to title via long-term occupation. Title cloud.",
+      "source_priority": "P0"
+    },
+    "RECEIVERSHIP_ORDER": {
+      "lead_pattern": "commercial_distress",
+      "subtype": "receivership_order",
+      "source_class": "lead_generating",
+      "default_confidence": 85,
+      "document_priority": 75,
+      "common_abbreviations": [
+        "RECEIVERSHIP",
+        "RECEIVER ORDER"
+      ],
+      "notes": "Court-appointed receiver controls the property. Commercial distress.",
+      "source_priority": "P0"
+    },
+    "ASSIGNMENT_FOR_BENEFIT_OF_CREDITORS": {
+      "lead_pattern": "commercial_distress",
+      "subtype": "abc_assignment",
+      "source_class": "lead_generating",
+      "default_confidence": 85,
+      "document_priority": 70,
+      "common_abbreviations": [
+        "ABC",
+        "ASSIGNMENT FOR BENEFIT OF CREDITORS"
+      ],
+      "notes": "Insolvency workout instrument. Commercial distress.",
+      "source_priority": "P0"
+    },
+    "EASEMENT": {
+      "lead_pattern": null,
+      "subtype": "easement",
+      "source_class": "enrichment",
+      "default_confidence": 85,
+      "document_priority": 5,
+      "common_abbreviations": [
+        "EASE",
+        "EASEMENT"
+      ],
+      "notes": "Property right enrichment.",
+      "source_priority": "P2"
+    },
+    "RIGHT_OF_WAY": {
+      "lead_pattern": null,
+      "subtype": "right_of_way",
+      "source_class": "enrichment",
+      "default_confidence": 85,
+      "document_priority": 5,
+      "common_abbreviations": [
+        "ROW",
+        "R/W",
+        "RIGHT OF WAY"
+      ],
+      "notes": "Property right enrichment.",
+      "source_priority": "P2"
+    },
+    "PLAT": {
+      "lead_pattern": null,
+      "subtype": "plat",
+      "source_class": "enrichment",
+      "default_confidence": 90,
+      "document_priority": 5,
+      "common_abbreviations": [
+        "PLAT"
+      ],
+      "notes": "Subdivision plat. Enrichment for legal description.",
+      "source_priority": "P2"
+    },
+    "SURVEY": {
+      "lead_pattern": null,
+      "subtype": "survey",
+      "source_class": "enrichment",
+      "default_confidence": 85,
+      "document_priority": 5,
+      "common_abbreviations": [
+        "SURV",
+        "SURVEY"
+      ],
+      "notes": "Recorded survey. Enrichment.",
+      "source_priority": "P2"
+    },
+    "CONDOMINIUM_DECLARATION": {
+      "lead_pattern": null,
+      "subtype": "condominium_declaration",
+      "source_class": "enrichment",
+      "default_confidence": 85,
+      "document_priority": 5,
+      "common_abbreviations": [
+        "COND",
+        "DECL",
+        "CONDOMINIUM DECLARATION"
+      ],
+      "notes": "Condominium master deed.",
+      "source_priority": "P2"
+    },
+    "UCC_FINANCING_STATEMENT": {
+      "lead_pattern": null,
+      "subtype": "ucc_financing_statement",
+      "source_class": "enrichment",
+      "default_confidence": 85,
+      "document_priority": 10,
+      "common_abbreviations": [
+        "UCC",
+        "UCC1",
+        "UCC3",
+        "UCC FINANCING"
+      ],
+      "notes": "Personal property security interest. Enrichment.",
+      "source_priority": "P2"
+    },
+    "ESTATE_OWNER_NAME_PATTERN": {
+      "lead_pattern": "estate",
+      "subtype": "estate_owner_name_pattern",
+      "source_class": "lead_generating",
+      "default_confidence": 75,
+      "document_priority": 55,
+      "common_abbreviations": [],
+      "notes": "v5.1.2-beta+: Derived signal emitted by the pipeline when a parcel-master owner-name string matches an estate/heirship regex pattern (e.g. 'ESTATE OF', 'EST OF', 'HEIRS OF', 'HEIRS'). Medium confidence because it's a name pattern, not a court-filed instrument — but operationally valuable: appraisal districts see the estate string the moment the owner of record changes, often weeks or months before probate court filings surface. Pairs powerfully with foreclosure_notices and tax_delinquency to identify heir-hunting opportunities.",
+      "source_priority": "P2"
+    },
+    "LIVING_TRUST_OWNER_NAME_PATTERN": {
+      "lead_pattern": "transfer",
+      "subtype": "living_trust_owner_name_pattern",
+      "source_class": "lead_generating",
+      "default_confidence": 70,
+      "document_priority": 30,
+      "common_abbreviations": [],
+      "notes": "v5.1.2-beta+: Derived signal emitted by the pipeline when a parcel-master owner-name string matches a living-trust regex pattern (e.g. 'LIVING TRUST', 'FAMILY TRUST', 'REVOCABLE TRUST', 'REV TRUST', 'TRUSTEE'). Trust ownership often signals a deceased or incapacitated original owner — the trust holds the property because the grantor can no longer act on it directly. Operator leverage when paired with distress signals.",
+      "source_priority": "P2"
+    },
+    "SHERIFF_SALE_SURPLUS": {
+      "lead_pattern": "surplus_owed",
+      "subtype": "sheriff_sale_surplus",
+      "source_class": "lead_generating",
+      "default_confidence": 80,
+      "document_priority": 50,
+      "common_abbreviations": [
+        "SURPLUS",
+        "SALE SURPLUS",
+        "SHERIFF SURPLUS"
+      ],
+      "notes": "v5.1.2-beta+: Notice or filing that proceeds from a sheriff sale exceeded the debt owed. Former owner is entitled to the surplus funds and is typically a high-value contact target. Promoted from synthetic-only canonical to real canonical so production sources can declare this type via doc_type_synonyms.",
+      "source_priority": "P0"
+    }
+  },
+  "lead_patterns": [
+    "foreclosure",
+    "tax",
+    "lien",
+    "estate",
+    "code",
+    "transfer",
+    "bankruptcy",
+    "divorce",
+    "eviction",
+    "tired_landlord",
+    "surplus_owed",
+    "commercial_distress",
+    "title_issue",
+    "utility_distress"
+  ],
+  "source_classes": [
+    "lead_generating",
+    "enrichment",
+    "negative_signal",
+    "review_required"
+  ],
+  "document_statuses": [
+    "ACTIVE",
+    "RELEASED",
+    "SATISFIED",
+    "DISCHARGED",
+    "DISMISSED",
+    "EXPIRED",
+    "SUPERSEDED",
+    "UNKNOWN"
+  ],
+  "party_roles": [
+    "grantor",
+    "grantee",
+    "borrower",
+    "lender",
+    "trustee",
+    "substitute_trustee",
+    "plaintiff",
+    "defendant",
+    "decedent",
+    "heir",
+    "executor",
+    "administrator",
+    "personal_representative",
+    "lien_claimant",
+    "judgment_creditor",
+    "judgment_debtor"
+  ],
+  "source_priorities": [
+    "P0",
+    "P1",
+    "P2"
+  ],
+  "_priority_definition": {
+    "P0": "Daily-refresh distress source. Required for a shippable county intelligence build.",
+    "P1": "Weekly-refresh distress source. Acceptable supplement; cannot be the only distress feed.",
+    "P2": "Enrichment source. Supporting context only; never the headline of a build."
+  }
+}

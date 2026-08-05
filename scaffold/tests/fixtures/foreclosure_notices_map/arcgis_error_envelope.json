@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": 400,
+    "message": "Invalid where clause",
+    "details": ["Unable to parse WHERE clause."]
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xcerebro.framework/v5.4.0/contracts/evidence_ledger_entry.schema.json",
+  "title": "Evidence ledger entry (v5.4.0 pipeline — evidence ledger stage)",
+  "description": "One evidence object backing one claim, per knowledge_base/architecture/08_evidence_ledger.md. Every field shown, stored, exported, or scored must have at least one evidence entry; a field marked Confirmed with no backing evidence is relabeled Unsupported and routed through hallucination controls. The evidence ledger is populated alongside matched_leads.json and feeds the dashboard evidence drawer.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "evidence_id",
+    "record_id",
+    "field",
+    "value",
+    "status",
+    "source_id",
+    "source_reliability_grade",
+    "source_url",
+    "captured_at"
+  ],
+  "properties": {
+    "evidence_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique id for the evidence object itself (08: 'ev_<uuid>')."
+    },
+    "record_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The lead, parcel, signal, or entity record this evidence supports."
+    },
+    "field": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The canonical field name being evidenced (e.g. owner_name, recorded_date)."
+    },
+    "value": {
+      "description": "The actual value as it appears in this evidence. Any JSON type; may differ from the final record value when multiple sources contribute.",
+      "type": ["string", "number", "boolean", "object", "array", "null"]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Confirmed",
+        "Estimated",
+        "Possible",
+        "Unknown",
+        "Needs Review",
+        "Unsupported"
+      ],
+      "description": "Evidence status per 08. Unsupported is a temporary internal label — a record containing an Unsupported field cannot ship."
+    },
+    "source_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Source identifier matching a config/counties/<county_slug>.json sources key."
+    },
+    "source_name": {
+      "type": ["string", "null"],
+      "description": "Human-readable source name."
+    },
+    "source_class": {
+      "type": ["string", "null"],
+      "enum": ["lead_generating", "enrichment", "negative_signal", "review_required", null],
+      "description": "Source class per knowledge_base/domain/02_signals_and_sources.md."
+    },
+    "source_reliability_grade": {
+      "type": "string",
+      "enum": ["A", "B", "C", "D", "E"],
+      "description": "Source reliability grade per 08. A/B can carry Confirmed; E can never back a lead-generating signal."
+    },
+    "source_url": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Verbatim source URL (or a valid offline path) — never templated."
+    },
+    "source_document_id": {
+      "type": ["string", "null"],
+      "description": "Pointer into the source document for audit replay."
+    },
+    "source_row_id": {
+      "type": ["string", "null"],
+      "description": "Pointer into the source row for audit replay."
+    },
+    "captured_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this evidence was collected."
+    },
+    "parser_name": { "type": ["string", "null"] },
+    "parser_version": { "type": ["string", "null"] },
+    "parser_confidence": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Parser self-report, 0-100."
+    },
+    "match_confidence": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 100,
+      "description": "0-100, meaningful only for evidence that joins one record to another."
+    },
+    "derivation": {
+      "type": ["object", "null"],
+      "description": "Required when status is Estimated — the formula or proxy used. Null otherwise.",
+      "additionalProperties": true
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "Free-form parser commentary."
+    }
+  },
+  "allOf": [
+    {
+      "description": "08 status rule: status Estimated MUST include a derivation object.",
+      "if": {
+        "properties": { "status": { "const": "Estimated" } }
+      },
+      "then": {
+        "properties": { "derivation": { "type": "object" } },
+        "required": ["derivation"]
+      }
+    }
+  ]
+}

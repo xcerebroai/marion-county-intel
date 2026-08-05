@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Distress Intelligence</title>
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body data-ready="0" data-mode="loading">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <span class="brand-title" id="brand-title">Distress Intelligence</span>
+        <span class="brand-subtitle" id="brand-subtitle">Daily-refreshed real estate distress signals</span>
+      </div>
+      <div class="topbar-meta">
+        <span class="meta-pill" id="build-label">FULL_BUILD</span>
+        <span class="meta-pill" id="generated-at">—</span>
+        <span class="meta-pill" id="view-mode-pill">CLIENT_VIEW</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="status-banner" id="status-banner" hidden></section>
+
+  <main class="layout">
+    <aside class="filter-rail" id="filter-rail">
+      <div class="rail-group">
+        <h3 class="rail-heading">Score tier</h3>
+        <div class="chip-group" id="chips-tier" data-axis="tier"></div>
+      </div>
+      <div class="rail-group">
+        <h3 class="rail-heading">Pattern</h3>
+        <div class="chip-group" id="chips-pattern" data-axis="pattern"></div>
+      </div>
+      <div class="rail-group">
+        <h3 class="rail-heading">Attribute</h3>
+        <div class="chip-group" id="chips-attribute" data-axis="attribute"></div>
+      </div>
+      <div class="rail-group">
+        <h3 class="rail-heading">Deal path</h3>
+        <div class="chip-group" id="chips-deal-path" data-axis="deal_path"></div>
+      </div>
+      <div class="rail-group">
+        <h3 class="rail-heading">Stack depth</h3>
+        <div class="chip-group" id="chips-stack-depth" data-axis="stack_depth"></div>
+      </div>
+
+      <div class="rail-group rail-actions">
+        <button id="reset-filters" class="action-btn">Reset filters</button>
+        <button id="toggle-view-mode" class="action-btn secondary">
+          Switch to Operator View
+        </button>
+        <button id="csv-export" class="action-btn primary" data-testid="csv-export">
+          Export CSV
+        </button>
+      </div>
+    </aside>
+
+    <section class="content">
+      <div class="stat-tiles" id="stat-tiles" role="status"></div>
+      <div class="precanned-views" id="precanned-views"></div>
+
+      <div class="table-wrap" id="table-wrap">
+        <table class="leads-table" id="leads-table" aria-label="Distress leads">
+          <thead>
+            <tr>
+              <th data-sort="display_score">Score</th>
+              <th data-sort="display_tier">Tier</th>
+              <th data-sort="primary_parcel_id">Parcel</th>
+              <th data-sort="display_address">Address</th>
+              <th data-sort="display_owner">Owner</th>
+              <th>Patterns</th>
+              <th>Attributes</th>
+              <th>Deal paths</th>
+              <th data-sort="stack_depth">Stack</th>
+              <th data-sort="display_assessed_value">Assessed</th>
+              <th data-sort="display_last_sale_price">Last sale</th>
+              <th data-sort="expected_sale_date">Sale / event date</th>
+              <th>Review flags</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody id="leads-tbody"></tbody>
+        </table>
+        <p class="empty-state" id="empty-state" hidden>
+          No leads match the current filter set.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span id="footer-counts">—</span>
+    <span class="footer-spacer"></span>
+    <a class="footer-link" id="repo-link" href="#" target="_blank" rel="noopener" hidden>repo</a>
+  </footer>
+
+  <script src="dashboard.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+﻿# Auto-detect text files and normalize line endings on checkin.
+# This prevents the "every file looks modified" problem when contributors
+# work across Linux/Mac (LF) and Windows (CRLF) machines.
+
+* text=auto eol=lf
+
+# Force specific file types to LF regardless of OS
+*.md     text eol=lf
+*.json   text eol=lf
+*.jsonl  text eol=lf
+*.py     text eol=lf
+*.txt    text eol=lf
+*.yml    text eol=lf
+*.yaml   text eol=lf
+*.html   text eol=lf
+*.css    text eol=lf
+*.js     text eol=lf
+*.sh     text eol=lf
+
+# Binary types — never normalize
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.webp   binary
+*.pdf    binary
+*.zip    binary
+*.docx   binary
+*.xlsx   binary
+*.pptx   binary
+*.ico    binary

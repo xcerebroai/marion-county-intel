@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+venv/
+.venv/
+env/
+ENV/
+
+# Node (for any tooling layered on top)
+node_modules/
+npm-debug.log*
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Build artifacts that DO NOT belong in version control
+# (Phase 1+ may generate these; tracked separately by run manifests)
+data/raw/
+data/runs/*/raw/
+data/evidence/*.pdf
+
+# Per-county run logs and transient artifacts
+# The runs/<slug>/ folder itself IS committed (launch files, manifests, notes).
+# But per-county logs are scratch and not committed.
+runs/*/logs/
+runs/*/tmp/
+runs/*/.cache/
+
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+
+# Coverage / test artifacts
+.coverage
+htmlcov/
+.tox/

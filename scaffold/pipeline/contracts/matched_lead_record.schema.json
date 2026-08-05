@@ -1,0 +1,258 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xcerebro.framework/v5.4.0/contracts/matched_lead_record.schema.json",
+  "title": "Matched-lead record (v5.4.0 pipeline stage 4 output — one record in matched_leads.json)",
+  "description": "A record in matched_leads.json, the idempotent aggregator output (19_aggregator_idempotency_rule.md). Each matched lead carries one or more aggregated signals; each signal is a group of leads-base records that shared the full 18.B aggregation key, merged per the 18.C within-group contract and the 18.D cross-source rule. matched_leads.json is the aggregate output and is NEVER an aggregator input (19.C). Every matched lead MUST carry at least one signal from a PRIMARY_EVENT_SOURCE (13.5 row provenance rule). v5.4.0 Session 7A (see 17.K) adds the multi-owner block, carried from the matched lead's representative leads-base record; owner_name stays the required primary display owner and old single-owner records remain valid.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "lead_id",
+    "primary_parcel_id",
+    "owner_name",
+    "owner_type",
+    "filer_entity",
+    "review_reason",
+    "parcel_resolution_status",
+    "enrichment_status",
+    "signals",
+    "source_ids",
+    "evidence_ids"
+  ],
+  "properties": {
+    "lead_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique id for the matched lead. Deterministic given the same base-file inputs (19.D idempotency invariant)."
+    },
+    "primary_parcel_id": {
+      "type": ["string", "null"],
+      "description": "Resolved county-canonical parcel id, or null when parcel_resolution_status is UNRESOLVED / REVIEW_REQUIRED (13.14)."
+    },
+    "owner_name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The debtor / lead subject per 17 — the PRIMARY display owner. The 17.E placeholder when parcel_resolution_status is REVIEW_REQUIRED. Never a filer (20 Check 12). Backward-compatible: required, unchanged by Session 7A."
+    },
+    "owner_type": {
+      "type": "string",
+      "enum": ["ENTITY", "ESTATE", "TRUST", "INDIVIDUAL", "UNKNOWN"]
+    },
+    "filer_entity": {
+      "type": ["string", "null"],
+      "description": "Filer name (17.E). A known-filer pattern may appear here and only here, never in owner_name."
+    },
+    "review_reason": {
+      "type": ["string", "null"],
+      "description": "17.E routing reason. Non-null when parcel_resolution_status is REVIEW_REQUIRED."
+    },
+    "parcel_resolution_status": {
+      "type": "string",
+      "enum": ["RESOLVED", "UNRESOLVED", "REVIEW_REQUIRED"],
+      "description": "13.14.1 parcel resolution status. Session 7A: the downstream needs-review verdict field; multi_owner_status never carries a review verdict."
+    },
+    "enrichment_status": {
+      "type": "string",
+      "enum": ["ENRICHED", "UNENRICHED"],
+      "description": "13.14.1 enrichment status, tracked independently of parcel_resolution_status."
+    },
+    "signals": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Aggregated signals on this lead. minItems 1: a lead with zero signals is not a lead (13.5). Each item is one 18.B aggregation group.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "aggregation_key",
+          "signal_type",
+          "canonical_doc_type",
+          "count",
+          "instrument_numbers",
+          "source_urls",
+          "evidence_ids",
+          "source_ids",
+          "earliest_recorded_date",
+          "latest_recorded_date",
+          "recorded_date_range"
+        ],
+        "properties": {
+          "aggregation_key": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "The 18.B key tuple this group collapsed on.",
+            "required": ["parcel_id", "canonical_doc_type", "signal_type"],
+            "properties": {
+              "parcel_id": { "type": ["string", "null"] },
+              "canonical_doc_type": { "type": "string", "minLength": 1 },
+              "signal_type": { "type": "string", "minLength": 1 }
+            }
+          },
+          "signal_type": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Operator-facing display label (18.B). The signal chip text; the count badge shows count when count > 1."
+          },
+          "canonical_doc_type": { "type": "string", "minLength": 1 },
+          "count": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Number of base records in this group (18.C). count > 1 is legitimate stacking only when it equals the number of distinct instrument_numbers (18.E); count > distinct instrument count is a dedup failure."
+          },
+          "instrument_numbers": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Distinct instrument numbers across the group (18.C). The 18.E union key."
+          },
+          "source_urls": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Distinct source proof URLs across the group (18.C / 18.D)."
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Distinct evidence ledger entry ids across the group (18.C)."
+          },
+          "source_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1,
+            "description": "Distinct source_ids contributing to this group. More than one entry means a 18.D cross-source merge."
+          },
+          "earliest_recorded_date": {
+            "type": ["string", "null"],
+            "format": "date",
+            "description": "Earliest recorded_date in the group (18.C)."
+          },
+          "latest_recorded_date": {
+            "type": ["string", "null"],
+            "format": "date",
+            "description": "Latest recorded_date in the group (18.C)."
+          },
+          "recorded_date_range": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": { "type": ["string", "null"], "format": "date" },
+            "description": "The [earliest, latest] pair for display (18.C)."
+          }
+        }
+      }
+    },
+    "source_ids": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Distinct source_ids contributing any signal to this lead."
+    },
+    "evidence_ids": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Union of all evidence ledger entry ids across this lead's signals."
+    },
+    "lead_status": {
+      "type": ["string", "null"],
+      "enum": [
+        "RAW_RECORD",
+        "NORMALIZED_SIGNAL",
+        "MATCHED_PARCEL",
+        "STACKED_LEAD",
+        "REVIEW_REQUIRED",
+        "APPROVED_FOR_DASHBOARD",
+        "EXPORTED_TO_CRM",
+        "CONTACTED",
+        "DEAD",
+        "ARCHIVED",
+        null
+      ],
+      "description": "Lead lifecycle status per FRAMEWORK_VERSION.json lead_status_lifecycle / 09_output_schemas.md. Optional at aggregator output; the dashboard-build stage sets it."
+    },
+    "owners": {
+      "type": "array",
+      "description": "v5.4.0 Session 7A multi-owner block — every distressed owner identified, carried from the matched lead's representative leads-base record. Co-owners are NEVER dropped. A single-owner record carries exactly one entry, is_primary true. Optional for backward compatibility; old single-owner records that omit the multi-owner block remain valid.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "role", "name_type", "is_primary", "confidence", "source_field", "resolution_status", "notes"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "role": { "type": ["string", "null"] },
+          "name_type": { "type": ["string", "null"], "enum": ["TP", "DF", "GR", "GE", "PL", "OTHER", null] },
+          "is_primary": { "type": "boolean" },
+          "confidence": { "type": ["string", "null"] },
+          "source_field": { "type": ["string", "null"] },
+          "resolution_status": { "type": ["string", "null"] },
+          "notes": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "primary_owner_name": {
+      "type": ["string", "null"],
+      "description": "v5.4.0 Session 7A — the primary display owner; equals owner_name when multi_owner_status is SINGLE_OWNER or MULTIPLE_OWNERS_PRIMARY_CLEAR; the 17.E placeholder when MULTIPLE_OWNERS_PRIMARY_UNCLEAR."
+    },
+    "additional_owner_names": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "v5.4.0 Session 7A — names of every non-primary owner. Empty for SINGLE_OWNER."
+    },
+    "owner_count": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "v5.4.0 Session 7A — count of entries in owners."
+    },
+    "multi_owner_status": {
+      "type": ["string", "null"],
+      "enum": ["SINGLE_OWNER", "MULTIPLE_OWNERS_PRIMARY_CLEAR", "MULTIPLE_OWNERS_PRIMARY_UNCLEAR", null],
+      "description": "v5.4.0 Session 7A — DESCRIPTIVE owner-cardinality status, NOT a review verdict. The needs-review verdict on a matched lead is parcel_resolution_status (= REVIEW_REQUIRED), the downstream F-1 propagation. multi_owner_status has no REVIEW_REQUIRED value; when the primary owner is unclear it is MULTIPLE_OWNERS_PRIMARY_UNCLEAR and parcel_resolution_status is independently REVIEW_REQUIRED — the descriptive and verdict fields never contradict."
+    }
+  },
+  "dependentRequired": {
+    "multi_owner_status": ["owners", "primary_owner_name", "additional_owner_names", "owner_count"]
+  },
+  "allOf": [
+    {
+      "description": "v5.4.0 Session 7A — SINGLE_OWNER: exactly one owner, marked primary; owner_count 1; no additional owners.",
+      "if": { "required": ["multi_owner_status"], "properties": { "multi_owner_status": { "const": "SINGLE_OWNER" } } },
+      "then": {
+        "properties": {
+          "owner_count": { "const": 1 },
+          "owners": {
+            "minItems": 1,
+            "maxItems": 1,
+            "contains": { "required": ["is_primary"], "properties": { "is_primary": { "const": true } } }
+          },
+          "additional_owner_names": { "maxItems": 0 }
+        }
+      }
+    },
+    {
+      "description": "v5.4.0 Session 7A — MULTIPLE_OWNERS_PRIMARY_CLEAR: more than one owner, exactly one marked primary; owner_count > 1.",
+      "if": { "required": ["multi_owner_status"], "properties": { "multi_owner_status": { "const": "MULTIPLE_OWNERS_PRIMARY_CLEAR" } } },
+      "then": {
+        "properties": {
+          "owner_count": { "type": "integer", "minimum": 2 },
+          "owners": {
+            "minItems": 2,
+            "contains": { "required": ["is_primary"], "properties": { "is_primary": { "const": true } } },
+            "minContains": 1,
+            "maxContains": 1
+          }
+        }
+      }
+    },
+    {
+      "description": "v5.4.0 Session 7A — MULTIPLE_OWNERS_PRIMARY_UNCLEAR: more than one owner, NONE marked primary; owner_count > 1. multi_owner_status only describes; the verdict is separate — parcel_resolution_status MUST independently be REVIEW_REQUIRED, so the descriptive and verdict fields never contradict.",
+      "if": { "required": ["multi_owner_status"], "properties": { "multi_owner_status": { "const": "MULTIPLE_OWNERS_PRIMARY_UNCLEAR" } } },
+      "then": {
+        "properties": {
+          "owner_count": { "type": "integer", "minimum": 2 },
+          "owners": {
+            "minItems": 2,
+            "items": { "properties": { "is_primary": { "const": false } } }
+          },
+          "parcel_resolution_status": { "const": "REVIEW_REQUIRED" }
+        }
+      }
+    }
+  ]
+}

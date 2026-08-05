@@ -1,0 +1,116 @@
+{
+  "copyright": "Copyright \u00a9 2026 Xcerebro LLC. All rights reserved.",
+  "owner": "Xcerebro LLC",
+  "license": "Proprietary VIP-only license",
+  "license_file": "LICENSE.md",
+  "is_open_source": false,
+  "framework_version": "v5.6.0",
+  "previous_version": "v5.5.0",
+  "framework_codename": "Xcerebro County Intelligence Harness",
+  "locked_at": "2026-08-04",
+  "locked_rules": {
+    "county_specific_examples_allowed": false,
+    "github_pages_allowed": true,
+    "supabase_allowed": true,
+    "captcha_solver_allowed": true,
+    "stealth_browser_allowed": true,
+    "seeded_session_allowed": true,
+    "operator_seeded_session_allowed": true,
+    "residential_proxy_allowed": true,
+    "operator_credentialed_login_allowed": true,
+    "compliance_workflow_included": false,
+    "public_records_request_default": false,
+    "public_records_request_as_primary_when_no_portal_exists": true,
+    "raw_data_immutable": true,
+    "raw_data_retention_days_default": -1,
+    "canonical_doc_types_is_source_of_truth": true,
+    "recorder_and_court_normalization_separate": true,
+    "deterministic_before_semantic_normalization": true,
+    "only_canonical_types_score": true,
+    "negative_signals_suppress_only_linked_targets": true,
+    "unknown_doc_types_route_to_review": true,
+    "p0_distress_source_required_for_shippable_build": true,
+    "access_control_enforcement_must_be_tested_before_blocked": true,
+    "single_layer_human_verifiable_control_is_not_a_build_blocker": true,
+    "operator_assisted_session_handoff_is_a_valid_resolution": true,
+    "lead_type_terminology_must_be_verified_against_local_vocabulary": true,
+    "originating_event_preferred_over_downstream_stage": true,
+    "tax_roll_delinquency_and_balance_discovery_required": true,
+    "source_freshness_must_be_evidence_based": true,
+    "frozen_sources_cannot_satisfy_p0_gate": true
+  },
+  "source_priority_definitions": {
+    "P0": "daily-refresh distress sources (clerk, court, sheriff, code, tax delinquency) \u2014 at least one P0 must be unblocked for a shippable build",
+    "P1": "weekly-refresh distress sources (sheriff weekly PDFs, bulk extracts) \u2014 supplement only, cannot be sole distress feed",
+    "P2": "enrichment sources (parcel master, GIS, USPS, utility) \u2014 supporting context, never the headline"
+  },
+  "build_priority_definitions": {
+    "mvp_required": "build first to ship minimum viable lead pipeline",
+    "high_value": "high-value lead source, build after MVP",
+    "enrichment": "supporting enrichment, no leads on its own",
+    "optional": "nice-to-have, not blocking",
+    "future": "deferred to later build phase"
+  },
+  "source_reliability_grade_definitions": {
+    "A": "official source of truth (clerk recorder, tax collector, court of jurisdiction direct)",
+    "B": "official but delayed (same official source delivered via public-records request or scheduled bulk)",
+    "C": "vendor mirror of official source",
+    "D": "scraped public display only, not authoritative",
+    "E": "enrichment only, never proof"
+  },
+  "lead_status_lifecycle": [
+    "RAW_RECORD",
+    "NORMALIZED_SIGNAL",
+    "MATCHED_PARCEL",
+    "STACKED_LEAD",
+    "REVIEW_REQUIRED",
+    "APPROVED_FOR_DASHBOARD",
+    "EXPORTED_TO_CRM",
+    "CONTACTED",
+    "DEAD",
+    "ARCHIVED"
+  ],
+  "dashboard_access_modes": [
+    "FULL_ACCESS",
+    "CLIENT_VIEW",
+    "DEMO_VIEW",
+    "PAUSED_FOR_NONPAYMENT",
+    "REDACTED_VIEW"
+  ],
+  "source_failure_classifications": [
+    "NO_RESULTS",
+    "PARSER_CHANGED",
+    "CAPTCHA_REQUIRED",
+    "SESSION_EXPIRED",
+    "WAF_BLOCKED",
+    "RATE_LIMITED",
+    "LOGIN_REQUIRED",
+    "SOURCE_DOWN",
+    "LAYOUT_CHANGED",
+    "TIMEOUT",
+    "UNKNOWN_ERROR"
+  ],
+  "required_tests_for_shippable_build": [
+    "scaffold/tests/test_golden_path.py",
+    "scaffold/tests/test_county_agnostic_regression.py"
+  ],
+  "do_not_argue": [
+    "These rules are locked. Future Claude sessions should not re-debate them.",
+    "Changing any locked rule requires the operator to explicitly unlock it and update this file.",
+    "Do not silently rename folders, move files, replace approved rules, or add county-specific examples.",
+    "If a proposed change conflicts with locked rules, stop and ask before patching."
+  ],
+  "release_channel": "stable",
+  "changelog": [
+    {
+      "version": "v5.6.0",
+      "date": "2026-08-04",
+      "summary": "Recon protocol Gaps 4-7 (Protocol 01 §01.28-§01.32), each closing a class of false recon outcome. Gap 4: access-control ENFORCEMENT must be tested before any blocked classification — a control that exists is not a control that blocks; adds SINGLE_LAYER_HUMAN_VERIFIABLE / MULTI_LAYER / PER_REQUEST_CHALLENGE tiering, and a single-layer human-verifiable control is explicitly NOT a build blocker but an operator-assisted session handoff. Gap 5: lead type names are framework vocabulary, not local vocabulary — terminology must be established empirically from the jurisdiction's own controlled vocabulary, and the ORIGINATING event must be separated from downstream stages of the same distress process; adds NOT_APPLICABLE_IN_JURISDICTION. Gap 6: tax roll, delinquency list, and balance lookup must be searched and classified separately, with a delivery-mechanism preference order and a state-level fallback; a tax sale list does not substitute for a delinquency feed. Gap 7: freshness must be verified from max actual record date, not advertised cadence; adds LIVE/LAGGING/FROZEN/UNKNOWN, and a FROZEN source cannot satisfy the P0 gate. Four new gate tests auto-discovered from scaffold/tests/v5_6_0/."
+    },
+    {
+      "version": "v5.5.0",
+      "date": "2026-06-26",
+      "summary": "Source category expansion: 5 new mandatory Phase 0.A search queries (bankruptcy court, public notices, land bank, treasurer/tax billing, UCC/entity enrichment). Lead type sweep 27->29 (Bankruptcy Notice, Public Notice). UCC/entity classified ENRICHMENT_SOURCE + build_priority:future. Protocol 01 and matrix 16 updated."
+    }
+  ]
+}

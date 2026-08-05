@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xcerebro.framework/v5.4.0/contracts/debtor_resolved_record.schema.json",
+  "title": "Debtor-party-resolved record (v5.4.0 pipeline stage 2 output)",
+  "description": "The output of the debtor party engine (knowledge_base/architecture/17_debtor_party_rules.md). It is a raw event record (raw_event_record.schema.json) with the 17-derived debtor identity attached: owner_name, owner_type, filer_entity, and the resolution verdict. When 17.E routing fires (expected debtor missing, a known filer matches the proposed owner, a document-body debtor is not extractable, or no 17.C rule exists for the doc type), debtor_resolution_status is REVIEW_REQUIRED, owner_name is the 17.E placeholder, and review_reason is populated. v5.4.0 finding F-1 — RATIFIED Session 2 (see 17.K): the 17 engine records its verdict ONLY in debtor_resolution_status and MUST NOT write parcel_resolution_status or any other parcel-stage field; parcel_resolution_status first appears on the leads_base record. v5.4.0 Session 7A (see 17.K) adds the multi-owner block (owners, primary_owner_name, additional_owner_names, owner_count, multi_owner_status); owner_name stays the required primary display owner and old single-owner records remain valid.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "raw_event_id",
+    "source_id",
+    "source_role",
+    "canonical_doc_type",
+    "source_url",
+    "recorded_date",
+    "instrument_number",
+    "property_refs",
+    "owner_name",
+    "owner_type",
+    "filer_entity",
+    "debtor_resolution_status",
+    "review_reason",
+    "debtor_extraction_method",
+    "expected_debtor_name_type"
+  ],
+  "properties": {
+    "raw_event_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Back-reference to the raw_event_record this was resolved from."
+    },
+    "source_id": { "type": "string", "minLength": 1 },
+    "source_role": {
+      "type": "string",
+      "enum": [
+        "PRIMARY_EVENT_SOURCE",
+        "SUPPORTING_EVENT_SOURCE",
+        "ENRICHMENT_SOURCE",
+        "REFERENCE_SOURCE",
+        "BLOCKED_SOURCE"
+      ]
+    },
+    "canonical_doc_type": { "type": "string", "minLength": 1 },
+    "instrument_number": { "type": ["string", "null"] },
+    "recorded_date": { "type": ["string", "null"], "format": "date" },
+    "event_date": { "type": ["string", "null"], "format": "date" },
+    "source_url": { "type": "string", "minLength": 1 },
+    "property_refs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "parcel_id": { "type": ["string", "null"] },
+        "situs_address": { "type": ["string", "null"] },
+        "legal_description": { "type": ["string", "null"] },
+        "case_number": { "type": ["string", "null"] }
+      },
+      "required": ["parcel_id", "situs_address", "legal_description", "case_number"]
+    },
+    "evidence_ids": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "owner_name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The resolved debtor / lead subject per 17.C — the PRIMARY display owner. When debtor_resolution_status is REVIEW_REQUIRED this is the 17.E placeholder '<canonical_doc_type> against unidentified party' — never a filer name. Backward-compatible: required, unchanged by Session 7A."
+    },
+    "owner_type": {
+      "type": "string",
+      "enum": ["ENTITY", "ESTATE", "TRUST", "INDIVIDUAL", "UNKNOWN"],
+      "description": "Owner-type classification per 17.F. Precedence ENTITY > ESTATE > TRUST > INDIVIDUAL; UNKNOWN only when the name is empty or pure punctuation."
+    },
+    "filer_entity": {
+      "type": ["string", "null"],
+      "description": "The original filer / lienholder / claimant name from the raw record (17.E). Populated whenever a filer is identifiable — including on RESOLVED records. Null when no filer could be identified, e.g. the F-5 default rule (no 17.C rule for the doc type) routes before any filer determination. A known-filer pattern may appear here and ONLY here — never in owner_name (20_semantic_verification_contract.md Check 12)."
+    },
+    "debtor_resolution_status": {
+      "type": "string",
+      "enum": ["RESOLVED", "REVIEW_REQUIRED"],
+      "description": "The debtor party engine's sole verdict field. RESOLVED = a real debtor was extracted per 17.C. REVIEW_REQUIRED = 17.E routing fired (expected debtor missing, a known filer matched the proposed owner, a document-body debtor was not extractable, or no 17.C rule exists for the doc type — the F-5 default). v5.4.0 finding F-1, RATIFIED Session 2 (see 17.K): the 17 engine does NOT write parcel_resolution_status; the REVIEW_REQUIRED verdict is propagated to parcel_resolution_status later, by the leads_base writer. Session 7A: this remains the single needs-review verdict field — multi_owner_status is descriptive only and never carries a review verdict."
+    },
+    "review_reason": {
+      "type": ["string", "null"],
+      "description": "The 17.E rule that triggered REVIEW_REQUIRED routing — e.g. 'expected_debtor_name_type TP missing' or 'known_filer_pattern match on STATE OF <*>'. Null when debtor_resolution_status is RESOLVED."
+    },
+    "expected_debtor_name_type": {
+      "type": ["string", "null"],
+      "description": "The name_type the 17.C rule designated as the debtor source for this canonical_doc_type. Audit field; null for document-body extraction."
+    },
+    "debtor_extraction_method": {
+      "type": "string",
+      "enum": [
+        "STRUCTURED_NAME_TYPE",
+        "FALLBACK_NAME_TYPE",
+        "DOCUMENT_BODY",
+        "REVIEW_ROUTED"
+      ],
+      "description": "How owner_name was derived: from the 17.C expected name_type, from the fallback name_type, extracted from document_body_text, or REVIEW_ROUTED when 17.E fired."
+    },
+    "owners": {
+      "type": "array",
+      "description": "v5.4.0 Session 7A multi-owner block — every distressed owner the 17 engine identified on the source document. Co-owners are NEVER dropped: every identified owner appears here regardless of multi_owner_status. A single-owner record carries exactly one entry, is_primary true. Optional for backward compatibility; old single-owner records that omit the multi-owner block remain valid.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "role", "name_type", "is_primary", "confidence", "source_field", "resolution_status", "notes"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "role": { "type": ["string", "null"] },
+          "name_type": { "type": ["string", "null"], "enum": ["TP", "DF", "GR", "GE", "PL", "OTHER", null] },
+          "is_primary": { "type": "boolean" },
+          "confidence": { "type": ["string", "null"] },
+          "source_field": { "type": ["string", "null"] },
+          "resolution_status": { "type": ["string", "null"] },
+          "notes": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "primary_owner_name": {
+      "type": ["string", "null"],
+      "description": "v5.4.0 Session 7A — the primary display owner; equals owner_name when multi_owner_status is SINGLE_OWNER or MULTIPLE_OWNERS_PRIMARY_CLEAR; the 17.E placeholder when MULTIPLE_OWNERS_PRIMARY_UNCLEAR (ownership priority is never guessed)."
+    },
+    "additional_owner_names": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "v5.4.0 Session 7A — names of every non-primary owner. Empty for SINGLE_OWNER."
+    },
+    "owner_count": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "v5.4.0 Session 7A — count of entries in owners."
+    },
+    "multi_owner_status": {
+      "type": ["string", "null"],
+      "enum": ["SINGLE_OWNER", "MULTIPLE_OWNERS_PRIMARY_CLEAR", "MULTIPLE_OWNERS_PRIMARY_UNCLEAR", null],
+      "description": "v5.4.0 Session 7A — DESCRIPTIVE owner-cardinality status, NOT a review verdict. It describes owner count and primary clarity only. The needs-review verdict stays debtor_resolution_status (the F-1-ratified field). multi_owner_status has no REVIEW_REQUIRED value by design; when the primary owner is unclear it is MULTIPLE_OWNERS_PRIMARY_UNCLEAR and debtor_resolution_status is independently REVIEW_REQUIRED — the descriptive and verdict fields answer different questions and can never contradict."
+    }
+  },
+  "dependentRequired": {
+    "multi_owner_status": ["owners", "primary_owner_name", "additional_owner_names", "owner_count"]
+  },
+  "allOf": [
+    {
+      "description": "17.E / v5.4.0 F-1: a REVIEW_REQUIRED debtor verdict carries a non-empty review_reason and REVIEW_ROUTED extraction. filer_entity is populated when a filer was identified and is null when routing fired before any filer determination (the F-5 default rule). The 17 engine writes no parcel-stage field.",
+      "if": {
+        "properties": { "debtor_resolution_status": { "const": "REVIEW_REQUIRED" } }
+      },
+      "then": {
+        "properties": {
+          "review_reason": { "type": "string", "minLength": 1 },
+          "debtor_extraction_method": { "const": "REVIEW_ROUTED" }
+        },
+        "required": ["review_reason"]
+      }
+    },
+    {
+      "description": "A RESOLVED debtor verdict carries no review_reason and is not REVIEW_ROUTED.",
+      "if": {
+        "properties": { "debtor_resolution_status": { "const": "RESOLVED" } }
+      },
+      "then": {
+        "properties": {
+          "review_reason": { "type": "null" },
+          "debtor_extraction_method": {
+            "enum": ["STRUCTURED_NAME_TYPE", "FALLBACK_NAME_TYPE", "DOCUMENT_BODY"]
+          }
+        }
+      }
+    },
+    {
+      "description": "v5.4.0 Session 7A — SINGLE_OWNER: exactly one owner, marked primary; owner_count 1; no additional owners.",
+      "if": { "required": ["multi_owner_status"], "properties": { "multi_owner_status": { "const": "SINGLE_OWNER" } } },
+      "then": {
+        "properties": {
+          "owner_count": { "const": 1 },
+          "owners": {
+            "minItems": 1,
+            "maxItems": 1,
+            "contains": { "required": ["is_primary"], "properties": { "is_primary": { "const": true } } }
+          },
+          "additional_owner_names": { "maxItems": 0 }
+        }
+      }
+    },
+    {
+      "description": "v5.4.0 Session 7A — MULTIPLE_OWNERS_PRIMARY_CLEAR: more than one owner, exactly one marked primary; owner_count > 1.",
+      "if": { "required": ["multi_owner_status"], "properties": { "multi_owner_status": { "const": "MULTIPLE_OWNERS_PRIMARY_CLEAR" } } },
+      "then": {
+        "properties": {
+          "owner_count": { "type": "integer", "minimum": 2 },
+          "owners": {
+            "minItems": 2,
+            "contains": { "required": ["is_primary"], "properties": { "is_primary": { "const": true } } },
+            "minContains": 1,
+            "maxContains": 1
+          }
+        }
+      }
+    },
+    {
+      "description": "v5.4.0 Session 7A — MULTIPLE_OWNERS_PRIMARY_UNCLEAR: more than one owner, NONE marked primary; owner_count > 1. multi_owner_status only describes; the verdict is separate — debtor_resolution_status MUST independently be REVIEW_REQUIRED, so the descriptive and verdict fields never contradict.",
+      "if": { "required": ["multi_owner_status"], "properties": { "multi_owner_status": { "const": "MULTIPLE_OWNERS_PRIMARY_UNCLEAR" } } },
+      "then": {
+        "properties": {
+          "owner_count": { "type": "integer", "minimum": 2 },
+          "owners": {
+            "minItems": 2,
+            "items": { "properties": { "is_primary": { "const": false } } }
+          },
+          "debtor_resolution_status": { "const": "REVIEW_REQUIRED" }
+        }
+      }
+    }
+  ]
+}
