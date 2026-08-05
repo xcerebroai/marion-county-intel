@@ -30,9 +30,14 @@ called out.
     BIGGEST RISK:         Court records carry NO property address. The parcel
                           join is the single hardest problem in this build.
 
-Three findings overturn common assumptions about this county, including two
-stated in the build request and two asserted by the prior `marion-in-intel`
-recon. They are detailed in §8.
+    HEADLESS-BROWSER PASS COMPLETED 2026-08-05. Four sources moved to GREEN
+    (recorder, tax sale, Accela, Gateway); no source moved down. The recorder
+    enforcement test is done and it is NOT blocked. §01.22 sample-document
+    inspection is now discharged for every GREEN source. Full changes in §12.
+
+Findings that overturn common assumptions about this county — from the build
+request, the prior `marion-in-intel` recon, and the pre-browser pass of this
+recon — are detailed in §8.
 
 ---
 
@@ -152,18 +157,52 @@ So the canonical key cannot be read directly off the primary distress sources.
 It must be **derived** via an address or owner bridge against the parcel layer.
 Ranked by reliability:
 
-    1. ADDRESS NORMALIZATION (recommended primary bridge)
+    0. DIRECT PARCEL KEY — no bridge needed (CONFIRMED 2026-08-05)
+       Three sources turned out to carry a parcel key directly and need no
+       matching at all. This was not known before the browser pass:
+         - Tax sale Parcel Status List and Surplus PDFs are keyed on the LOCAL
+           parcel number (e.g. 1000182 = PARCEL_C). §4.2.
+         - MapIndy Abandoned and Vacant is keyed on PARCEL_I. §4.5.
+         - MapIndy Registered Landlord is keyed on PARCEL_C. §4.5.
+         - Accela code enforcement exposes a parcel-number SEARCH field
+           (`txtGSParcelNo`), so the live system is parcel-aware even though the
+           open-data extract has no parcel column. §4.4.
+       Use the key. Do not build an address match for these.
+
+    1. LEGAL DESCRIPTION -> SUBDIVISION + LOT (the recorder's only path)
+       PROVEN END-TO-END 2026-08-05. The recorder exposes no address and no
+       parcel by statute (§4.1), but every indexed document carries a
+       `LegalSummary` such as "Sub: SADDLEBROOK NORTH SEC 1  Lot: 2". Chain:
+
+         recorder LegalSummary
+           -> MapIndy layer 19 "Subdivisions" WHERE UPPER(RECORDED_NAME) matches
+              -> SUBDIV_TAG
+           -> MapIndy layer 10 Parcel WHERE SUBDIVISION_TAG=<tag> AND LOTNUM=<lot>
+              -> STATEPARCELNUMBER + PARCEL_C
+
+       Verified against a real record: "SADDLEBROOK NORTH SEC 1 / Lot 2"
+       resolved to SUBDIV_TAG 6785, then to EXACTLY ONE parcel,
+       49-06-05-112-029.000-600 (PARCEL_C 6023323, 3619 CATALPA AVE), whose own
+       LEGAL_DESCRIPTION_ reads "SADDLEBROOK NORTH SECTION 1 L 2". Deterministic,
+       not fuzzy.
+
+         COVERAGE CEILING: 114,831 of 347,050 parcels (33%) have both
+         SUBDIVISION_TAG > 0 and a populated LOTNUM. Metes-and-bounds and
+         unplatted parcels have no lot number and are unreachable this way.
+         DO NOT join on SUBDIVNUM — it is '0' for many subdivisions and will
+         match hundreds of unrelated parcels. Use SUBDIVISION_TAG / SUBDIV_TAG.
+
+    2. ADDRESS NORMALIZATION (primary bridge for the address-bearing sources)
        Normalize source address -> match against parcel layer STNUMBER +
        FULL_STNAME + ZIPCODE -> read STATEPARCELNUMBER and PARCEL_I.
-       Works for: code enforcement, sheriff sale list, tax sale list.
+       Still required for: Accela code enforcement result rows, sheriff sale
+       list, and the tax sale Surplus PDF's "Parcel Location" column.
        Supporting asset: the county publishes address point layers ("Buildings
        with Addresses", "Building Unit Addresses", both CSV on the open data
        portal, and MapIndy layer 0 "Unit Address Points") which give an
        authoritative address->parcel spine rather than fuzzy string matching.
-       This is the highest-value unbuilt asset in the county and should be
-       built as a dedicated crosswalk table before any matcher work.
 
-    2. SHERIFF SALE AS THE ADDRESS BRIDGE FOR FORECLOSURE (high value)
+    3. SHERIFF SALE AS THE ADDRESS BRIDGE FOR FORECLOSURE (high value)
        The MF court case has no address; the sheriff sale list for the same
        foreclosure HAS the address. Joining MF cases to sheriff sale entries by
        case number recovers the address — and therefore the parcel — for the
@@ -204,23 +243,29 @@ Ranked by reliability:
 
 ## 2. Recommended source priority order
 
+Revised 2026-08-05 after the headless-browser pass. Verdict changes marked.
+
     RANK  SOURCE                        ROLE          PRIORITY  VERDICT
     1     MyCase — Indiana Courts       PRIMARY       P0        GREEN
     2     MapIndy Parcel layer          ENRICHMENT    P2        GREEN
-    3     MapIndy Abandoned & Vacant    PRIMARY       P1        GREEN
-    4     Accela code enforcement       PRIMARY       P0        YELLOW
-    5     Indiana Gateway tax bills     ENRICHMENT    P2        YELLOW
-    6     Sheriff sale list             SUPPORTING    P1        YELLOW
-    7     Tax sale (GovEase/SRI)        PRIMARY       P1        YELLOW
+    3     Tax sale lists (indy.gov PDF) PRIMARY       P1        GREEN  (was YELLOW)
+    4     MapIndy Abandoned & Vacant    PRIMARY       P1        GREEN
+    5     Marion County Recorder        PRIMARY       P1        GREEN  (was RED)
+    6     Accela code enforcement       PRIMARY       P0        GREEN  (was YELLOW)
+    7     Indiana Gateway tax bills     ENRICHMENT    P2        GREEN  (was YELLOW)
     8     MapIndy Registered Landlord   ENRICHMENT    P2        GREEN
-    9     Marion County Recorder        PRIMARY       P1        RED-ish
+    9     Sheriff sale list (GovEase)   SUPPORTING    P1        YELLOW
     10    Open-data code enforcement    BACKFILL ONLY —         RED as live
     11    PACER bankruptcy              PRIMARY       future    RED
 
-Build order recommendation: **1 -> 2 -> address crosswalk (§1.5) -> 3 -> 4 ->
-6 -> 5 -> 7**. Ship an MVP on MyCase + parcel + address crosswalk alone; that
-combination already produces foreclosure, eviction, probate, and tax deed leads
-with a real parcel join.
+Build order recommendation: **1 -> 2 -> 3 -> address crosswalk (§1.5) -> 4 ->
+6 -> 5 -> 7 -> 9**. Tax sale moves up sharply: it is a static PDF set already
+keyed on the parcel number, so it needs no crosswalk and delivers tax
+delinquency, tax sale certificate, and surplus leads immediately.
+
+Ship an MVP on MyCase + parcel layer + tax sale lists; that combination produces
+foreclosure, eviction, probate, tax deed, tax delinquency and surplus leads, and
+only the court sources need the address crosswalk.
 
 ---
 
@@ -261,12 +306,19 @@ civil cases, Marion County only):
       5  CB - Foreign Judgment
       1  TP - Verified Petition for Issuance of a Tax Deed
 
-Live MF examples pulled 2026-08-04 (filed 06/02/2026):
+Live MF examples pulled 2026-08-04 (filed 06/02/2026), defendant names redacted:
 
-    49D33-2606-MF-030447  Rocket Mortgage, LLC v. <individual>, ...
-    49D33-2606-MF-030448  Lakeview Loan Servicing, LLC v. <individual>, ...
+    49D33-2606-MF-030447  Rocket Mortgage, LLC v. <individual>, Indiana Housing
+                          & Community Development Authority, State of Indiana
+    49D33-2606-MF-030448  Lakeview Loan Servicing, LLC v. <individuals>,
+                          Eagles Landing Homeowners Association, Inc.
     49D33-2606-MF-030449  U.S. BANK NATIONAL ASSOCIATION v. <individual>, ...
-    49D33-2606-MF-030468  KeyBank National Association v. <individual>, ...
+    49D33-2606-MF-030468  KeyBank National Association v. <individuals>,
+                          JPMorgan Chase Bank, National Association
+
+The `Style` field reliably reads "<lender> v. <borrower(s)>", so the plaintiff
+is the lender and the first individual defendant is the distressed owner — the
+shape the debtor-party engine needs.
 
 MF volume ≈ 8/day ≈ ~2,000/year. Filings concentrate in court **49D33** (Marion
 Superior Court, the foreclosure docket). Case number format:
@@ -291,24 +343,24 @@ not as the origination event.
     Tax Sale                   Marion County Tax Sale (GovEase/SRI)   LIVE
     Tax Sale Certificate       commissioners' certificate sale        LIVE
     Tax Delinquency            treasurer balance / tax sale list      PARTIAL — §6
-    Lis Pendens                recorder document type                 BLOCKED — §4.1
+    Lis Pendens                NO DEDICATED RECORDER CODE — §4.1      NOT_SEPARABLE
     Civil Judgment             CC - Civil Collection (MyCase)         LIVE, high volume
-    Abstract of Judgment       recorder document type                 BLOCKED — §4.1
-    Mechanic Lien              recorder document type                 BLOCKED — §4.1
-    Construction Lien          recorder document type                 BLOCKED — §4.1
-    Federal Tax Lien           recorder document type                 BLOCKED — §4.1
-    State Tax Lien             IN tax warrant / recorder              BLOCKED — §4.1
+    Abstract of Judgment       NO DEDICATED RECORDER CODE — §4.1      NOT_SEPARABLE
+    Mechanic Lien              MECHANIC LIEN (code 24), recorder      LIVE (unblocked)
+    Construction Lien          MECHANIC LIEN (code 24) — same code    LIVE (unblocked)
+    Federal Tax Lien           FEDERAL TAX LIEN (code 21), recorder   LIVE (unblocked)
+    State Tax Lien             NO DEDICATED CODE — generic LIEN (23)  NOT_SEPARABLE
     Probate                    EU / ES / EM (MyCase, category PR)     LIVE
-    Affidavit of Heirship      recorder document type                 BLOCKED — §4.1
-    Executor Deed              recorder document type                 BLOCKED — §4.1
-    Administrator Deed         recorder document type                 BLOCKED — §4.1
+    Affidavit of Heirship      AFFIDAVIT (code 3) — generic bucket    NOT_SEPARABLE
+    Executor Deed              DEED (code 18) — generic bucket        NOT_SEPARABLE
+    Administrator Deed         DEED (code 18) — generic bucket        NOT_SEPARABLE
     Code Lien                  Enforcement/Violation/* (Accela)       LIVE
     Demolition                 Enforcement/Violation/Demolition       LIVE
     Condemnation               Enforcement/Investigation/Unsafe Bldgs LIVE
     Eviction                   EV - Evictions, two dockets (MyCase)   LIVE, very high vol
     Divorce                    DR / DC (MyCase, category FAM)         LIVE, low value
     Bankruptcy                 PACER — S.D. Indiana                   BLOCKED, paid
-    Surplus                    tax sale surplus / sheriff overage     UNCERTAIN — §9
+    Surplus                    Tax Sale Surplus Details PDF — §4.2    LIVE (resolved)
     Bankruptcy Notice          PACER                                  BLOCKED, paid
     Public Notice              newspaper of record / posted notices   UNCERTAIN — §9
 
@@ -317,9 +369,36 @@ not as the origination event.
     where a tax sale certificate holder converts to a deed. Low volume (~1 per
     5 filing days) but an extremely high-intent distress signal.
 
-**Coverage summary:** 15 of 29 framework lead types are LIVE and buildable now.
-9 are blocked behind the single recorder blocker (§4.1) — one unblock recovers
-all nine. 3 are structurally N/A (judicial state). 2 are uncertain (§9).
+**Coverage summary (revised 2026-08-05).** 19 of 29 framework lead types are
+LIVE and buildable now — up from 15. The recorder is unblocked (§4.1), which
+delivered Mechanic Lien, Construction Lien and Federal Tax Lien outright, and
+the tax sale PDFs resolved Surplus.
+
+    LIVE                19   (was 15)
+    NOT_SEPARABLE        6   Lis Pendens, Abstract of Judgment, State Tax Lien,
+                             Affidavit of Heirship, Executor Deed,
+                             Administrator Deed — the recorder is reachable but
+                             has no dedicated code for these; they sit inside
+                             generic AFFIDAVIT / DEED / LIEN / COURT DOCUMENT
+                             buckets and can only be separated by reading the
+                             paywalled document image
+    NOT_APPLICABLE       3   trustee sale variants — judicial state
+    BLOCKED (paid)       2   Bankruptcy, Bankruptcy Notice — PACER
+    UNCERTAIN            1   Public Notice (§9)
+
+**Important correction.** The pre-browser recon said "9 lead types are blocked
+behind the single recorder blocker — one unblock recovers all nine." The unblock
+happened, and it recovered THREE, not nine. The other six are limited by the
+county's document-type vocabulary, not by access. That is a taxonomy limit, and
+no amount of access work fixes it — only paying for document images would, and
+even then it means OCR-classifying generic DEED and AFFIDAVIT filings at volume.
+Recorded plainly because the earlier framing overstated the prize.
+
+    Additional lead types found in the recorder taxonomy, not in the framework
+    sweep: SHERIFF DEED (code 33) — the post-sale transfer, confirming a
+    completed foreclosure; VACATED PROPERTY (code 7); ASSESSMENT LIEN (46),
+    SEWER LIEN (35), HOSPITAL LIEN (50); ASSIGNMENT OF LAND CONTRACTS (49),
+    a creative-finance signal.
 
 ---
 
@@ -327,18 +406,131 @@ all nine. 3 are structurally N/A (judicial state). 2 are uncertain (§9).
 
 ### 4.1 Marion County Recorder — recorded documents
 
+**STATUS CHANGED 2026-08-05 (headless-browser pass): RED -> GREEN.**
+
     Authority:      Marion County Recorder, 200 E. Washington St, Suite 1040
     Portal:         https://inmarion.fidlar.com/INMarion/DirectSearch/
     Vendor:         Fidlar Technologies (NOT Doxpop, NOT Landex, NOT county-native)
-    Live status:    HTTP 200, 63,135 bytes, title "Direct Search"
-    Architecture:   Angular SPA. Server-rendered HTML contains ZERO forms and
-                    zero input elements — all search UI is client-rendered.
-    Bundles:        runtime.a11dc006eb6e3c31.js, polyfills.29452d2039922ec4.js,
-                    main.c6975cfaa4c318e4.js (991,266 bytes)
+    Product:        "Direct Search" v5.0.10-rel (appConfig.json)
+    Live status:    HTTP 200, title "Direct Search"
+    Architecture:   Angular SPA (Angular Material). Server-rendered HTML has zero
+                    forms; all search UI is client-rendered.
+    API base:       https://inmarion.fidlar.com/INMarion/Scrap.WebService.DirectSearch/
+                    (from appConfig.json -> "webApiBase") — a Breeze service
     Server:         Microsoft-IIS/10.0, ASP.NET
-    Access class:   UNKNOWN — enforcement not yet tested (see below)
-    Bulk (§01.24):  UNKNOWN, presumed PER_RECORD_ONLY
-    Scrapeability:  RED for now, plausibly YELLOW after one enforcement test
+    Access class:   SEARCH_ONLY_PUBLIC — index/metadata free, document images paid
+    Bulk (§01.24):  BATCH_QUERY — date-range + party or doc-type queries return
+                    full result sets in one JSON response (90 results in 100 KB)
+    Freshness:      LAGGING BY DESIGN — "Document information is available five
+                    days after recording" (portal's own InfoMessage). Build the
+                    cursor with a 5-day lag or records will be missed.
+    Scrapeability:  GREEN (browser-driven) / RED (pure HTTP — see enforcement)
+
+**Endpoints (captured from live network traffic).** All under the API base:
+
+    GET  /breeze/Settings        capability matrix — no auth required (HTTP 200
+                                 via plain HTTP, no browser, no token)
+    GET  /breeze/DocumentTypes   the 50-value doc type registry — no auth required
+    POST /breeze/Search          the search endpoint — AUTH REQUIRED (see below)
+
+Search request body (verbatim, from the captured XHR):
+
+    {"FirstName":"","LastBusinessName":"SMITH","StartDate":"2026-01-01",
+     "EndDate":"2026-01-31","DocumentName":"","DocumentType":"",
+     "SubdivisionName":"","SubdivisionLot":"","SubdivisionBlock":"",
+     "MunicipalityName":"","TractSection":"","TractTownship":"","TractRange":"",
+     "TractQuarter":"","TractQuarterQuarter":"","AddressHouseNo":"",
+     "AddressStreet":"","AddressCity":"","AddressZip":"","ParcelNumber":"",
+     "Book":"","Page":"","ReferenceNumber":"",
+     "DisplayStartDate":"01/01/2026","DisplayEndDate":"01/31/2026"}
+
+**§01.29 ENFORCEMENT TEST — PERFORMED 2026-08-05. Control present AND enforced,
+but machine-satisfiable without a human.**
+
+    Test A — POST /breeze/Search with no auth and no captcha header
+             RESULT: HTTP 401 Unauthorized. Enforcement is REAL.
+
+    Test B — same search driven through a headless browser
+             RESULT: HTTP 200, 100,457 bytes, TotalResults 90.
+             No challenge was displayed at any point. No human interaction.
+             Post-search DOM check: recaptcha bframe present but NOT visible,
+             body text contains no captcha/"not a robot" prompt.
+
+Two headers are required on `/breeze/Search` and both are minted automatically
+by the page:
+
+    authorization: Bearer <JWE>   an encrypted JWT issued to the anonymous session
+    fidlarcaptchasolution: <token> a reCAPTCHA **v3 invisible** token
+                                   site key 6LckDLwaAAAAAFdkFeW-dkX0IMirFhqiB_tXcRZE
+
+**§01.29 tiering: `PER_REQUEST_CHALLENGE`.** The token is minted per search and
+there is no durable session to hand off. Critically, though, reCAPTCHA v3 is
+*score-based and invisible* — there is no puzzle for a human to solve, so this
+is NOT an operator-assisted source and NOT a `SINGLE_LAYER_HUMAN_VERIFIABLE`
+one. It is simply a source whose adapter must run in a real browser context that
+executes the reCAPTCHA JS, rather than as a plain HTTP client. Cost: a
+Playwright-driven adapter instead of a `requests`-style one. That is an
+engineering cost, not a blocker, and no CAPTCHA is ever solved.
+
+**API discovery (§01.23) — documented API found: NO** (the Breeze service is
+undocumented but discoverable). Paths checked, all 404:
+
+    /INMarion/api            /INMarion/api/swagger      /INMarion/swagger
+    /INMarion/swagger/index.html                        /INMarion/api-docs
+    /INMarion/docs           /api                       /swagger
+    /swagger/v1/swagger.json /INMarion/DirectSearch/api /INMarion/api/Search
+    /INMarion/api/documents  /breeze/Metadata (404 — Breeze metadata disabled)
+
+**Search capability matrix (`/breeze/Settings`, verbatim).** This is decisive for
+the join strategy and was invisible before this pass:
+
+    PartySearchEnabled            true
+    DateRangeSearchEnabled        true
+    DocumentNumberSearchEnabled   true
+    DocumentTypeSearchEnabled     true
+    SubdivisionLotBlockSearchEnabled  true
+    ParcelSearchEnabled           FALSE   <-- IC 36-1-8.5 restricted addresses
+    AddressSearchEnabled          FALSE
+    UseWildcardSearches           FALSE   <-- exact-match party names only
+    ViewImages                    FALSE   <-- images are pay-per-view (Tapestry)
+    ViewParcel                    FALSE
+    ViewAddress                   FALSE
+    ViewParty / ViewLocation / ViewNotes   true
+    CountyDisplayName             "IN, Marion"   (correct county confirmed)
+
+    CONSEQUENCE: the recorder exposes NO address and NO parcel number, by
+    statute, in both search AND detail. Recorder records therefore cannot be
+    joined to a parcel by address or parcel id at all. The ONLY join path is the
+    legal description — see §1.5, which this pass rewrote around that finding.
+
+**Sample record (§01.22 — INSPECTED).** Saved to
+`runs/marion_in/recon/samples/fidlar/05_search_response.json`. Fields returned
+per document:
+
+    Id, DocumentType, RecordedDateTime, DocumentName (instrument no.),
+    Book, Page, ConsiderationAmount, DocumentDate, ReferenceNumber,
+    LegalSummary, Legals[], Notes, Party1, Party2,
+    Parties[] {Id, PartyTypeId, Name, AdditionalName},
+    AssociatedDocuments[], Fees[], ReturnTo{}, ImagePageCount,
+    UCCData{}, TapestryLink, CanViewImage (false)
+
+    Real example (party names redacted — see the PII note at the end of §11):
+      DocumentName   A202600008247
+      DocumentType   DEED
+      RecordedDateTime 1/30/2026 3:12:20 PM
+      Party1         <individual, LAST FIRST MIDDLE form>
+      Party2         <individual, LAST FIRST MIDDLE form>
+      LegalSummary   "Sub: SADDLEBROOK NORTH SEC 1  Lot: 2"
+      CanViewImage   false
+
+    Party name shape matters for the matcher: the recorder stores names as
+    LAST FIRST MIDDLE in separate `Name` / `AdditionalName` sub-fields, while
+    MyCase returns FIRST LAST in a single string. Any cross-source party match
+    must normalize that difference.
+
+    Text-extractable JSON, not scanned images. Layout is uniform. No OCR needed
+    for the index; document IMAGES are a separate paid product (Tapestry) and
+    are not required to produce leads.
 
 **Correction to the build request.** The request suggested Doxpop, Landex, or
 county-native. It is Fidlar. Doxpop does carry Marion County data but is a
@@ -349,45 +541,43 @@ prefix is the only thing distinguishing them, and it is easy to mis-target.
 `inmarion.fidlar.com/INMarion/AvaWeb/` returns 404; `/INMarion/DirectSearch/`
 is the live path.
 
-**API discovery (§01.23) — documented API found: NO.** Paths checked, all 404:
+**Document type taxonomy (§01.12) — CAPTURED 2026-08-05.** 50 types, retrieved
+from `/breeze/DocumentTypes` (saved to `samples/fidlar/02_document_types.json`).
+The registry is COARSER than the framework lead-type sweep assumed, and that
+materially limits what unblocking the recorder actually delivers:
 
-    /INMarion/api            /INMarion/api/swagger      /INMarion/swagger
-    /INMarion/swagger/index.html                        /INMarion/api-docs
-    /INMarion/docs           /api                       /swagger
-    /swagger/v1/swagger.json /INMarion/DirectSearch/api /INMarion/api/Search
-    /INMarion/api/documents
+    DISTINCTLY TYPED — directly filterable, genuinely unblocked:
+      24 MECHANIC LIEN              25 MECHANIC LIEN RELEASE
+      21 FEDERAL TAX LIEN           22 FEDERAL TAX LIEN RELEASE
+      46 ASSESSMENT LIEN            47 ASSESSMENT LIEN RELEASE
+      35 SEWER LIEN                 50 HOSPITAL LIEN
+      33 SHERIFF DEED               23 LIEN
+      7  VACATED PROPERTY           49 ASSIGNMENT OF LAND CONTRACTS
+      27 MORTGAGE                   28 MORTGAGE RELEASE
+      18 DEED                       12 CONTRACT
+      16 COURT DOCUMENT             3  AFFIDAVIT
+      29 PLAT                       30 POWER OF ATTORNEY
+      (plus 30 further administrative/UCC/misc types)
 
-The Angular bundle yields no extractable API base — no `api/` string literals,
-no `baseUrl`/`apiUrl` configuration in cleartext. The search endpoint is
-constructed at runtime and will need a browser network capture to identify.
+    NOT DISTINCTLY TYPED — these framework lead types have NO dedicated code in
+    Marion County and collapse into generic buckets:
+      Lis Pendens            -> no code. Likely filed as COURT DOCUMENT or MISC.
+      Abstract of Judgment   -> no code. LIEN / COURT DOCUMENT.
+      State Tax Lien         -> no code. LIEN (only FEDERAL is broken out).
+      Affidavit of Heirship  -> AFFIDAVIT (generic, code 3)
+      Executor Deed          -> DEED (generic, code 18)
+      Administrator Deed     -> DEED (generic, code 18)
 
-**Access control (§01.29) — control PRESENT, enforcement NOT YET TESTED.**
-The main bundle contains the `ng-recaptcha` Angular library: `grecaptcha`,
-`recaptcha-v3-site-key`, `recaptcha-base-url`, and a loader pointing at
-`https://www.google.com/recaptcha/api.js`. It also contains the strings
-`authorize`, `bearer`, `subscription`, and `Tapestry` (Fidlar's pay-per-search
-public product, as distinct from Laredo, the subscription product for title
-professionals).
+    Isolating those six from their generic buckets requires reading the document
+    IMAGE, which is paywalled (`ViewImages: false`). From index metadata alone
+    they cannot be separated. This is an honest downgrade of the earlier
+    "one unblock recovers all nine lead types" claim — see §3.2.
 
-Per the v5.6.0 rule I added to the framework off the back of this build,
-**presence is not enforcement** and this source must NOT be recorded as blocked
-until a good-faith request has been made. I could not complete that test in this
-pass because the request path itself is unknown (no discoverable API, SPA-only
-UI), and identifying it requires driving a real browser — which is Phase 1 work,
-not recon. This is an honest gap, not a finished verdict.
-
-    NEXT ACTION (highest-value unblock in the county):
-    Drive the portal once with a headless browser, capture the XHR the search
-    form issues, and record: (a) the endpoint and payload, (b) whether a
-    reCAPTCHA token is actually required on the first search or only after a
-    threshold, (c) whether index/search metadata is free while only document
-    IMAGES are paywalled — which would make this SEARCH_ONLY_PUBLIC and fully
-    acceptable to the framework, since images are not needed to produce leads.
-    If a challenge IS enforced and is single-layer human-verifiable, this is an
-    operator-assisted source per §01.29 tiering, not a dead one.
-
-This one test governs nine lead types (§3.2). It is the single highest-leverage
-task remaining.
+**Correction to the earlier recon.** The pre-browser pass concluded the Angular
+bundle "yields no extractable API base." That was wrong in a recoverable way:
+the base is not in the bundle, it is in `appConfig.json`, fetched at runtime and
+trivially readable. Checking a SPA's runtime config file is now the first thing
+to try before declaring an API base undiscoverable.
 
 ### 4.2 Treasurer / tax sale
 
@@ -416,12 +606,63 @@ task remaining.
                          format still to be pinned down
 
 **Correction to the build request.** The request asked to confirm SRI. SRI is
-the administrator, but the *auction and list platform for Marion is GovEase*,
-not SRI's own Zeus. Target GovEase for the list.
+the administrator, but the *auction platform for Marion is GovEase*, not SRI's
+own Zeus. Target GovEase for the auction.
 
-Open-data tax sale reports exist but are useless as a live feed: data.indy.gov
-carries "Tax Sale Reports" for **2010 through 2017 only**, as ArcGIS portal
-document items (not CSV). Historical backfill value only.
+**MAJOR CORRECTION 2026-08-05 — the lists are published, and they are the best
+tax-distress source in the county. Verdict YELLOW -> GREEN.**
+
+The pre-browser pass concluded tax sale reports existed "for 2010 through 2017
+only." That was true of the data.indy.gov open-data portal and false of the
+county itself. Rendering `indy.gov/activity/tax-sale-reports` shows report sets
+for **2018 through 2025**, hosted on the county's Hygraph CDN:
+
+    https://us-east-1-indy.graphassets.com/ActDBC5rvRWeCZlNNnLrDz/<asset-id>
+
+Four documents per year. The 2025 set, downloaded and inspected (§01.22):
+
+    2025 Tax Sale - Parcel Status List 12.3.25.pdf     946 KB, 54 pages
+    2025 Tax Sale - Purchase Details 12.3.25.pdf       334 KB
+    2025 Tax Sale - Surplus Details 12.3.25.pdf         47 KB, 1 page
+    2025 Tax Sale Information and Procedures
+
+    Format: text-extractable PDF (PDF-1.3), tabular, uniform layout, no OCR
+    required. Saved under runs/marion_in/recon/samples/taxsale/.
+
+**Parcel Status List — the delinquency feed.** Columns:
+
+    Seq # | Parcel # | Owner Name | Parcel Status | Face Value | Overbid |
+    Purchase Amount | Last Updated
+
+    Real rows (individual owner names redacted; entity names retained):
+      A1  1000182  VGM CAPITAL HOLDINGS LLC   Sold             6,441.79  59,001.00
+      A3  1000372  <individual>               Encroachment Issues  994.29
+      A6  1000616  <individual>               Payment Plan     3,513.93
+      A18 1002347  <individual>               Owner Redeemed   1,574.93  46,001.00
+      A21 1002414  <individual>               Bankruptcy       3,561.11
+
+    Observed Parcel Status values: Sold, Paid, Owner Redeemed, Payment Plan,
+    Bankruptcy, Encroachment Issues, Removed - Miscellaneous.
+
+    THE PARCEL COLUMN IS THE LOCAL PARCEL NUMBER (PARCEL_C). It joins straight
+    to the parcel layer with no address matching. This is the only distress
+    source in the county that arrives pre-keyed.
+
+    "Bankruptcy" as a status is also a free bankruptcy signal for those parcels
+    without touching PACER.
+
+**Surplus Details — resolves the §9 Surplus flag.** Columns:
+
+    Bidder ID | Parcel # | Primary Owner | Parcel Location | Face Value |
+    Overbid Amount | Purchase Amount
+
+    Carries BOTH the parcel number AND a full situs address in the form
+    "<house no> <street> INDIANAPOLIS, IN <zip>". Surplus moves from UNCERTAIN
+    to LIVE.
+
+    Cadence: annual, published after the autumn sale and revised (the 2025 set
+    is stamped 12.3.25). The 2026 set is not yet posted as of the recon date.
+    Bulk class: FULL_COUNTY_BULK per sale year.
 
 ### 4.3 Probate / courts — MyCase (Odyssey Public Access)
 
@@ -594,15 +835,52 @@ Schema (note: **no parcel identifier**):
     (noise: High Weeds & Grass, Trash, Vehicle, Right of Way, Zoning,
      Illegal Dumping, Forestry, Air Quality, Liquor License, Infrastructure)
 
-**Path B — Accela Citizen Access. The live source.**
+**Path B — Accela Citizen Access. The live source. YELLOW -> GREEN 2026-08-05.**
 
-    URL:     https://permitsandcases.indy.gov/citizenaccess/Cap/CapHome.aspx
-             ?module=Enforcement
-    Live:    HTTP 200, 73,305 bytes, title "Accela Citizen Access"
-    Access:  public search, no login observed
-    Verdict: YELLOW — live and public, but Accela is ASP.NET WebForms with
-             __VIEWSTATE/__EVENTVALIDATION postback state, which is workable
-             but brittle. Enforcement of any control NOT yet tested (§01.29).
+    Entry URL:   https://permitsandcases.indy.gov/citizenaccess/Cap/CapHome.aspx
+                 ?module=Enforcement
+    REDIRECTS TO: https://aca-prod.accela.com/INDY/...
+                 (permitsandcases.indy.gov is a vanity host; the real origin is
+                 Accela's aca-prod tenant "INDY". Target aca-prod directly.)
+    Search page: https://aca-prod.accela.com/INDY/Cap/CapHome.aspx
+                 ?module=Enforcement&TabName=Enforcement
+    Access:      OPEN_PUBLIC
+    Bulk:        PER_RECORD_ONLY via UI, but see "Reports" below
+    Verdict:     GREEN
+
+**§01.29 enforcement check — PERFORMED. No control is enforced.**
+
+    password fields on page      0
+    captcha nodes                0
+    window.grecaptcha            undefined
+    login required to search     NO ("Login" and "Register" links exist, but
+                                 they gate saved searches and applications, not
+                                 the public case search)
+    __VIEWSTATE present          yes — standard ASP.NET WebForms postback
+
+**A parcel search field exists — this corrects the recon's earlier claim.**
+The Enforcement General Search form exposes:
+
+    ctl00$PlaceHolderMain$generalSearchForm$txtGSParcelNo    <-- PARCEL NUMBER
+    ...$txtGSStartDate / $txtGSEndDate                       date range
+    ...$txtGSPermitNumber                                    case number
+    ...$txtGSFirstName / $txtGSLastName / $txtGSBusiName     party
+    ...$txtGSStreetName / $txtGSNumber$ChildControl0/1       address
+    plus a Case Type dropdown
+
+    So code enforcement IS parcel-addressable in the live system. The "no parcel
+    identifier" finding in §1.5 applies only to the frozen open-data EXTRACT,
+    which drops the column. Corrected accordingly.
+
+**Case types in the live dropdown** include the distress set as first-class
+entries: "Enforcement - Demolition", "Enforcement - Repair w/no Hearing",
+"Enforcement - Vacant Board Order", alongside the investigation/violation types
+seen in the extract.
+
+**Reports.** The portal exposes a "Reports" menu with a **Case Research Report**
+and **Case Summary** report per module. Not yet exercised — this is the most
+likely bulk path and should be tried before building a page-scraping adapter.
+Recorded as an open item rather than assumed to work.
 
 The open-data `LINK` column points directly at Accela case detail, e.g.
 `http://permitsandcases.indy.gov/citizenaccess/Cap/CapDetail.aspx?Module=
@@ -694,14 +972,33 @@ use it to flag coverage gaps rather than reporting false negatives.
 
 ### 5.1 Sheriff's sale — the address bridge
 
-    Authority:  Marion County Sheriff, Judicial Enforcement Division
+    Authority:  Marion County Sheriff, Judicial Enforcement (JED) Real Estate
     Page:       https://www.indy.gov/activity/sheriff-real-estate-sales
-    Schedule:   third Friday monthly, no December sale (SECONDARY)
-    Lists:      a "short" list (address, sale number, township) and a full list
-                (address, sale number, township, plaintiff, judgment amount and
-                fees) (SECONDARY)
-    Lead time:  list published ~30 days ahead of sale (SECONDARY)
-    Verdict:    YELLOW — high value, exact machine-readable source not yet pinned
+    LIST URL:   https://liveauctions.govease.com/PublicPortal/
+                RegistrationDetail?AuctionID=1375&Edit=False
+                (CONFIRMED 2026-08-05 by rendering the indy.gov page)
+    Cost:       FREE. County states plainly: "The Marion County Sheriff sale
+                mortgage foreclosure list is available for free... You do not
+                have to register to get the list."
+    Lead time:  lists posted 30 days ahead; removals updated in real time
+    Schedule:   CONFIRMED 2026 dates published on the page —
+                01/16, 02/20, 03/20, 04/17, ... (third Friday monthly)
+    Archive:    archived lists held with City Base back to 2005
+    Contact:    MCSO-SheriffSaleRealEstate@indy.gov, 317.327.2459
+    Verdict:    YELLOW — list URL now known and free, but the GovEase portal
+                itself was not driven this pass, so the list's on-page format
+                and field set remain unverified. Downgraded honestly rather
+                than assumed.
+
+**Origination confirmed.** The county's own wording settles §3.1: "When a
+property has been foreclosed on in Marion County and the judgment is certified
+to the Marion County Sheriff by the Marion County Clerk, that property is then
+sold at the Sheriff's Sale." The sheriff sale is the execution of an already-
+entered MF judgment — downstream, exactly as §3.1 concluded.
+
+    Also on the page and relevant: a "Notice of Sheriff Sale Form" and a
+    "Sheriff's Deed Form", which pair with the recorder's SHERIFF DEED doc type
+    (code 33) to close the foreclosure lifecycle end to end.
 
 **Why this matters more than its rank suggests:** the sheriff sale list carries
 the **property address and the judgment amount**, which the MF court record does
@@ -784,11 +1081,60 @@ it exposes an **export button**, which suggests bulk extraction is possible
 rather than per-record only. DLGF cautions that data is passed through from each
 county so formatting varies.
 
-    NEXT ACTION: drive one search postback for county 49 and click export, to
-    determine (a) the export format, (b) whether export is bounded to a result
-    set or can span the county, (c) whether the parcel field wants the
-    punctuated or digits-only state parcel number, and (d) whether tax
-    delinquency / unpaid balance is exposed or only billed amounts.
+**DRIVEN 2026-08-05. YELLOW -> GREEN. Answers to the four open questions:**
+
+    (c) PARCEL FORMAT — Gateway speaks ONLY the state parcel number. The
+        punctuated form "49-06-05-112-029.000-600" is accepted as input and the
+        result grid displays the digits-only form "490605112029000600", which is
+        exactly the `parcel_id_state_n` normalization defined in §1.6. The LOCAL
+        parcel number (6023323) returns "No records to display."
+        This independently validates the canonical key choice.
+
+    (d) DELINQUENCY IS EXPOSED. The parcel detail page carries a dedicated
+        "Penalty and Delinquent Taxes" block:
+            Personal Property Late Penalty
+            Personal Property Underpay Penalty
+            Prior Year Delinquent Payment
+            Prior Year Delinquent Penalty
+        (all $0.00 on the current-paid sample parcel, but the fields are there).
+
+    (a)(b) EXPORT — UNCONFIRMED. The "Export to Excel" control is present,
+        enabled and visible (105x21 px, not disabled), but clicking it did not
+        produce a download event within 30 s in headless Chromium. Whether it
+        exports the result set only or can span a whole county is therefore NOT
+        established. Recorded as unproven rather than claimed.
+
+**Search result grid** (year + county + parcel):
+
+    Pay Year | Parcel Number | Taxpayer | Total Tax Bill
+    2025     | 490605112029000600 | AMERICAN HOMES 4 RENT | $4,726.40
+
+The taxpayer name matches the parcel layer's FULLOWNERNAME for the same parcel —
+a clean cross-source validation of the join key.
+
+**Parcel detail fields (§01.22 — INSPECTED),** saved to
+`runs/marion_in/recon/samples/gateway/04_parcel_detail.txt`:
+
+    Tax Bill ID, Total Gross Assessed Value, Gross AV of Homestead Property,
+    Gross AV of Other Residential Property and Farmland, Gross AV of all Other
+    Property, Local/State Personal Property AV, Total Deductions and Exemptions,
+    Total Net Assessed Value, Local Tax Rate, Gross Tax, Total Credits,
+    Net Current Property Tax Liability, Exemptions,
+    Property Tax Cap / Adjustment to Cap / Maximum Tax Under Cap,
+    the four Penalty and Delinquent Taxes fields above,
+    and a full Units in the District breakdown (unit, code, fund, rate).
+
+    "Gross AV of Homestead Property = $0.00" on this parcel is an
+    owner-occupancy signal: no homestead deduction means non-owner-occupied.
+    That is a free absentee-owner indicator across the county.
+
+    Pay Year selector covers 2007-2026, so historical tax series are available.
+
+    STABILITY CAVEAT: the detail page leaked a raw SQL exception below the
+    rendered content — "There is already an object named 'credit_temp' in the
+    database" — which is why Total Credits rendered empty. The page is partially
+    broken server-side. Build defensively and do not treat a blank credits field
+    as authoritative.
 
 Marion-specific alternatives, both blocked behind the indy.gov SPA shell:
 `indy.gov/activity/property-tax-history-reports` (payments, amounts billed, and
@@ -799,7 +1145,23 @@ that STATEPARCELNUMBER is the right canonical key). Treasurer contact:
 
 ### 6.3 DELINQUENCY_LIST — the real gap
 
-**No current, downloadable, county-wide delinquent-parcel list was found.**
+**RESOLVED 2026-08-05 — a county-wide delinquent-parcel list DOES exist.**
+The annual **Tax Sale Parcel Status List** (§4.2) is exactly that: every parcel
+that reached tax-sale eligibility, with owner, status, face value and amounts,
+keyed on the local parcel number, published as a text-extractable PDF for each
+year 2018-2025. Combined with Gateway's per-parcel "Penalty and Delinquent
+Taxes" block (§6.2), the delinquency picture is covered:
+
+    county-wide annual snapshot   Tax Sale Parcel Status List (bulk PDF)
+    per-parcel current detail     Indiana Gateway parcel detail (per-record)
+
+The remaining gap is narrower than first recorded: there is still no *continuous*
+(monthly or nightly) county-wide delinquency feed. The annual list is a snapshot
+of parcels already at sale eligibility, so parcels that fall behind mid-year and
+cure before the sale never appear. A standing delivery request to the Treasurer
+remains the way to close that, but it is now an optimization rather than a hole.
+
+Original finding, retained for the audit trail:
 
     data.indy.gov:  "Tax Sale Reports" 2010-2017 only. FROZEN. Backfill only.
     Tax sale list:  annual, via GovEase (§4.2) — but per §01.31 this is only
@@ -822,20 +1184,30 @@ and this is a legitimate ask for public record data.
 
 ## 7. Freshness summary (§01.32)
 
-    SOURCE                       MAX RECORD DATE  LAG        VERDICT
-    MapIndy Parcel layer         2026-08-03       1 day      LIVE
-    MyCase courts                current period   current    LIVE
-    MapIndy Abandoned & Vacant   not exposed      —          UNKNOWN
-    MapIndy Reg. Landlord        not exposed      —          UNKNOWN
-    Accela code enforcement      not tested       —          UNKNOWN
-    Open-data code enforcement   2024-02-27       ~2.4 yr    FROZEN
-    Open-data tax sale reports   2017             ~9 yr      FROZEN
-    Recorder (Fidlar)            not tested       —          UNKNOWN
-    Indiana Gateway              not tested       —          UNKNOWN
+Revised 2026-08-05.
 
-Only two sources are confirmed LIVE. Both are P0/P2 anchors, so the build is
-viable — but every UNKNOWN above must be resolved before its source is trusted
-as current, and the two FROZEN sources must never be counted as live feeds.
+    SOURCE                       MAX RECORD DATE  LAG          VERDICT
+    MapIndy Parcel layer         2026-08-03       1 day        LIVE
+    MyCase courts                current period   current      LIVE
+    Recorder (Fidlar)            2026-01-30 in    5 days by    LAGGING
+                                 sampled window   design       (by design)
+    indy.gov tax sale reports    2025 sale year   annual       LIVE for cadence
+    Indiana Gateway              pay year 2026    annual       LIVE for cadence
+                                 selectable
+    MapIndy Abandoned & Vacant   not exposed      —            UNKNOWN
+    MapIndy Reg. Landlord        not exposed      —            UNKNOWN
+    Accela code enforcement      not measured     —            UNKNOWN
+    Open-data code enforcement   2024-02-27       ~2.4 yr      FROZEN
+    Open-data tax sale reports   2017             ~9 yr        FROZEN
+
+**Recorder lag is structural, not a defect.** The portal states: "Document
+information is available five days after recording." Any incremental cursor must
+lag five days or it will silently miss documents. This is a build requirement.
+
+Three UNKNOWNs remain, all on sources whose cadence could not be measured
+because the layer or portal exposes no record-date field to aggregate. None is
+load-bearing for the MVP. The two FROZEN sources must never be counted as live
+feeds — see §4.4.
 
 ---
 
@@ -871,11 +1243,12 @@ Recording these explicitly because each would have caused a wrong build.
 
 ## 9. Uncertain doc-type coverage — flagged
 
-    SURPLUS / OVERAGE — UNCERTAIN.
-    Indiana tax sale surplus and sheriff sale overage funds exist, but no
-    public list of claimable surplus was located for Marion County. Likely held
-    by the Auditor. Needs a targeted pass; the Auditor was not probed this pass
-    and is a gap in this recon.
+    SURPLUS / OVERAGE — RESOLVED 2026-08-05.
+    The county publishes "Tax Sale - Surplus Details" as an annual PDF with
+    parcel number, owner, situs address and overbid/purchase amounts (§4.2).
+    Sheriff sale overage remains unconfirmed and is presumably held by the
+    Clerk or Auditor; the Auditor was still not probed. Partial resolution:
+    tax sale surplus LIVE, sheriff overage still unknown.
 
     PUBLIC NOTICE — UNCERTAIN.
     Indiana's statewide public notice portal and the county's newspaper of
@@ -883,21 +1256,27 @@ Recording these explicitly because each would have caused a wrong build.
     foreclosure and sheriff sale ahead of the recorded/updated counterpart,
     which would add lead time on top of the MF filing.
 
-    RECORDER DOC-TYPE TAXONOMY — NOT CAPTURED.
-    Framework §01.12 requires capturing the source's document-type vocabulary.
-    Could not be done for the recorder: the SPA renders the doc-type dropdown
-    client-side and there is no reachable API. Nine lead types (§3.2) depend on
-    this. Blocked behind the same §4.1 browser test.
+    RECORDER DOC-TYPE TAXONOMY — CAPTURED 2026-08-05 (§4.1). 50 types via
+    /breeze/DocumentTypes. Closed.
 
-    PDF / SAMPLE DOCUMENT INSPECTION (§01.22) — NOT PERFORMED.
-    No source documents were fetched. Evidence of why: the recorder path is
-    unreachable without a browser; MyCase PDFs are robots.txt-disallowed; the
-    sheriff and tax sale lists sit behind the indy.gov SPA shell. This is a
-    genuine outstanding requirement, not a waiver, and must be completed in the
-    browser pass before any of those sources is finalized.
+    PDF / SAMPLE DOCUMENT INSPECTION (§01.22) — DISCHARGED 2026-08-05 for every
+    GREEN source. Samples saved under runs/marion_in/recon/samples/ and each
+    source's claimed fields verified against the real record. See §11.
 
-    MARION COUNTY AUDITOR — NOT PROBED.
-    Relevant to tax sale surplus and to the tax sale list itself. Gap.
+    ACCELA REPORTS MODULE — NOT EXERCISED.
+    The portal exposes a "Case Research Report" and "Case Summary" report per
+    module (§4.4). These are the most likely bulk path for code enforcement and
+    were not run. New open item from this pass.
+
+    GOVEASE SHERIFF SALE LIST — NOT DRIVEN.
+    The free list URL is now known (§5.1) but the portal itself was not
+    rendered, so the list's field set and format are unverified.
+
+    GATEWAY EXPORT — ATTEMPTED, DID NOT COMPLETE (§6.2). Whether bulk county
+    export is possible is unresolved.
+
+    MARION COUNTY AUDITOR — STILL NOT PROBED.
+    Relevant to sheriff sale overage. Gap carried forward.
 
 ---
 
@@ -1018,20 +1397,57 @@ drifting out of sync.
         state that explicitly rather than leave the artifact unaccounted for.
 
     fingerprints/<source_id>.fingerprint.json
-        GAP — no per-source JSON fingerprint files were written. The
-        fingerprint CONTENT is present in prose (see portal_fingerprints.md
-        row above); the machine-readable per-source files are not. These are
-        Phase 1 inputs for adapter selection and should be generated during
-        the headless-browser pass (§10.1), when the remaining SPA sources can
-        finally be fingerprinted properly.
+        GAP — still no per-source JSON fingerprint files. The fingerprint
+        CONTENT is now considerably richer after the browser pass (endpoints,
+        payloads, control state, capability matrices — §4.1, §4.4, §6.2) but
+        remains in prose. Generating the machine-readable files is a Phase 1
+        adapter-selection task.
+
+### §01.22 sample documents (added 2026-08-05)
+
+Raw samples are immutable and stored under `runs/marion_in/recon/samples/`:
+
+    fidlar/     01_rendered.html, 01_controls.json, 01_network.json,
+                01_landing.png, 02_document_types.json (50 types),
+                02_settings.json (capability matrix),
+                05_search_request.json, 05_search_response.json (90 records),
+                06_results_rendered.png, 06_results_text.txt
+    taxsale/    2025_status_list.pdf (54 pp), 2025_sold_list.pdf,
+                2025_county_lien_list.pdf (= Surplus Details)
+    gateway/    search_state-parcel-dashed.txt/.png,
+                search_local-parcel.txt/.png (negative control),
+                04_parcel_detail.txt/.png
+    accela/     01_home_text.txt, 03_enforcement_search.txt/.png
+    mycase/     sample_civil_2026-06-02.json (287 cases incl. MF)
+    mapindy/    sample_parcel.json, sample_layer11.json, sample_layer27.json
+    indygov/    sheriff_text.txt/_links.json, taxsale_text.txt/_links.json,
+                treasurer_*, taxhistory_* (+ screenshots)
+
+**These sample files are NOT committed.** They are raw source records carrying
+real owner names, situs addresses and party names — the same class as
+`data/raw/`. Framework v5.6.1 gitignores `runs/*/recon/samples/` and exempts it
+from the PII guard for exactly this reason: §01.22 requires recon to FETCH and
+INSPECT real documents, and equally requires it not to publish them. The files
+live on the recon operator's disk; this report carries the findings, the field
+lists and the structural evidence, with individual person names redacted and
+entity names retained.
+
+Every GREEN source's claimed fields were re-verified against its real sample.
+One discrepancy found and recorded: the parcel layer reports
+ASSESSORYEAR_TOTALAV 212,100 for parcel 49-06-05-112-029.000-600 while Gateway
+reports Total Gross Assessed Value 211,000 for pay year 2025. These are
+different vintages (assessor current vs billed year), not an error — but a
+build must not treat the two as interchangeable.
 
 ### Outstanding protocol obligations
 
 Recorded here so the index never reads as full compliance when it is not:
 
-    §01.22 sample-document inspection — NOT PERFORMED for any source. Evidence
-           of why, per source, in §9. Must be discharged in the §10.1 pass.
-    §01.12 recorder document-type taxonomy — NOT CAPTURED. §9.
+    §01.22 sample-document inspection — DISCHARGED 2026-08-05 for all GREEN
+           sources (list above). Not performed for GovEase sheriff sale list
+           (§5.1) or PACER (paid).
+    §01.12 recorder document-type taxonomy — CAPTURED 2026-08-05 (§4.1).
+    Remaining open items are enumerated in §9 and §12.
 
 ### Deviations from §01.17
 
@@ -1040,4 +1456,78 @@ Both directed by the build request, recorded for the audit trail:
     - §01.17 forbids committing or pushing during recon. This report is
       committed and pushed as instructed.
     - §01.17 forbids writing outside `runs/<county_slug>/recon/`. This report
-      is at `recon/marion-in-recon.md`.
+      is at `recon/marion-in-recon.md`. Sample documents from the browser pass
+      ARE inside `runs/marion_in/recon/samples/`, per §01.22.
+
+---
+
+## 12. Headless-browser pass — change log (2026-08-05)
+
+Everything below was established by driving a real browser. Each entry replaced
+an inference or an untested assumption.
+
+### Verdict changes
+
+    Marion County Recorder    RED    -> GREEN   §4.1
+    Tax sale lists            YELLOW -> GREEN   §4.2  (and promoted rank 7 -> 3)
+    Accela code enforcement   YELLOW -> GREEN   §4.4
+    Indiana Gateway           YELLOW -> GREEN   §6.2
+    Sheriff sale list         YELLOW -> YELLOW  §5.1  (URL found, portal not driven)
+
+No source moved down. Nothing previously GREEN was contradicted.
+
+### Newly unblocked lead types
+
+    Mechanic Lien         recorder code 24
+    Construction Lien     recorder code 24 (same code)
+    Federal Tax Lien      recorder code 21
+    Surplus               tax sale Surplus Details PDF
+
+    LIVE lead types: 15 -> 19 of 29.
+
+    NOT delivered, contrary to the earlier claim that one unblock would recover
+    nine: Lis Pendens, Abstract of Judgment, State Tax Lien, Affidavit of
+    Heirship, Executor Deed, Administrator Deed. The recorder is reachable; its
+    doc-type vocabulary simply has no codes for these. See §3.2.
+
+### The §01.29 enforcement test, in full
+
+    Recorder  CONTROL PRESENT and ENFORCED — /breeze/Search returns 401 with no
+              headers, 200 through a browser. Tier PER_REQUEST_CHALLENGE, but
+              reCAPTCHA v3 invisible: no human step, no operator handoff. Costs
+              a browser-context adapter, blocks nothing. No CAPTCHA was solved.
+    Accela    NO control enforced — 0 captcha nodes, no grecaptcha, no password
+              field, public search without login.
+    Gateway   NO control — plain ASP.NET WebForms postback.
+    MyCase    (prior pass) control present, NOT enforced.
+
+### Corrections to this report's own earlier pass
+
+    1. "The Angular bundle yields no extractable API base." Wrong — the base is
+       in appConfig.json, fetched at runtime. Check a SPA's runtime config
+       before declaring an API undiscoverable.
+    2. "Tax sale reports exist for 2010-2017 only." True of data.indy.gov,
+       false of the county — indy.gov publishes 2018-2025 on its Hygraph CDN.
+    3. "Code enforcement carries no parcel id." True of the frozen open-data
+       extract, false of live Accela, which has a parcel-number search field.
+    4. "One recorder unblock recovers nine lead types." It recovered three.
+
+### New findings with build impact
+
+    - Deterministic recorder -> parcel join via legal description
+      (subdivision + lot -> SUBDIVISION_TAG + LOTNUM), proven to a single
+      parcel. 33% coverage ceiling. §1.5.
+    - Tax sale lists arrive pre-keyed on the local parcel number — the only
+      distress source needing no crosswalk at all. §4.2.
+    - Recorder data is 5 days stale BY DESIGN; cursors must lag. §7.
+    - Gateway exposes homestead AV, giving a free absentee-owner signal, and
+      2007-2026 tax history. §6.2.
+    - Gateway's parcel detail page leaks a SQL error and renders Total Credits
+      blank. Build defensively. §6.2.
+    - Recorder party search is EXACT MATCH only — no wildcards. §4.1.
+
+### Still open after this pass
+
+    Accela Reports module (likely bulk path) not exercised; GovEase sheriff
+    list not driven; Gateway export unproven; Auditor not probed; Public Notice
+    still uncertain; per-source fingerprint JSON files not written.

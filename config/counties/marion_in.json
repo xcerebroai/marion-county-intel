@@ -63,7 +63,29 @@
       "parcel_id_state_n": "digits only, punctuation stripped, fixed width 18",
       "parcel_id_local": "PARCEL_C as zero-padded 7-character string"
     },
-    "derivation_rule": "Sources without a parcel id (courts, code enforcement, sheriff sale, tax sale) must derive the key via the address bridge. A derived key MUST carry its derivation method and confidence and MUST route to the review queue below threshold. Never silently accept a fuzzy parcel match."
+    "derivation_rule": "Sources without a parcel id must derive the key. A derived key MUST carry its derivation method and confidence and MUST route to the review queue below threshold. Never silently accept a fuzzy parcel match.",
+    "derivation_paths": {
+      "direct_key": {
+        "sources": ["tax_sale_lists_indygov", "mapindy_abandoned_vacant", "mapindy_registered_landlord", "accela_code_enforcement"],
+        "note": "Carry a parcel key already — no bridge needed. Confirmed 2026-08-05."
+      },
+      "legal_description": {
+        "sources": ["marion_recorder_fidlar"],
+        "method": "LegalSummary 'Sub: <name> Lot: <n>' -> MapIndy layer 19 Subdivisions WHERE UPPER(RECORDED_NAME) matches -> SUBDIV_TAG -> parcel layer WHERE SUBDIVISION_TAG=<tag> AND LOTNUM=<lot>",
+        "proven": "SADDLEBROOK NORTH SEC 1 / Lot 2 -> SUBDIV_TAG 6785 -> exactly one parcel 49-06-05-112-029.000-600",
+        "coverage_ceiling": "114831 of 347050 parcels (33%) have SUBDIVISION_TAG>0 AND populated LOTNUM",
+        "warning": "DO NOT join on SUBDIVNUM — it is '0' for many subdivisions and matches hundreds of unrelated parcels. Use SUBDIVISION_TAG / SUBDIV_TAG."
+      },
+      "address": {
+        "sources": ["accela_code_enforcement", "sheriff_sale", "tax_sale_lists_indygov (Surplus Details)"],
+        "method": "normalize address -> parcel layer STNUMBER + FULL_STNAME + ZIPCODE",
+        "supporting_asset": "MapIndy layer 0 Unit Address Points; open-data 'Buildings with Addresses' and 'Building Unit Addresses' CSVs"
+      },
+      "case_number_bridge": {
+        "sources": ["mycase_courts"],
+        "method": "MF case -> sheriff sale list entry by case number -> address -> parcel"
+      }
+    }
   },
 
   "sources": [
@@ -142,14 +164,58 @@
       "source_role": "PRIMARY_LEAD_SOURCE",
       "priority": "P0",
       "build_priority": "high_value",
+      "real_origin": "https://aca-prod.accela.com/INDY/Cap/CapHome.aspx?module=Enforcement&TabName=Enforcement",
+      "vanity_host_note": "permitsandcases.indy.gov redirects to aca-prod.accela.com tenant INDY. Target aca-prod directly.",
       "access_method": "ASP.NET WebForms postback",
       "access_classification": "OPEN_PUBLIC",
       "bulk_availability": "PER_RECORD_ONLY",
-      "carries_parcel_id": false,
+      "carries_parcel_id": true,
+      "carries_parcel_id_note": "Live Accela exposes a parcel-number SEARCH field (txtGSParcelNo). The frozen open-data extract drops the column; the live system does not.",
       "carries_address": true,
+      "search_fields": [
+        "ctl00$PlaceHolderMain$generalSearchForm$txtGSParcelNo",
+        "ctl00$PlaceHolderMain$generalSearchForm$txtGSStartDate",
+        "ctl00$PlaceHolderMain$generalSearchForm$txtGSEndDate",
+        "ctl00$PlaceHolderMain$generalSearchForm$txtGSPermitNumber",
+        "ctl00$PlaceHolderMain$generalSearchForm$txtGSFirstName",
+        "ctl00$PlaceHolderMain$generalSearchForm$txtGSLastName",
+        "ctl00$PlaceHolderMain$generalSearchForm$txtGSBusiName",
+        "ctl00$PlaceHolderMain$generalSearchForm$txtGSStreetName"
+      ],
       "freshness_verdict": "UNKNOWN",
-      "enforcement_tested": false,
-      "verdict": "YELLOW"
+      "enforcement_tested": true,
+      "enforcement_test_date": "2026-08-05",
+      "enforcement_test_result": "No control enforced: 0 captcha nodes, window.grecaptcha undefined, 0 password fields, public case search reachable without login. __VIEWSTATE present (standard WebForms).",
+      "captcha_present": false,
+      "open_item": "Reports menu exposes Case Research Report / Case Summary per module — likely bulk path, NOT yet exercised.",
+      "sample_inspected": "runs/marion_in/recon/samples/accela/03_enforcement_search.txt",
+      "verdict": "GREEN"
+    },
+    {
+      "source_id": "tax_sale_lists_indygov",
+      "name": "Marion County Tax Sale reports (Parcel Status List, Purchase Details, Surplus Details)",
+      "url": "https://www.indy.gov/activity/tax-sale-reports",
+      "cdn_pattern": "https://us-east-1-indy.graphassets.com/ActDBC5rvRWeCZlNNnLrDz/<asset-id>",
+      "authority": "Marion County Treasurer",
+      "source_role": "PRIMARY_LEAD_SOURCE",
+      "priority": "P1",
+      "build_priority": "mvp_required",
+      "reliability_grade": "A",
+      "access_method": "static PDF download",
+      "access_classification": "OPEN_PUBLIC",
+      "years_available": "2018-2025",
+      "format": "text-extractable PDF (PDF-1.3), tabular, no OCR required",
+      "bulk_availability": "FULL_COUNTY_BULK",
+      "cadence": "annual, revised post-sale",
+      "freshness_verdict": "LIVE",
+      "carries_parcel_id": true,
+      "parcel_key_type": "local parcel number (PARCEL_C) — joins directly, no address bridge",
+      "carries_address": "Surplus Details only (Parcel Location column)",
+      "status_values": ["Sold", "Paid", "Owner Redeemed", "Payment Plan", "Bankruptcy", "Encroachment Issues", "Removed - Miscellaneous"],
+      "artifact_class": "DELINQUENCY_LIST",
+      "lead_types": ["Tax Delinquency", "Tax Sale", "Tax Sale Certificate", "Surplus", "Bankruptcy (status flag)"],
+      "sample_inspected": "runs/marion_in/recon/samples/taxsale/2025_status_list.pdf",
+      "verdict": "GREEN"
     },
     {
       "source_id": "opendata_code_enforcement",
@@ -181,28 +247,75 @@
       "source_role": "PRIMARY_LEAD_SOURCE",
       "priority": "P1",
       "build_priority": "high_value",
-      "access_method": "Angular SPA, no server-rendered form",
-      "access_classification": "UNKNOWN",
+      "access_method": "Angular SPA over an undocumented Breeze web service",
+      "access_classification": "SEARCH_ONLY_PUBLIC",
+      "api_base": "https://inmarion.fidlar.com/INMarion/Scrap.WebService.DirectSearch/",
+      "api_base_discovered_via": "https://inmarion.fidlar.com/INMarion/DirectSearch/appConfig.json -> webApiBase",
+      "product_version": "5.0.10-rel",
+      "endpoints": {
+        "settings": "GET /breeze/Settings — no auth required, HTTP 200 via plain HTTP",
+        "document_types": "GET /breeze/DocumentTypes — no auth required, HTTP 200 via plain HTTP",
+        "search": "POST /breeze/Search — auth required"
+      },
+      "search_payload_fields": [
+        "FirstName", "LastBusinessName", "StartDate", "EndDate", "DocumentName",
+        "DocumentType", "SubdivisionName", "SubdivisionLot", "SubdivisionBlock",
+        "MunicipalityName", "TractSection", "TractTownship", "TractRange",
+        "TractQuarter", "TractQuarterQuarter", "AddressHouseNo", "AddressStreet",
+        "AddressCity", "AddressZip", "ParcelNumber", "Book", "Page",
+        "ReferenceNumber", "DisplayStartDate", "DisplayEndDate"
+      ],
+      "required_headers": {
+        "authorization": "Bearer <JWE> — anonymous session token minted by the page",
+        "fidlarcaptchasolution": "reCAPTCHA v3 invisible token, site key 6LckDLwaAAAAAFdkFeW-dkX0IMirFhqiB_tXcRZE"
+      },
       "documented_api_found": false,
       "api_paths_checked": [
         "/INMarion/api", "/INMarion/api/swagger", "/INMarion/swagger",
         "/INMarion/swagger/index.html", "/INMarion/api-docs", "/INMarion/docs",
         "/api", "/swagger", "/swagger/v1/swagger.json",
         "/INMarion/DirectSearch/api", "/INMarion/api/Search",
-        "/INMarion/api/documents"
+        "/INMarion/api/documents", "/breeze/Metadata"
       ],
       "captcha_present": true,
-      "captcha_enforced": null,
-      "enforcement_tested": false,
-      "enforcement_test_blocker": "Search path unknown — SPA only, no discoverable API. Requires a headless browser network capture (Phase 1).",
-      "bulk_availability": "UNKNOWN",
-      "freshness_verdict": "UNKNOWN",
-      "gates_lead_types": [
-        "Lis Pendens", "Abstract of Judgment", "Mechanic Lien",
-        "Construction Lien", "Federal Tax Lien", "State Tax Lien",
+      "captcha_enforced": true,
+      "captcha_type": "reCAPTCHA v3 invisible (score-based, no human-solvable challenge)",
+      "enforcement_tested": true,
+      "enforcement_test_date": "2026-08-05",
+      "enforcement_test_result": "POST /breeze/Search with no headers -> HTTP 401 Unauthorized. Same search through headless browser -> HTTP 200, 100457 bytes, TotalResults 90, no challenge displayed, no human interaction.",
+      "enforcement_tier": "PER_REQUEST_CHALLENGE",
+      "enforcement_tier_note": "Machine-satisfiable. reCAPTCHA v3 is invisible and score-based, so this is NOT an operator-assisted source. Adapter must run in a browser context; no CAPTCHA is ever solved.",
+      "adapter_requirement": "browser_context (Playwright) — not a plain HTTP client",
+      "search_capabilities": {
+        "PartySearchEnabled": true,
+        "DateRangeSearchEnabled": true,
+        "DocumentNumberSearchEnabled": true,
+        "DocumentTypeSearchEnabled": true,
+        "SubdivisionLotBlockSearchEnabled": true,
+        "ParcelSearchEnabled": false,
+        "AddressSearchEnabled": false,
+        "UseWildcardSearches": false,
+        "ViewImages": false,
+        "ViewParcel": false,
+        "ViewAddress": false
+      },
+      "statutory_restriction": "IC 36-1-8.5 — parcel and address search disabled by statute (restricted addresses)",
+      "document_type_count": 50,
+      "document_types_endpoint": "/breeze/DocumentTypes",
+      "bulk_availability": "BATCH_QUERY",
+      "freshness_verdict": "LAGGING",
+      "freshness_note": "Portal states document information is available five days after recording. Incremental cursors MUST lag 5 days.",
+      "carries_parcel_id": false,
+      "carries_address": false,
+      "join_path": "legal description -> LegalSummary 'Sub: <name> Lot: <n>' -> MapIndy layer 19 SUBDIV_TAG -> parcel layer SUBDIVISION_TAG + LOTNUM",
+      "unblocked_lead_types": ["Mechanic Lien", "Construction Lien", "Federal Tax Lien", "Sheriff Deed"],
+      "not_separable_lead_types": [
+        "Lis Pendens", "Abstract of Judgment", "State Tax Lien",
         "Affidavit of Heirship", "Executor Deed", "Administrator Deed"
       ],
-      "verdict": "RED pending enforcement test — highest-leverage unblock in the county"
+      "not_separable_reason": "No dedicated document-type code in Marion County; these collapse into generic AFFIDAVIT / DEED / LIEN / COURT DOCUMENT buckets and can only be separated by reading the paywalled document image.",
+      "sample_inspected": "runs/marion_in/recon/samples/fidlar/05_search_response.json",
+      "verdict": "GREEN"
     },
     {
       "source_id": "indiana_gateway_tax_bills",
@@ -217,13 +330,38 @@
       "captcha_present": false,
       "county_param": "49",
       "searchable_by_parcel": true,
+      "parcel_key_accepted": "STATE parcel number only. Punctuated input '49-06-05-112-029.000-600' accepted; grid displays digits-only '490605112029000600' (= parcel_id_state_n). LOCAL parcel number returns no records.",
       "has_export": true,
+      "export_confirmed": false,
+      "export_note": "Export to Excel button present, enabled and visible, but click produced no download event within 30s in headless Chromium. Bulk export capability UNPROVEN.",
       "statewide": true,
       "county_coverage": 92,
-      "bulk_availability": "UNKNOWN",
-      "freshness_verdict": "UNKNOWN",
+      "county_param_value": "49",
+      "pay_years_available": "2007-2026",
+      "bulk_availability": "PER_RECORD_ONLY",
+      "freshness_verdict": "LIVE",
       "artifact_class": "BALANCE_LOOKUP",
-      "verdict": "YELLOW"
+      "exposes_delinquency": true,
+      "delinquency_fields": [
+        "Personal Property Late Penalty",
+        "Personal Property Underpay Penalty",
+        "Prior Year Delinquent Payment",
+        "Prior Year Delinquent Penalty"
+      ],
+      "detail_fields": [
+        "Tax Bill ID", "Total Gross Assessed Value", "Gross AV of Homestead Property",
+        "Gross AV of Other Residential Property and Farmland", "Gross AV of all Other Property",
+        "Total Deductions and Exemptions", "Total Net Assessed Value", "Local Tax Rate",
+        "Gross Tax", "Total Credits", "Net Current Property Tax Liability", "Exemptions",
+        "Property Tax Cap", "Maximum Tax that may be Imposed Under Cap",
+        "Units in the District (unit/code/fund/rate)"
+      ],
+      "derived_signal": "Gross AV of Homestead Property = 0 indicates non-owner-occupied — a free absentee-owner signal.",
+      "stability_caveat": "Parcel detail page leaks a SQL exception (\"There is already an object named 'credit_temp'\") and renders Total Credits blank. Build defensively.",
+      "enforcement_tested": true,
+      "captcha_present": false,
+      "sample_inspected": "runs/marion_in/recon/samples/gateway/04_parcel_detail.txt",
+      "verdict": "GREEN"
     },
     {
       "source_id": "sheriff_sale",
@@ -232,11 +370,17 @@
       "source_role": "SUPPORTING_LEAD_SOURCE",
       "priority": "P1",
       "build_priority": "high_value",
+      "list_url": "https://liveauctions.govease.com/PublicPortal/RegistrationDetail?AuctionID=1375&Edit=False",
+      "list_cost": "FREE — county states no registration is required to obtain the list",
+      "lead_time": "lists posted 30 days ahead of sale; removals updated in real time",
       "schedule": "third Friday monthly, no December sale",
+      "schedule_2026_confirmed": ["01/16", "02/20", "03/20", "04/17"],
+      "archive": "archived lists held with City Base back to 2005",
+      "contact": "MCSO-SheriffSaleRealEstate@indy.gov, 317.327.2459",
       "carries_address": true,
       "carries_judgment_amount": true,
       "carries_parcel_id": false,
-      "access_blocker": "indy.gov is a client-rendered SPA returning a ~4.3KB shell with no backing API. Requires headless browser.",
+      "access_blocker_resolved": "indy.gov page rendered 2026-08-05; list URL recovered. GovEase portal itself NOT yet driven — list field set unverified.",
       "freshness_verdict": "UNKNOWN",
       "role_note": "Downstream stage of MF, NOT the originating foreclosure event. Primary value is as the address bridge that recovers parcel for MF cases.",
       "verdict": "YELLOW"
@@ -269,11 +413,16 @@
   ],
 
   "lead_type_coverage": {
-    "live": 15,
-    "blocked_behind_recorder": 9,
+    "live": 19,
+    "not_separable": 6,
+    "not_separable_note": "Recorder is unblocked but has no dedicated document-type code for these six; they sit inside generic AFFIDAVIT / DEED / LIEN / COURT DOCUMENT buckets and can only be isolated by reading the paywalled document image. This is a taxonomy limit, not an access limit.",
     "not_applicable_in_jurisdiction": 3,
-    "uncertain": 2,
+    "blocked_paid": 2,
+    "uncertain": 1,
     "total": 29,
+    "revised": "2026-08-05 headless-browser pass; was live:15 / blocked_behind_recorder:9 / uncertain:2",
+    "newly_unblocked": ["Mechanic Lien", "Construction Lien", "Federal Tax Lien", "Surplus"],
+    "bonus_types_found_in_recorder_taxonomy": ["Sheriff Deed (33)", "Vacated Property (7)", "Assessment Lien (46)", "Sewer Lien (35)", "Hospital Lien (50)", "Assignment of Land Contracts (49)"],
     "not_applicable_reason": "Indiana is a strict judicial foreclosure state — no trustee sale, no notice of trustee sale, no notice of substitute trustee sale.",
     "canonical_foreclosure_type": "MF - Mortgage Foreclosure (MyCase, court 49D33)",
     "canonical_foreclosure_note": "Sheriff sale is the downstream auction executing the MF judgment, NOT the originating foreclosure event. Targeting MF filings buys months of lead time.",
@@ -281,14 +430,22 @@
   },
 
   "open_items": [
-    "Headless-browser pass: Fidlar recorder search XHR + CAPTCHA enforcement test + doc-type dropdown capture",
-    "Headless-browser pass: indy.gov sheriff sale and tax sale list URLs",
-    "Indiana Gateway county-49 search + export test — determine format and whether delinquency balances are exposed",
+    "Exercise the Accela Reports module (Case Research Report / Case Summary) — likely bulk path for code enforcement",
+    "Drive the GovEase sheriff sale portal to verify list field set and format",
+    "Resolve whether Indiana Gateway 'Export to Excel' can span a county (bulk) or only a result set",
     "Build the address -> parcel crosswalk from MapIndy layer 0 / open data address datasets",
-    "Framework §01.22 sample-document inspection — not yet performed for any source",
-    "Marion County Auditor not probed — relevant to tax sale surplus",
+    "Write per-source fingerprint JSON files (runs/marion_in/recon/fingerprints/)",
+    "Marion County Auditor not probed — relevant to SHERIFF SALE OVERAGE (tax sale surplus is now resolved)",
+    "Public Notice lead type still uncertain — state public notice portal / newspaper of record not confirmed",
     "Operator decision: MyCase case detail is robots.txt-disallowed. Fetch anyway or bridge addresses via sheriff sale?",
     "Operator decision: PACER funding for bankruptcy lead types",
-    "Operator decision: standing delinquency delivery request to the Treasurer"
+    "Operator decision: standing delinquency delivery request to the Treasurer (annual tax sale list now covers the snapshot case)"
+  ],
+  "completed_items": [
+    "2026-08-05 Fidlar recorder: search endpoint, payload, doc-type taxonomy and §01.29 enforcement test — DONE, verdict RED -> GREEN",
+    "2026-08-05 indy.gov sheriff sale and tax sale list URLs — DONE",
+    "2026-08-05 Indiana Gateway county-49 search + delinquency field discovery — DONE (export still unproven)",
+    "2026-08-05 Accela §01.29 control check — DONE, no control enforced",
+    "2026-08-05 §01.22 sample-document inspection — DISCHARGED for all GREEN sources"
   ]
 }

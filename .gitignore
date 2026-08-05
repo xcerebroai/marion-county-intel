@@ -38,6 +38,12 @@ runs/*/logs/
 runs/*/tmp/
 runs/*/.cache/
 
+# §01.22 sample-document pulls. Recon MUST fetch and inspect real source
+# documents; it MUST NOT commit them. These are raw records carrying real owner
+# names, situs addresses and party names — same class as data/raw/. The recon
+# report cites their paths and findings; the files stay local.
+runs/*/recon/samples/
+
 # Secrets — never commit
 .env
 .env.*

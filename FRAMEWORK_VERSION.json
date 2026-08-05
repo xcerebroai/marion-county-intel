@@ -4,8 +4,8 @@
   "license": "Proprietary VIP-only license",
   "license_file": "LICENSE.md",
   "is_open_source": false,
-  "framework_version": "v5.6.0",
-  "previous_version": "v5.5.0",
+  "framework_version": "v5.6.1",
+  "previous_version": "v5.6.0",
   "framework_codename": "Xcerebro County Intelligence Harness",
   "locked_at": "2026-08-04",
   "locked_rules": {
@@ -102,6 +102,11 @@
   ],
   "release_channel": "stable",
   "changelog": [
+    {
+      "version": "v5.6.1",
+      "date": "2026-08-05",
+      "summary": "§01.22 sample-document handling. Recon is required to fetch and inspect real source documents, which are raw records carrying real owner names, situs addresses and party names. Nothing previously said where they go or that they must not be committed. runs/<slug>/recon/samples/ is now gitignored and added to the PII guard's EXCLUDED_DIR_COMPONENTS alongside raw/logs/tmp/evidence, matching the guard's documented intent that immutable raw pulls are gitignored and never scanned. Surfaced by a live county build where §01.22 compliance made the PII guard fail: the protocol required fetching the documents and the gate correctly refused to let them into history. Both are now satisfiable at once."
+    },
     {
       "version": "v5.6.0",
       "date": "2026-08-04",

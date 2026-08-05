@@ -79,7 +79,12 @@ EXCLUDED_DIR_COMPONENTS = {
     ".eggs", "htmlcov",
     # gitignored raw pulls — belt-and-suspenders even though .gitignore covers
     # them, in case the test is run on a dirty tree before commit.
-    "raw", "logs", "tmp", ".cache", "evidence",
+    # "samples" holds the §01.22 sample-document pulls a recon must fetch and
+    # inspect (runs/<slug>/recon/samples/). Those are raw source records by
+    # definition — real owner names, situs addresses, party names — so they are
+    # gitignored like data/raw/ and excluded here for the same reason. Recon is
+    # REQUIRED to fetch them (§01.22) and equally required not to commit them.
+    "raw", "logs", "tmp", ".cache", "evidence", "samples",
 }
 
 # ---------------------------------------------------------------------------

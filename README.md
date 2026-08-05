@@ -42,28 +42,42 @@ crosswalk. Full contract, 1:1 proof, and the multi-polygon dedupe trap are in
 
 ### Source verdicts
 
+Revised after the 2026-08-05 headless-browser pass. Four sources moved to GREEN;
+none moved down.
+
     RANK  SOURCE                        ROLE          P    VERDICT
     1     MyCase — Indiana Courts       PRIMARY       P0   GREEN
     2     MapIndy Parcel layer          ENRICHMENT    P2   GREEN
-    3     MapIndy Abandoned & Vacant    PRIMARY       P1   GREEN
-    4     Accela code enforcement       PRIMARY       P0   YELLOW
-    5     Indiana Gateway tax bills     ENRICHMENT    P2   YELLOW
-    6     Sheriff sale list             SUPPORTING    P1   YELLOW
-    7     Tax sale (GovEase/SRI)        PRIMARY       P1   YELLOW
+    3     Tax sale lists (indy.gov PDF) PRIMARY       P1   GREEN  (was YELLOW)
+    4     MapIndy Abandoned & Vacant    PRIMARY       P1   GREEN
+    5     Marion County Recorder        PRIMARY       P1   GREEN  (was RED)
+    6     Accela code enforcement       PRIMARY       P0   GREEN  (was YELLOW)
+    7     Indiana Gateway tax bills     ENRICHMENT    P2   GREEN  (was YELLOW)
     8     MapIndy Registered Landlord   ENRICHMENT    P2   GREEN
-    9     Marion County Recorder        PRIMARY       P1   RED-ish
+    9     Sheriff sale list (GovEase)   SUPPORTING    P1   YELLOW
     10    Open-data code enforcement    BACKFILL ONLY      RED as live feed
     11    PACER bankruptcy              PRIMARY       —    RED (paid)
 
-15 of 29 framework lead types are live and buildable now. 9 more are blocked
-behind a single unresolved question on the recorder portal.
+19 of 29 framework lead types are live and buildable now (was 15). Six more are
+**not separable** — the recorder is reachable, but Marion County has no dedicated
+document-type code for lis pendens, abstracts of judgment, state tax liens,
+heirship affidavits, or executor/administrator deeds. That is a taxonomy limit,
+not an access one.
 
 ### Things that will bite you
 
 - **Court records carry no address and no parcel id.** MyCase returns parties
   and case metadata only. The parcel join must be derived via an address
   bridge. This is the hardest problem in the build (recon §1.5).
-- **Code enforcement carries no parcel id either** — address + owner only.
+- **The recorder carries no address and no parcel either — by statute**
+  (IC 36-1-8.5). Its only join path is the legal description: subdivision + lot
+  → `SUBDIVISION_TAG` + `LOTNUM`. Proven to a single parcel, but only 33% of
+  parcels are reachable that way (recon §1.5).
+- **The recorder is 5 days stale by design.** Cursors must lag or miss records.
+- **Three sources need no bridge at all** — tax sale lists, abandoned/vacant,
+  and registered landlord all arrive pre-keyed on the parcel number.
+- **Code enforcement: the open-data extract has no parcel id, but live Accela
+  does** — it exposes a parcel-number search field.
 - **The parcel layer is not row-unique.** Multi-polygon parcels repeat up to
   30x. Dedupe on the canonical key or counts inflate.
 - **The open-data code enforcement extract is frozen at 2024-02-27** despite a
