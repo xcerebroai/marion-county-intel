@@ -8,6 +8,14 @@
 
 pypdf==6.14.2        # tax sale Parcel Status / Surplus PDFs (recon §4.2)
 requests==2.34.2     # HTTP with session reuse
+
+# Required by the FRAMEWORK GATE, not by the adapters: 13 v5.4.0 contract-shape
+# tests plus the golden path import jsonschema and hard-fail without it. It
+# happened to be present in system Python locally but not in this venv, so the
+# gate passed on a workstation and failed in CI. Pinned here so the CI
+# environment and the venv both satisfy the gate.
+#   Verify the way CI does:  .venv\Scripts\python.exe scaffold\tests\run_all.py
+jsonschema==4.26.0
 # playwright is installed separately (browser download):
 #   uv pip install --python .venv\Scripts\python.exe playwright
 #   .venv\Scripts\python.exe -m playwright install chromium
