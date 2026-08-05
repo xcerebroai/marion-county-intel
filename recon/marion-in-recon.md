@@ -931,20 +931,113 @@ Recording these explicitly because each would have caused a wrong build.
 
 ---
 
-## 11. Framework artifact note
+## 11. Section-to-artifact index (Protocol 01 §01.14 / §01.33)
 
-The build request specified this single consolidated report at
-`recon/marion-in-recon.md`, and that is what this file is. Framework Protocol 01
-§01.14 additionally expects eight split artifacts under
-`runs/marion_in/recon/` (`source_discovery.md`, `source_verification.md`,
-`portal_fingerprints.md`, `access_classification.md`,
-`source_role_classification.md`, `document_type_discovery.md`,
-`build_eligibility_handoff.md`, `recon_summary.md`), plus the v5.3.0
-Source-of-Record Matrix set. Every field those artifacts require is present in
-this document; they have not been split out. Say the word and I will generate
-them from this content.
+    RECON FORMAT: CONSOLIDATED
 
-Two protocol deviations, both directed by the build request and recorded here
-for the audit trail: §01.17 forbids committing during recon (this report is
-committed and pushed as instructed), and forbids writing outside
-`runs/<slug>/recon/` (this report is at `recon/`).
+This recon uses the CONSOLIDATED format permitted by §01.14 as amended in
+v5.6.0. The eight §01.14 artifacts were intentionally NOT produced as separate
+files under `runs/marion_in/recon/`. This index is mandatory under §01.33 and
+maps every artifact to the section(s) of this document carrying its content.
+
+Format chosen because the findings here are heavily cross-cutting — the parcel
+join key (§1), the recorder blocker (§4.1) that gates nine lead types, and the
+MF-vs-sheriff-sale origination correction (§3.1) are each load-bearing across
+four or more artifacts. Restating them per-file would risk the restatements
+drifting out of sync.
+
+### The eight §01.14 artifacts
+
+    source_discovery.md
+        §4 (all subsections) — every candidate source with URL, authority, and
+        records covered. §5 — additional sources found during recon.
+        §4.2, §5.1 — dead/moved URLs recorded rather than dropped.
+
+    source_verification.md
+        §4 per-source "Authority" / "Portal" / "Live status" lines, each with
+        the observed HTTP status and byte count. §8 — the five verification
+        results that overturned prior assumptions, with evidence.
+
+    portal_fingerprints.md
+        §4.1 (Fidlar: Angular SPA, IIS/ASP.NET, bundle names and sizes),
+        §4.3 (Tyler Odyssey: ASP.NET MVC 5.2, Knockout, server volt-adc),
+        §4.4 Path B (Accela: ASP.NET WebForms, __VIEWSTATE postback),
+        §4.5 (ArcGIS REST: maxRecordCount, supportsPagination),
+        §5.1 (indy.gov: client-rendered Phoenix SPA),
+        §6.2 (Indiana Gateway: ASP.NET WebForms, full form field list).
+
+    access_classification.md
+        §4 per-source "Access class" lines using the §01.9 enum, each with the
+        observed evidence required by §01.9. §2 — the consolidated verdict
+        table. §4.3 — the CAPTCHA enforcement test (§01.29) with the live
+        request and response recorded.
+
+    source_role_classification.md
+        §2 — ROLE column (PRIMARY / SUPPORTING / ENRICHMENT) with priority
+        tier per source. §6.1 — tax roll classified ENRICHMENT per §13.
+        Machine-readable form in `config/counties/marion_in.json` → `sources[]`
+        → `source_role`.
+
+    document_type_discovery.md
+        §3.2 — full 29-type lead sweep mapped to local vocabulary.
+        §3.1 — court case-type taxonomy with observed frequencies.
+        §4.4 — the 29 code enforcement CASE_TYPE values, distress vs noise.
+        §4.3 — MyCase Categories enum (CR/CV/FAM/PR) and probate type counts.
+        GAP: recorder document-type taxonomy NOT captured — see §9.
+
+    build_eligibility_handoff.md
+        §0 — verdict and P0 gate result. §2 — source priority order and counts.
+        §7 — freshness table (§01.32). §9 — blocker and uncertainty register.
+        §10 — recommended operator next actions and required decisions.
+
+    recon_summary.md
+        §0 — executive verdict, the operator-facing summary.
+
+### v5.3.0 Source-of-Record Matrix companions (§01.20)
+
+    source_of_record_matrix.md / .json
+        §3.2 — lead type to source-of-record mapping with access pattern and
+        buildability per type. §2 — rank, role, priority, verdict per source.
+
+    source_coverage_map.md
+        §3.2 coverage summary (15 live / 9 blocked / 3 N/A / 2 uncertain) and
+        the §4.5 excluded-cities coverage caveat.
+
+    api_discovery_report.md
+        §4.1 — the 12 API paths checked on the recorder host, all 404, with the
+        explicit "documented API found: NO" answer required by §01.23.
+        §4.3 — the MyCase endpoints discovered. §6.3 — tax/delinquency search
+        paths checked.
+
+    build_eligibility_report.md
+        §0, §2, §10 — same content as build_eligibility_handoff.md above.
+
+    operator_verified_sources.yml
+        GAP — not produced. No operator-surfaced source links were supplied
+        during this recon, so there is nothing to record. This entry exists to
+        state that explicitly rather than leave the artifact unaccounted for.
+
+    fingerprints/<source_id>.fingerprint.json
+        GAP — no per-source JSON fingerprint files were written. The
+        fingerprint CONTENT is present in prose (see portal_fingerprints.md
+        row above); the machine-readable per-source files are not. These are
+        Phase 1 inputs for adapter selection and should be generated during
+        the headless-browser pass (§10.1), when the remaining SPA sources can
+        finally be fingerprinted properly.
+
+### Outstanding protocol obligations
+
+Recorded here so the index never reads as full compliance when it is not:
+
+    §01.22 sample-document inspection — NOT PERFORMED for any source. Evidence
+           of why, per source, in §9. Must be discharged in the §10.1 pass.
+    §01.12 recorder document-type taxonomy — NOT CAPTURED. §9.
+
+### Deviations from §01.17
+
+Both directed by the build request, recorded for the audit trail:
+
+    - §01.17 forbids committing or pushing during recon. This report is
+      committed and pushed as instructed.
+    - §01.17 forbids writing outside `runs/<county_slug>/recon/`. This report
+      is at `recon/marion-in-recon.md`.

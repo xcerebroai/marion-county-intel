@@ -77,6 +77,9 @@ behind a single unresolved question on the recorder portal.
 ## Layout
 
     recon/marion-in-recon.md      Phase 0 doc-type recon — START HERE
+                                  CONSOLIDATED format per Protocol 01 §01.33;
+                                  §11 carries the mandatory section-to-artifact
+                                  index and the outstanding-obligation register
     config/counties/marion_in.json  county config (recon stub, not yet
                                     schema-validated — see below)
     config/counties/_schema.json    framework county config schema
@@ -93,8 +96,8 @@ behind a single unresolved question on the recorder portal.
 
     python scaffold/tests/run_all.py
 
-35/35 gate suites (539 assertions, 0 failures) pass as of 2026-08-04,
-including the four v5.6.0 recon invariants.
+36/36 gate suites (540 assertions, 0 failures) pass as of 2026-08-04,
+including the five v5.6.0 recon invariants.
 
 ---
 

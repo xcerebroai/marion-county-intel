@@ -452,6 +452,22 @@ All artifacts are written under `runs/<county_slug>/recon/`:
 That is eight artifacts. Each uses 4-space indented prose blocks for structured content,
 matching the existing harness convention — no triple-backtick code fences.
 
+**v5.6.0 amendment — permitted recon formats.** The eight artifacts above are a
+CONTENT contract, not a filesystem contract. Two layouts satisfy this protocol:
+
+    SPLIT_ARTIFACTS   the eight files named above, written under
+                      runs/<county_slug>/recon/. The default.
+    CONSOLIDATED      one recon document containing every field the eight
+                      artifacts require, accompanied by the mandatory
+                      section-to-artifact index defined in §01.33.
+
+Both are fully compliant. Neither is preferred by default — pick per §01.33.
+
+A consolidated recon WITHOUT the §01.33 index is NOT compliant. The index is
+what keeps the content contract mechanically checkable when the file boundaries
+that used to encode it are gone; without it, a consolidated recon is an
+undocumented exception rather than a permitted format.
+
 ---
 
 ## 01.15 Build Eligibility Gate handoff
@@ -1011,3 +1027,52 @@ verdict: <verdict>."
 
 Classifying a source as a live P0 feed without a freshness check is a recon
 defect.
+
+---
+
+## 01.33 Consolidated recon format and the section-to-artifact index
+
+§01.14 permits a CONSOLIDATED recon — one document carrying the content of all
+eight artifacts — provided it includes the index defined here.
+
+**Rationale.** §01.1 states the recon dossier's purpose: it answers one operator
+question with evidence an operator can review without re-running the recon. That
+purpose is served by the CONTENT being complete and reviewable, not by the
+number of files it occupies. Splitting a coherent argument across eight
+cross-referencing documents can reduce reviewability rather than increase it,
+particularly where a single finding (a join key, a blocked source that gates
+several lead types) is load-bearing across multiple artifacts and would have to
+be restated or hyperlinked in each. The file boundaries, however, were doing real
+work: they made completeness mechanically checkable. The index restores that
+property without forcing the split.
+
+**Choosing a format.** Neither layout is preferred by default:
+
+- prefer SPLIT_ARTIFACTS when different artifacts have different audiences or
+  review cadences, when artifacts are generated or consumed by tooling
+  separately, or when the recon is large enough that one document becomes
+  unnavigable;
+- prefer CONSOLIDATED when the findings are heavily cross-cutting, when one
+  operator reviews the whole dossier in a single pass, or when restating a
+  load-bearing finding across artifacts would risk the restatements drifting
+  out of sync.
+
+**The index is mandatory.** A consolidated recon MUST contain an explicit
+section-to-artifact index mapping every one of the eight §01.14 artifacts to the
+section(s) of the consolidated document that carry its content. Requirements:
+
+- all eight artifact names appear in the index, spelled as in §01.14;
+- each maps to at least one concrete, locatable section reference within the
+  document (a section number or heading, not a vague pointer);
+- an artifact whose content is genuinely absent MUST be listed with an explicit
+  gap statement and the reason, NOT silently omitted — an absent artifact is a
+  recorded gap, never a blank row;
+- the index states which format was used, so a reader knows the split files were
+  intentionally not produced rather than lost;
+- the v5.3.0 Source-of-Record Matrix companion artifacts (§01.20) follow the same
+  rule: consolidate with an index entry, or produce them as separate files.
+
+**Completion checklist interaction.** Where §01.18 requires that a named artifact
+"exists," a consolidated recon satisfies that requirement when the index maps
+that artifact to a populated section. The underlying obligation is unchanged:
+every field the artifact requires must be present and reviewable.

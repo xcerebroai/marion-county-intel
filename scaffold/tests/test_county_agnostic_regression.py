@@ -127,6 +127,15 @@ def is_exempt_path(rel_path):
     if rel_str.startswith("runs/"):
         return True
 
+    # County recon artifacts — exempt. Protocol 01 §01.14 writes recon under
+    # runs/<slug>/recon/, already covered above; a repo-root recon/ directory is
+    # the same class of artifact when a build consolidates its recon there
+    # (§01.33 CONSOLIDATED format). Recon output is county-specific BY DEFINITION
+    # — it names the county's vendors, portals, and neighbouring jurisdictions —
+    # so scanning it for county-specific terms is a category error, not a leak.
+    if rel_str.startswith("recon/"):
+        return True
+
     # County-side scraper adapters — exempt
     if rel_str.startswith("scrapers/"):
         return True
