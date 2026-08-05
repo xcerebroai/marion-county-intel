@@ -1,0 +1,50 @@
+name: Deploy Dashboard to Pages
+
+# Standalone publish. The full pipeline (refresh-and-deploy.yml) also deploys,
+# but that job takes ~90 minutes; this one publishes dashboard/ on its own so a
+# dashboard change reaches the live site immediately.
+#
+# Pages is configured with build_type: workflow and the artifact root is
+# dashboard/, so dashboard/index.html serves at:
+#   https://xcerebroai.github.io/marion-county-intel/
+# This mirrors harris-intel exactly.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "dashboard/**"
+      - ".github/workflows/deploy-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload dashboard to Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
