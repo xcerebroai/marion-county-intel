@@ -1,0 +1,15 @@
+# Marion County adapter dependencies.
+# Install into a project-local venv (the framework does not auto-install deps):
+#   uv venv .venv --python 3.11
+#   uv pip install --python .venv\Scripts\python.exe -r scrapers\requirements.txt
+#
+# The framework gate (scaffold/tests/run_all.py) has NO external dependencies and
+# runs on the system Python. Only these adapters need the venv.
+
+pypdf==6.14.2        # tax sale Parcel Status / Surplus PDFs (recon §4.2)
+requests==2.34.2     # HTTP with session reuse
+# playwright is installed separately (browser download):
+#   uv pip install --python .venv\Scripts\python.exe playwright
+#   .venv\Scripts\python.exe -m playwright install chromium
+# Needed only by scrapers/recorder_fidlar.py — recon §4.1 established that
+# POST /breeze/Search returns 401 without browser-minted headers.

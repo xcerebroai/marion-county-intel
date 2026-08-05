@@ -44,6 +44,14 @@ runs/*/.cache/
 # report cites their paths and findings; the files stay local.
 runs/*/recon/samples/
 
+# NOTE: every Marion adapter artifact is written under data/raw/ — the crosswalk
+# (data/raw/crosswalk/), the review queue, and the run report included. They all
+# carry real owner names and situs addresses, so they are covered by the
+# data/raw/ rule above and are additionally skipped by the framework PII guard,
+# which excludes any path containing a "raw" component. Do not relocate them out
+# of data/raw/: doing so both leaks PII into history and makes the gate scan
+# ~150 MB of owner names (it times out, then fails).
+
 # Secrets — never commit
 .env
 .env.*
