@@ -44,11 +44,11 @@ runs/*/.cache/
 # report cites their paths and findings; the files stay local.
 runs/*/recon/samples/
 
-# Generated dashboard. Embeds ~3,600 records with real owner names and situs
-# addresses as inline JSON, so it must never reach history. The GENERATOR
-# (scrapers/build_dashboard.py) is committed; rebuild locally with:
+# dashboard/index.html IS published — it is the GitHub Pages artifact, served
+# publicly at https://xcerebroai.github.io/marion-county-intel/ , mirroring how
+# harris-intel publishes dashboard/index.html + records.json. It embeds the full
+# unredacted record set by operator decision. Regenerate with:
 #   .venv\Scripts\python.exe scrapers\build_dashboard.py
-dashboard/marion_dashboard.html
 
 # NOTE: every Marion adapter artifact is written under data/raw/ — the crosswalk
 # (data/raw/crosswalk/), the review queue, and the run report included. They all

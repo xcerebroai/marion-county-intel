@@ -1,0 +1,137 @@
+name: Refresh Marion County Distress Signals
+
+# Mirrors harris-intel/.github/workflows/scrape.yml: a scrape job that
+# regenerates the dashboard and commits it, then a deploy-pages job that
+# publishes dashboard/ as the Pages artifact.
+#
+# Marion differences:
+#   - the pipeline is several adapters, orchestrated by scrapers/run_pipeline.py
+#   - the dashboard is a SINGLE self-contained file (dashboard/index.html) with
+#     the data inlined, rather than index.html + records.json
+#   - no scoring, so there is no hot/warm summary to print
+
+on:
+  schedule:
+    # 08:00 UTC daily (03:00 America/Indiana/Indianapolis)
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+    inputs:
+      rebuild_crosswalk:
+        description: "Rebuild the 346k-parcel address crosswalk (slow, ~25 min)"
+        required: false
+        default: "false"
+      mycase_start:
+        description: "MyCase harvest start date (YYYY-MM-DD)"
+        required: false
+        default: ""
+      mycase_end:
+        description: "MyCase harvest end date (YYYY-MM-DD)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: marion-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: scrapers/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r scrapers/requirements.txt playwright
+
+      - name: Install Playwright chromium
+        run: python -m playwright install --with-deps chromium
+
+      - name: Create output directories
+        run: mkdir -p data/raw dashboard
+
+      # The crosswalk is the join spine (346k parcels). It changes slowly and
+      # takes ~25 minutes, so it is opt-in rather than part of every run.
+      - name: Rebuild address -> parcel crosswalk (optional)
+        if: ${{ github.event.inputs.rebuild_crosswalk == 'true' }}
+        run: python scrapers/address_parcel_crosswalk.py
+
+      - name: Run the pipeline
+        run: python scrapers/run_pipeline.py --small
+        env:
+          MYCASE_START: ${{ github.event.inputs.mycase_start }}
+          MYCASE_END: ${{ github.event.inputs.mycase_end }}
+
+      - name: Build dashboard
+        run: python scrapers/build_dashboard.py
+
+      - name: Show run summary
+        run: |
+          echo "=== Marion refresh ==="
+          if [ -f data/raw/pipeline_report.json ]; then
+            python3 -c "
+          import json
+          d = json.load(open('data/raw/pipeline_report.json'))
+          print(f\"records        {d['total_records']}\")
+          print(f\"parcel joined  {d['parcel_joined']} ({d['join_rate_pct']}%)\")
+          print(f\"review queue   {d['review_queue']}\")
+          print(f\"lead types     {d['lead_types_populated']}/{d['lead_types_live_total']}\")
+          "
+          else
+            echo "no pipeline report produced"
+          fi
+
+      - name: Verify the framework gate still passes
+        run: python scaffold/tests/run_all.py
+
+      - name: Commit refreshed dashboard
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add dashboard/index.html
+          git diff --cached --quiet || git commit -m "chore: refresh dashboard $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-pages:
+    needs: refresh
+    runs-on: ubuntu-22.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main   # pull the freshly committed dashboard
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload dashboard to Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

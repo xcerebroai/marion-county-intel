@@ -41,7 +41,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from scrapers._common import CROSSWALK_DIR, OUT_DIR, REPO_ROOT, banner, log, read_jsonl  # noqa: E402
 
-OUT_HTML = REPO_ROOT / "dashboard" / "marion_dashboard.html"
+# dashboard/index.html — mirrors harris-intel. GitHub Pages uploads dashboard/
+# as the artifact root (build_type: workflow), so index.html serves at the site
+# root: https://xcerebroai.github.io/marion-county-intel/
+OUT_HTML = REPO_ROOT / "dashboard" / "index.html"
 
 FEEDS = {
     "tax_sale_lists_indygov":    OUT_DIR / "raw" / "tax_sale" / "tax_sale_events.jsonl",
