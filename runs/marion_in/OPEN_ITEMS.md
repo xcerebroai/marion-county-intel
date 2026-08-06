@@ -230,6 +230,30 @@ Until one is chosen, the recorder contribution to the CI-built dashboard is
 whatever the trailing window returns, and the guard's 80% floor is what stops
 that from quietly replacing the full corpus.
 
+### SB-12 — crosswalk build had no transport retry (fixed), and no cache (open)
+Run 31069007705 failed at minute 24 of the crosswalk build:
+
+    TimeoutError: The read operation timed out
+
+Not a code defect in what changed — the crosswalk step had succeeded in the two
+prior runs. It is a fragility: `arcgis_page_all` walks ~347 sequential paged
+requests and `arcgis_query` had no retry, so a single transient read timeout
+anywhere in a ~30-minute chain discarded the entire run. The recorder adapter
+had backoff; the ArcGIS path never did.
+
+Fixed in `_common.arcgis_query`: 4 attempts, linear 5/10/15s backoff, retrying
+ONLY transport errors (`URLError`, `TimeoutError`, `ConnectionError`,
+`HTTPException`). A malformed response is a real defect and still raises
+unretried. Verified three ways: recovers on attempt 3, raises after exhausting
+retries, and does not retry a JSON decode error.
+
+STILL OPEN: the crosswalk is rebuilt from scratch every run (~30 of the ~66
+minute runtime) because the 157 MB artifact carries owner names and therefore
+lives under gitignored `data/raw/`. It changes slowly — parcel geometry and
+ownership are not daily data. Options: an Actions cache keyed by month
+(evictable, but a miss just means today's behaviour), or accept the cost. Same
+family of tradeoff as SB-11.
+
 ### SB-10 — "score desc" requested but no score exists
 The daily-automation request asks for default sort "new leads first, then score
 desc within same-day cohorts", and for an updated score distribution.

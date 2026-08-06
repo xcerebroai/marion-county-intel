@@ -17,9 +17,11 @@ Copyright (c) 2026 Xcerebro LLC. Proprietary VIP license.
 from __future__ import annotations
 
 import hashlib
+import http.client
 import json
 import re
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
@@ -53,6 +55,12 @@ USER_AGENT = (
 
 # Politeness. Recon observed no throttling on any source; we still pace requests.
 DEFAULT_DELAY_S = 1.2
+
+# ArcGIS transport retry. The crosswalk build is ~347 sequential paged requests;
+# a single transient failure anywhere in that chain used to discard ~30 minutes
+# of work and fail the nightly pipeline.
+ARCGIS_MAX_RETRIES = 4
+ARCGIS_RETRY_BACKOFF_S = 5      # linear: 5s, 10s, 15s
 
 
 # ---------------------------------------------------------------------------
@@ -165,7 +173,29 @@ def arcgis_query(layer_url: str, *, where: str = "1=1", out_fields: str = "*",
     if extra:
         params.update(extra)
     url = f"{layer_url}/query?{urllib.parse.urlencode(params)}"
-    return http_json(url)
+
+    # Retry transport errors. The crosswalk pages ~347 sequential requests over
+    # ~30 minutes; without this, one transient read timeout discards the whole
+    # run. That is not hypothetical — run 31069007705 died at minute 24 on
+    # "TimeoutError: The read operation timed out" and took the nightly pipeline
+    # with it. Only transport failures are retried; a malformed response is a
+    # real defect and still raises.
+    last: Exception | None = None
+    for attempt in range(1, ARCGIS_MAX_RETRIES + 1):
+        try:
+            return http_json(url)
+        except (urllib.error.URLError, TimeoutError, ConnectionError,
+                http.client.HTTPException) as exc:
+            last = exc
+            if attempt == ARCGIS_MAX_RETRIES:
+                break
+            wait = ARCGIS_RETRY_BACKOFF_S * attempt
+            log(f"arcgis transport error ({type(exc).__name__}) at offset "
+                f"{result_offset}; retry {attempt}/{ARCGIS_MAX_RETRIES - 1} in {wait}s")
+            time.sleep(wait)
+    raise RuntimeError(
+        f"ArcGIS query failed after {ARCGIS_MAX_RETRIES} attempts at offset "
+        f"{result_offset}: {type(last).__name__}: {last}") from last
 
 
 def arcgis_page_all(layer_url: str, *, where: str = "1=1", out_fields: str = "*",
