@@ -96,9 +96,20 @@ jobs:
       # run_pipeline.py runs the staged order: tax sale -> crosswalk ->
       # code enforcement -> recorder -> MyCase -> sheriff -> MF/parcel bridge.
       # RECORDER_START/END pass straight through to the recorder stage.
+      #
+      # RECORDER_START is pinned rather than left to daily mode. The recorder is
+      # the only incremental feed: daily mode merges a trailing 5-day window into
+      # an existing file, and a stateless runner has none, so it produced 57 rows
+      # against a 536-row local corpus (run 31060098241 — caught only in hindsight
+      # because another feed grew and hid it in the total).
+      #
+      # Re-harvesting from a pinned start reproduces the same coverage every
+      # night with no persisted state and no owner names in git. This is parity
+      # restoration, not a coverage change: RECORDER_BACKFILL_FROM is the date
+      # the local backfill started. Cost is ~9 extra searches.
       - name: Full pipeline (all adapters, staged)
         env:
-          RECORDER_START: ${{ github.event.inputs.recorder_start }}
+          RECORDER_START: ${{ github.event.inputs.recorder_start || '2026-07-01' }}
           RECORDER_END: ${{ github.event.inputs.recorder_end }}
         run: python scrapers/run_pipeline.py
 

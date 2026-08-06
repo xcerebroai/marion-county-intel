@@ -97,11 +97,23 @@ def ingest(small: bool) -> None:
     # Daily mode walks a trailing window ending at the 5-day lag cursor and
     # merges into the existing dataset. RECORDER_START/RECORDER_END override it
     # for a backfill without editing code (used by the workflow inputs).
+    # RECORDER_END is optional: the adapter clamps a missing end to the 5-day
+    # recording-lag cursor itself. Only a start is required, which lets CI pin a
+    # fixed start date and re-harvest forward from it every run.
+    #
+    # That matters because the recorder is the one INCREMENTAL feed. Daily mode
+    # merges a trailing 5-day window into an existing file, and CI has no
+    # existing file (data/raw/ is gitignored), so a stateless daily run yields
+    # ~57 rows where the local corpus holds 536. Re-harvesting from a pinned
+    # start reproduces the same period every night with no state and no owner
+    # names in git. See SB-11.
     import os
     rs, re_ = os.environ.get("RECORDER_START"), os.environ.get("RECORDER_END")
-    if rs and re_:
+    if rs:
         y, m, d = rs.split("-"); s = date(int(y), int(m), int(d))
-        y, m, d = re_.split("-"); e = date(int(y), int(m), int(d))
+        e = None
+        if re_:
+            y, m, d = re_.split("-"); e = date(int(y), int(m), int(d))
         recorder_fidlar.run(s, e)
     else:
         recorder_fidlar.run(daily=True)

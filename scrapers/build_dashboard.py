@@ -65,6 +65,12 @@ BASELINE_PATH = OUT_DIR / "raw" / "dashboard_baseline.json"
 # regression rather than a legitimate shrink.
 SHRINK_LIMIT = 0.80
 
+# Per-feed floor. The total-based check alone is not enough: run 31060098241
+# lost 89% of the recorder feed (536 -> 57) and still passed, because code
+# enforcement grew at the same time and the total went UP. One feed collapsing
+# must be caught on its own terms, not netted off against another feed's growth.
+FEED_SHRINK_LIMIT = 0.50
+
 # dashboard/index.html — mirrors harris-intel. GitHub Pages uploads dashboard/
 # as the artifact root (build_type: workflow), so index.html serves at the site
 # root: https://xcerebroai.github.io/marion-county-intel/
@@ -278,8 +284,13 @@ def _guard(feed_counts: dict, total: int, allow_shrink: bool) -> None:
         problems = []
         for sid, was in (prev.get("feeds") or {}).items():
             now = feed_counts.get(sid, 0)
+            label = SOURCE_LABEL.get(sid, sid)
             if was > 0 and now == 0:
-                problems.append(f"{SOURCE_LABEL.get(sid, sid)}: {was:,} -> 0 (feed absent)")
+                problems.append(f"{label}: {was:,} -> 0 (feed absent)")
+            elif was > 0 and now < int(was * FEED_SHRINK_LIMIT):
+                pct = round((1 - now / was) * 100)
+                problems.append(f"{label}: {was:,} -> {now:,} (-{pct}%, below the "
+                                f"{int(FEED_SHRINK_LIMIT * 100)}% per-feed floor)")
         floor = int((prev.get("total") or 0) * SHRINK_LIMIT)
         if total < floor:
             problems.append(f"joined records: {prev['total']:,} -> {total:,} "
