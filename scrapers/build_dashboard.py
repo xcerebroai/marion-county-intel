@@ -46,6 +46,25 @@ from scrapers._common import (  # noqa: E402
 # A record wears the NEW badge while first_seen is within this many days.
 NEW_BADGE_DAYS = 7
 
+# ---------------------------------------------------------------------------
+# Corpus regression guard
+#
+# Every adapter writes under data/raw/, which is gitignored for PII containment.
+# A CI runner therefore starts with an EMPTY data/raw/ and only has whatever the
+# adapters produce in that run. If the workflow runs one adapter and rebuilds
+# the dashboard, the other four feeds are simply absent and the dashboard is
+# regenerated from a fraction of the corpus — silently, because "no records" is
+# not an error to a builder that just reads whatever files it finds.
+#
+# That happened: run 31057658281 published 6 records over the top of 3,611.
+# Every stage was green because nothing in the pipeline asserted that the corpus
+# had not evaporated. So assert it here, before the HTML is written.
+BASELINE_PATH = OUT_DIR / "raw" / "dashboard_baseline.json"
+
+# Fraction of the previous total below which the build is treated as a
+# regression rather than a legitimate shrink.
+SHRINK_LIMIT = 0.80
+
 # dashboard/index.html — mirrors harris-intel. GitHub Pages uploads dashboard/
 # as the artifact root (build_type: workflow), so index.html serves at the site
 # root: https://xcerebroai.github.io/marion-county-intel/
@@ -236,7 +255,57 @@ def _redact_addr(addr: str) -> str:
     return f"{(n // 100) * 100} BLOCK {m.group(2)}"
 
 
-def build(redact: bool = False) -> dict:
+def _guard(feed_counts: dict, total: int, allow_shrink: bool) -> None:
+    """Refuse to overwrite a healthy dashboard with a collapsed one.
+
+    Two failure shapes, both seen or plausible:
+      - a feed that had rows now has none  -> its adapter did not run, or its
+        artifact was never present in this environment
+      - the joined total falls off a cliff -> some feed silently under-produced
+
+    Counts only, no records: the baseline is safe to keep alongside the run logs.
+    """
+    prev = {}
+    if BASELINE_PATH.exists():
+        try:
+            prev = json.loads(BASELINE_PATH.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            log("baseline unreadable — treating this run as the new baseline")
+
+    cur = {"total": total, "feeds": feed_counts}
+
+    if prev:
+        problems = []
+        for sid, was in (prev.get("feeds") or {}).items():
+            now = feed_counts.get(sid, 0)
+            if was > 0 and now == 0:
+                problems.append(f"{SOURCE_LABEL.get(sid, sid)}: {was:,} -> 0 (feed absent)")
+        floor = int((prev.get("total") or 0) * SHRINK_LIMIT)
+        if total < floor:
+            problems.append(f"joined records: {prev['total']:,} -> {total:,} "
+                            f"(below the {int(SHRINK_LIMIT * 100)}% floor of {floor:,})")
+
+        if problems:
+            log("")
+            log("!! CORPUS REGRESSION — dashboard NOT written")
+            for p in problems:
+                log(f"     {p}")
+            log("")
+            log("   The previous dashboard is left in place. Most likely cause:")
+            log("   this environment does not have every feed under data/raw/,")
+            log("   which is gitignored and therefore empty on a fresh runner.")
+            log("   Run scrapers/run_pipeline.py so all adapters produce first.")
+            log("   If the shrink is genuine, re-run with --allow-shrink.")
+            if allow_shrink:
+                log("   --allow-shrink set: proceeding anyway.")
+            else:
+                raise SystemExit(2)
+
+    BASELINE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    BASELINE_PATH.write_text(json.dumps(cur, indent=2), encoding="utf-8")
+
+
+def build(redact: bool = False, allow_shrink: bool = False) -> dict:
     banner(f"BUILD DASHBOARD — Marion County (no scoring"
            f"{', REDACTED for public serving' if redact else ''})")
 
@@ -245,8 +314,10 @@ def build(redact: bool = False) -> dict:
 
     records, unjoined = [], 0
     total_new = 0
+    feed_counts: dict[str, int] = {}
     for sid, path in FEEDS.items():
         rows = read_jsonl(path)
+        feed_counts[sid] = len(rows)
         # Stamp first_seen for every source here — this is where all feeds
         # converge, so the ledger stays consistent whichever adapter ran. An
         # instrument already in the ledger keeps its original date; anything
@@ -351,6 +422,10 @@ def build(redact: bool = False) -> dict:
         },
     }
 
+    # Guard BEFORE the write. A collapsed corpus must not reach disk, because
+    # the workflow commits whatever dashboard/index.html it finds.
+    _guard(feed_counts, len(records), allow_shrink)
+
     OUT_HTML.parent.mkdir(parents=True, exist_ok=True)
     OUT_HTML.write_text(_html(payload), encoding="utf-8")
     log("")
@@ -383,5 +458,9 @@ if __name__ == "__main__":
     ap.add_argument("--redact", action="store_true",
                     help="omit individual owner names and reduce situs addresses to "
                          "block level. Not used by the deploy path.")
+    ap.add_argument("--allow-shrink", action="store_true",
+                    help="proceed even if the corpus regression guard trips. Use "
+                         "only when a shrink is known-genuine (a source retired, "
+                         "a window deliberately narrowed).")
     a = ap.parse_args()
-    build(redact=a.redact)
+    build(redact=a.redact, allow_shrink=a.allow_shrink)

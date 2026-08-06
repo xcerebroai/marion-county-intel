@@ -184,6 +184,52 @@ already works. Creating a second public repo is an outward-facing action with
 the same PII exposure profile as the first, so it is left as an operator
 decision rather than done implicitly.
 
+### SB-11 — CI has no corpus: PII containment vs. a stateless runner
+Found 2026-08-06 by inspecting the live site after the first green workflow run.
+
+Run 31057658281 was green end to end and published a dashboard with **6 records
+over the top of 3,611**. Nothing failed. The gate passed, the push succeeded,
+Pages deployed.
+
+Cause: every adapter writes under `data/raw/`, which is gitignored so owner
+names and situs addresses never enter git history. A fresh runner therefore
+starts with an EMPTY corpus. The workflow ran the recorder adapter alone and
+then rebuilt the dashboard, so the other four feeds were simply *absent* — and
+"no rows" is not an error to a builder that reads whatever files exist.
+
+The PII decision and the daily-automation design were each correct in isolation
+and silently incompatible in combination.
+
+Two fixes, both in place:
+
+1. `run_pipeline.py` now runs in the workflow instead of `recorder_fidlar.py`,
+   so all five feeds are re-pulled every night. The bulk sources (tax sale, code
+   enforcement, sheriff) are full re-pulls anyway; nothing depends on carryover.
+2. A corpus regression guard in `build_dashboard.py`, checked BEFORE the HTML is
+   written, against `data/raw/dashboard_baseline.json` (integers only, no
+   records, committed so it survives a fresh runner). It fails the build if any
+   feed drops to zero or the joined total falls below 80% of the last good
+   build. Verified by hiding four feeds: exit 2, dashboard byte-identical.
+
+Residual, and the reason this stays open: the **recorder feed cannot
+accumulate**. It is the one incremental source — daily mode walks a trailing
+5-day window and merges into an existing file that CI does not have. So each CI
+run contributes only ~5 days of recorder history, while the local corpus holds
+the full July backfill. Options, none taken unilaterally because each trades
+against the PII posture:
+
+  a. commit `recorder_events.jsonl` — it carries grantor/grantee names, but the
+     same records are already public in `dashboard/index.html` by operator
+     decision, so this is arguably no new exposure
+  b. re-harvest a rolling N-day window every run (stateless, no new PII in git,
+     but the dashboard becomes a rolling window rather than all-time)
+  c. persist the feed outside git (Actions cache is evictable; a bucket is new
+     infrastructure)
+
+Until one is chosen, the recorder contribution to the CI-built dashboard is
+whatever the trailing window returns, and the guard's 80% floor is what stops
+that from quietly replacing the full corpus.
+
 ### SB-10 — "score desc" requested but no score exists
 The daily-automation request asks for default sort "new leads first, then score
 desc within same-day cohorts", and for an updated score distribution.

@@ -60,9 +60,14 @@ runs/*/recon/samples/
 #   first_seen.json  the newness ledger: source|instrument -> first capture
 #               date. Instrument numbers are document identifiers, not people.
 #               Must persist across CI runs or every record looks new forever.
+#   dashboard_baseline.json  per-feed row counts and the joined total from the
+#               last good build. Integers only, no records. Must persist across
+#               CI runs or the corpus regression guard has nothing to compare
+#               against and every fresh runner looks like a legitimate build.
 !data/raw/run_logs/
 !data/raw/run_logs/**
 !data/raw/first_seen.json
+!data/raw/dashboard_baseline.json
 
 # NOTE: every Marion adapter artifact is written under data/raw/ — the crosswalk
 # (data/raw/crosswalk/), the review queue, and the run report included. They all

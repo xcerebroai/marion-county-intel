@@ -1,4 +1,4 @@
-name: Daily Recorder Pull
+name: Daily Pipeline
 
 # Mirrors harris-intel/.github/workflows/scrape.yml: a scrape job that pulls,
 # joins, regenerates the dashboard and commits, then a deploy job that publishes
@@ -42,7 +42,10 @@ concurrency:
 jobs:
   pull:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    # Crosswalk rebuild alone is ~30 min on a fresh runner (it cannot be cached:
+    # 157 MB of owner names, so it stays under gitignored data/raw/). The rest of
+    # the pipeline adds ~20-30 min. 90 was sized for a recorder-only run.
+    timeout-minutes: 150
     outputs:
       rows: ${{ steps.summary.outputs.rows }}
       new: ${{ steps.summary.outputs.new }}
@@ -82,18 +85,27 @@ jobs:
             echo "crosswalk present: $(wc -l < data/raw/crosswalk/parcel_master.jsonl) parcels"
           fi
 
-      - name: Recorder pull (slice + bisect + cap verification)
+      # ALL adapters, not just the recorder.
+      #
+      # data/raw/ is gitignored for PII containment, so a fresh runner has an
+      # empty corpus — nothing carries over from the previous night. Running the
+      # recorder alone therefore rebuilt the dashboard from one feed and
+      # published 6 records over 3,611 (run 31057658281). The bulk sources have
+      # to be re-pulled every run because there is nowhere for them to persist.
+      #
+      # run_pipeline.py runs the staged order: tax sale -> crosswalk ->
+      # code enforcement -> recorder -> MyCase -> sheriff -> MF/parcel bridge.
+      # RECORDER_START/END pass straight through to the recorder stage.
+      - name: Full pipeline (all adapters, staged)
         env:
           RECORDER_START: ${{ github.event.inputs.recorder_start }}
           RECORDER_END: ${{ github.event.inputs.recorder_end }}
-        run: |
-          if [ -n "$RECORDER_START" ] && [ -n "$RECORDER_END" ]; then
-            python scrapers/recorder_fidlar.py --start "$RECORDER_START" --end "$RECORDER_END"
-          else
-            python scrapers/recorder_fidlar.py --daily
-          fi
+        run: python scrapers/run_pipeline.py
 
-      - name: Rebuild dashboard (join + first_seen stamping)
+      # Trips and exits non-zero if any feed went to zero or the joined total
+      # fell below 80% of the last good build. Runs before the commit step, so a
+      # collapsed corpus stops here instead of being published.
+      - name: Rebuild dashboard (join + first_seen + regression guard)
         run: python scrapers/build_dashboard.py
 
       - name: Run summary
@@ -131,7 +143,8 @@ jobs:
           set -euo pipefail
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add dashboard/index.html data/raw/run_logs data/raw/first_seen.json || true
+          git add dashboard/index.html data/raw/run_logs data/raw/first_seen.json \
+                  data/raw/dashboard_baseline.json || true
           if git diff --cached --quiet; then
             echo "no changes to commit"
             exit 0
