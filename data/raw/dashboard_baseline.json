@@ -1,9 +1,9 @@
 {
-  "total": 11922,
+  "total": 11931,
   "feeds": {
     "tax_sale_lists_indygov": 2486,
     "opendata_code_enforcement": 20000,
-    "marion_recorder_fidlar": 609,
+    "marion_recorder_fidlar": 661,
     "mycase_courts": 295,
     "sheriff_sale": 225
   }
