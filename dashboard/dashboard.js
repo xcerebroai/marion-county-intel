@@ -1,8 +1,7 @@
 /**
  * Distress Intelligence — static dashboard runtime.
  *
- * The dashboard reads a flat JSON payload (data/leads.json in production
- * or data/leads_synthetic.json in synthetic mode) and renders:
+ * The customer dashboard reads the production data/leads.json payload and renders:
  *
  *   - stat tiles for total leads and per-tier counts,
  *   - a chip-based filter rail (tier / pattern / attribute / deal_path /
@@ -24,17 +23,19 @@
   // -------------------------------------------------------------------
 
   const DATA_PATHS_PROD = ["./data/leads.json", "../data/leads.json"];
-  const DATA_PATHS_SYNTH = [
-    "./data/leads_synthetic.json",
-    "../data/leads_synthetic.json",
-  ];
 
   async function fetchFirst(paths) {
     const errors = [];
     for (const path of paths) {
       try {
         const r = await fetch(path);
-        if (r.ok) return [path, await r.json()];
+        if (r.ok) {
+          const payload = await r.json();
+          if (payload.mode !== "production" || !Array.isArray(payload.records)) {
+            throw new Error("Customer dashboard requires production lead records.");
+          }
+          return [path, payload];
+        }
         errors.push(`${path}: HTTP ${r.status}`);
       } catch (e) {
         errors.push(`${path}: ${e.message}`);
@@ -123,37 +124,14 @@
     document.title = countyName
       ? `${countyName} County Distress Intelligence`
       : "Distress Intelligence";
-    const deployment = state.payload.deployment || {};
-    const repoOrg = deployment.github_org;
-    const repoName = deployment.github_repo;
-    const repoLink = document.getElementById("repo-link");
-    if (repoLink && repoOrg && repoName) {
-      repoLink.href = `https://github.com/${repoOrg}/${repoName}`;
-      repoLink.hidden = false;
-    }
-    document.getElementById("build-label").textContent =
-      state.payload.build_label || "FULL_BUILD";
     document.getElementById("generated-at").textContent =
-      "Generated " + state.payload.generated_at;
+      "Updated " + state.payload.generated_at;
     document.getElementById("view-mode-pill").textContent =
-      state.mode === "operator" ? "OPERATOR_VIEW" : "CLIENT_VIEW";
+      state.mode === "operator" ? "Review view" : "Research view";
     document.body.setAttribute("data-mode", state.mode);
 
-    // Status banner — surfaces build_label_reason for source-limited
-    // / partial / pending builds. Hidden for clean FULL_BUILD runs.
-    const banner = document.getElementById("status-banner");
-    const reason = state.payload.build_label_reason;
-    const limitedLabels = new Set([
-      "SOURCE_LIMITED",
-      "PARTIAL_BUILD",
-      "PRIMARY_SOURCE_PENDING",
-    ]);
-    if (reason && limitedLabels.has(state.payload.build_label)) {
-      banner.hidden = false;
-      banner.textContent = `${state.payload.build_label}: ${reason}`;
-    } else {
-      banner.hidden = true;
-    }
+    document.getElementById("status-banner").hidden = true;
+    document.getElementById("csv-export").disabled = false;
 
     const filteredRows = applyFilters(state.payload.records);
     renderTiles(filteredRows);
@@ -362,7 +340,7 @@
     const total = state.payload.records.length;
     const showing = rows.length;
     document.getElementById("footer-counts").textContent =
-      `${showing} of ${total} leads (${state.payload.mode} mode, ${state.payload.county}/${state.payload.state})`;
+      `${showing} of ${total} leads · ${state.payload.county}, ${state.payload.state}`;
   }
 
   // -------------------------------------------------------------------
@@ -394,10 +372,8 @@
     "score_reasons",
     "evidence_ids",
     "primary_source_urls",
-    "mode",
     "county",
     "state",
-    "build_label",
     "generated_at",
     "review_flag_count",
     "first_pattern",
@@ -412,15 +388,14 @@
   }
 
   function exportCsv() {
+    if (!state.payload) return { rows: 0, columns: CSV_COLUMNS.length };
     const rows = applyFilters(state.payload.records);
     const header = CSV_COLUMNS.join(",");
     const lines = rows.map((r) =>
       CSV_COLUMNS.map((col) => {
         switch (col) {
-          case "mode":
           case "county":
           case "state":
-          case "build_label":
           case "generated_at":
             return csvEscape(state.payload[col]);
           case "review_flag_count":
@@ -484,8 +459,8 @@
       state.mode = state.mode === "client" ? "operator" : "client";
       e.currentTarget.textContent =
         state.mode === "client"
-          ? "Switch to Operator View"
-          : "Switch to Client View";
+          ? "Show review queue"
+          : "Show research view";
       render();
     });
     document.getElementById("csv-export").addEventListener("click", exportCsv);
@@ -501,12 +476,8 @@
 
   async function boot() {
     wireEvents();
-    const isSynthetic = new URL(window.location.href).searchParams.get("synthetic") !== "0";
-    const paths = isSynthetic
-      ? DATA_PATHS_SYNTH.concat(DATA_PATHS_PROD)
-      : DATA_PATHS_PROD.concat(DATA_PATHS_SYNTH);
     try {
-      const [path, payload] = await fetchFirst(paths);
+      const [path, payload] = await fetchFirst(DATA_PATHS_PROD);
       state.payload = payload;
       console.info(`Loaded dashboard payload from ${path}`);
       render();
@@ -514,7 +485,7 @@
       console.error(err);
       document.getElementById("status-banner").hidden = false;
       document.getElementById("status-banner").textContent =
-        "Could not load dashboard payload — start an HTTP server in the repo root and reload.";
+        "Lead records are temporarily unavailable. Please try again shortly.";
       document.body.setAttribute("data-ready", "1");
     }
   }
