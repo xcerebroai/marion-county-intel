@@ -124,14 +124,6 @@
     document.title = countyName
       ? `${countyName} County Distress Intelligence`
       : "Distress Intelligence";
-    const deployment = state.payload.deployment || {};
-    const repoOrg = deployment.github_org;
-    const repoName = deployment.github_repo;
-    const repoLink = document.getElementById("repo-link");
-    if (repoLink && repoOrg && repoName) {
-      repoLink.href = `https://github.com/${repoOrg}/${repoName}`;
-      repoLink.hidden = false;
-    }
     document.getElementById("generated-at").textContent =
       "Updated " + state.payload.generated_at;
     document.getElementById("view-mode-pill").textContent =
